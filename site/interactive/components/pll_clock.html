@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F28335 PLL锁相环时钟配置</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.6em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:20px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;flex:1;min-width:340px}
+.panel-title{color:#00d4ff;font-size:1.1em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.control-group{margin-bottom:18px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:6px;font-size:0.85em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right}
+input[type=range]{width:100%;height:6px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#00d4ff;cursor:pointer;box-shadow:0 0 8px rgba(0,212,255,0.5)}
+select{width:100%;padding:8px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;font-size:0.9em;cursor:pointer}
+select:focus{outline:none;border-color:#00d4ff}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:10px}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #111633}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{color:#00ff88;font-weight:bold;font-family:'Consolas',monospace}
+.canvas-container{position:relative;width:100%;margin-top:10px}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.warning{color:#ff6b6b;font-size:0.8em;margin-top:5px}
+.info{color:#7a8ba8;font-size:0.75em;margin-top:3px}
+.clock-diagram{display:flex;align-items:center;justify-content:center;gap:8px;margin:15px 0;flex-wrap:wrap}
+.clock-block{background:#111633;border:2px solid #1e2a5a;border-radius:8px;padding:10px 15px;text-align:center;min-width:90px;transition:all 0.3s}
+.clock-block.active{border-color:#00d4ff;box-shadow:0 0 15px rgba(0,212,255,0.3)}
+.clock-block.highlight{border-color:#00ff88;box-shadow:0 0 15px rgba(0,255,136,0.3)}
+.clock-block .name{color:#7a8ba8;font-size:0.7em;margin-bottom:3px}
+.clock-block .freq{color:#00d4ff;font-size:1.1em;font-weight:bold;font-family:'Consolas',monospace}
+.clock-block .unit{color:#7a8ba8;font-size:0.7em}
+.arrow{color:#00d4ff;font-size:1.5em}
+.divider-badge{background:#ff6b6b;color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7em;font-weight:bold}
+</style>
+</head>
+<body>
+<h1>🔧 F28335 PLL锁相环时钟配置</h1>
+<p class="subtitle">第3章 3.1 F28335的时钟源与锁相环电路 — 实时计算SYSCLK频率</p>
+
+<div class="container">
+<div class="panel">
+<div class="panel-title">⚙️ 控制区</div>
+
+<div class="control-group">
+<label>外部晶振频率 (OSCCLK) <span class="value" id="oscVal">30 MHz</span></label>
+<input type="range" id="oscclk" min="10" max="40" value="30" step="1">
+<div class="info">F28335典型值: 30MHz (范围10~40MHz)</div>
+</div>
+
+<div class="control-group">
+<label>PLL倍频系数 (PLLCR.DIV) <span class="value" id="pllVal">10</span></label>
+<select id="pllcr">
+<option value="0">0 — 旁路PLL (÷1)</option>
+<option value="1">1 — ÷1 (VCOCLK=OSCCLK)</option>
+<option value="2">2 — ÷2 (VCOCLK=2×OSCCLK)</option>
+<option value="3">3 — ÷3</option>
+<option value="4">4 — ÷4</option>
+<option value="5">5 — ÷5</option>
+<option value="6">6 — ÷6</option>
+<option value="7">7 — ÷7</option>
+<option value="8">8 — ÷8</option>
+<option value="9">9 — ÷9</option>
+<option value="10" selected>10 — ÷10 (典型配置)</option>
+<option value="11">11 — ÷11</option>
+<option value="12">12 — ÷12</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>输出分频器 (PLLSTS.DIVSEL) <span class="value" id="divVal">÷2</span></label>
+<select id="divsel">
+<option value="0">00 — ÷4 (上电默认)</option>
+<option value="1">01 — ÷4</option>
+<option value="2" selected>10 — ÷2 (典型配置)</option>
+<option value="3">11 — ÷1 (旁路分频器)</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>低功耗模式</label>
+<select id="lpmode">
+<option value="0" selected>正常模式</option>
+<option value="1">IDLE模式</option>
+<option value="2">STANDBY模式</option>
+<option value="3">HALT模式</option>
+</select>
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">OSCCLK (输入时钟)</span>
+<span class="result-value" id="r_osc">30.00 MHz</span>
+</div>
+<div class="result-row">
+<span class="result-label">VCOCLK (压控振荡器)</span>
+<span class="result-value" id="r_vco">300.00 MHz</span>
+</div>
+<div class="result-row">
+<span class="result-label">SYSCLK (系统时钟)</span>
+<span class="result-value" id="r_sys">150.00 MHz</span>
+</div>
+<div class="result-row">
+<span class="result-label">SYSCLK周期</span>
+<span class="result-value" id="r_period">6.667 ns</span>
+</div>
+<div class="result-row">
+<span class="result-label">状态</span>
+<span class="result-value" id="r_status" style="color:#00ff88">✅ 正常</span>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-title">📊 时钟路径图</div>
+<div class="clock-diagram" id="clockDiagram">
+<div class="clock-block active" id="blk_osc">
+<div class="name">OSCCLK</div>
+<div class="freq" id="d_osc">30</div>
+<div class="unit">MHz</div>
+</div>
+<span class="arrow">→</span>
+<div class="clock-block" id="blk_pll">
+<div class="name">PLL ×<span id="d_pll_mult">10</span></div>
+<div class="freq" id="d_vco">300</div>
+<div class="unit">MHz</div>
+</div>
+<span class="arrow">→</span>
+<div class="clock-block" id="blk_div">
+<div class="name">÷<span id="d_div">2</span></div>
+<div class="freq" id="d_sys">150</div>
+<div class="unit">MHz</div>
+</div>
+<span class="arrow">→</span>
+<div class="clock-block highlight" id="blk_out">
+<div class="name">SYSCLK</div>
+<div class="freq" id="d_sysclk">150</div>
+<div class="unit">MHz</div>
+</div>
+</div>
+
+<div class="canvas-container">
+<canvas id="waveCanvas" height="280"></canvas>
+</div>
+
+<div class="result-box" style="margin-top:15px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 8px 0">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;white-space:pre-wrap;line-height:1.6"></pre>
+</div>
+</div>
+</div>
+
+<script>
+const oscSlider=document.getElementById('oscclk');
+const pllSelect=document.getElementById('pllcr');
+const divSelect=document.getElementById('divsel');
+const lpSelect=document.getElementById('lpmode');
+const canvas=document.getElementById('waveCanvas');
+const ctx=canvas.getContext('2d');
+
+function calc(){
+const osc=parseFloat(oscSlider.value);
+const pll=parseInt(pllSelect.value);
+const divVal=parseInt(divSelect.value);
+const lp=parseInt(lpSelect.value);
+
+let vco,divisor,sysclk;
+if(pll===0){
+vco=osc;
+divisor=2;
+sysclk=osc/divisor;
+}else{
+vco=osc*pll;
+switch(divVal){
+case 0:case 1:divisor=4;break;
+case 2:divisor=2;break;
+case 3:divisor=1;break;
+default:divisor=4;
+}
+sysclk=vco/divisor;
+}
+
+if(lp>0)sysclk=0;
+
+document.getElementById('oscVal').textContent=osc+' MHz';
+document.getElementById('pllVal').textContent=pll===0?'旁路':('×'+pll);
+document.getElementById('divVal').textContent='÷'+divisor;
+
+document.getElementById('r_osc').textContent=osc.toFixed(2)+' MHz';
+document.getElementById('r_vco').textContent=vco.toFixed(2)+' MHz';
+document.getElementById('r_sys').textContent=(lp>0?'—':sysclk.toFixed(2))+' MHz';
+document.getElementById('r_period').textContent=lp>0?'—':(1000/sysclk).toFixed(3)+' ns';
+
+const statusEl=document.getElementById('r_status');
+if(lp>0){statusEl.textContent='💤 低功耗模式';statusEl.style.color='#ffaa00'}
+else if(sysclk>150){statusEl.textContent='⚠️ 超频! 最大150MHz';statusEl.style.color='#ff6b6b'}
+else if(sysclk<=0){statusEl.textContent='❌ 无时钟输出';statusEl.style.color='#ff6b6b'}
+else{statusEl.textContent='✅ 正常';statusEl.style.color='#00ff88'}
+
+document.getElementById('d_osc').textContent=osc;
+document.getElementById('d_pll_mult').textContent=pll===0?'BYPASS':pll;
+document.getElementById('d_vco').textContent=vco>=1000?(vco/1000).toFixed(1):vco.toFixed(0);
+document.getElementById('d_div').textContent=divisor;
+document.getElementById('d_sys').textContent=sysclk>=1000?(sysclk/1000).toFixed(1):sysclk.toFixed(0);
+document.getElementById('d_sysclk').textContent=sysclk>=1000?(sysclk/1000).toFixed(1):sysclk.toFixed(0);
+
+const blk_pll=document.getElementById('blk_pll');
+const blk_div=document.getElementById('blk_div');
+blk_pll.className=pll>0?'clock-block active':'clock-block';
+blk_div.className=divisor>1?'clock-block active':'clock-block';
+
+const code=`EALLOW;
+SysCtrlRegs.PLLCR.bit.DIV = ${pll};    // PLL倍频系数
+SysCtrlRegs.PLLSTS.bit.DIVSEL = ${divVal};  // 输出分频选择
+// OSCCLK = ${osc}MHz → VCOCLK = ${vco}MHz → SYSCLK = ${lp>0?'0':sysclk.toFixed(2)}MHz
+EDIS;`;
+document.getElementById('codeOutput').textContent=code;
+
+drawWave(osc,sysclk,lp);
+}
+
+function drawWave(oscFreq,sysFreq,lp){
+const dpr=window.devicePixelRatio||1;
+const w=canvas.clientWidth;
+const h=280;
+canvas.width=w*dpr;
+canvas.height=h*dpr;
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
+
+const pad=40;
+const plotW=w-2*pad;
+const plotH=80;
+const midY1=pad+plotH/2;
+const midY2=pad+plotH+40+plotH/2;
+
+ctx.font='11px Microsoft YaHei';
+ctx.fillStyle='#7a8ba8';
+ctx.fillText('OSCCLK ('+oscFreq+'MHz)',pad,pad-8);
+ctx.fillText('SYSCLK ('+(lp>0?'0':sysFreq.toFixed(1))+'MHz)',pad,pad+plotH+40-8);
+
+ctx.strokeStyle='#1e2a5a';
+ctx.lineWidth=1;
+ctx.beginPath();
+ctx.moveTo(pad,midY1-plotH/2);ctx.lineTo(pad+plotW,midY1-plotH/2);
+ctx.moveTo(pad,midY1+plotH/2);ctx.lineTo(pad+plotW,midY1+plotH/2);
+ctx.moveTo(pad,midY2-plotH/2);ctx.lineTo(pad+plotW,midY2-plotH/2);
+ctx.moveTo(pad,midY2+plotH/2);ctx.lineTo(pad+plotW,midY2+plotH/2);
+ctx.stroke();
+
+const cycles=4;
+const steps=500;
+
+ctx.strokeStyle='#00d4ff';
+ctx.lineWidth=2;
+ctx.beginPath();
+for(let i=0;i<=steps;i++){
+const x=pad+(i/steps)*plotW;
+const phase=(i/steps)*cycles*2*Math.PI;
+const y=midY1-(Math.sin(phase)>0?1:-1)*plotH*0.4;
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.stroke();
+
+if(!lp&&sysFreq>0){
+const ratio=sysFreq/oscFreq;
+ctx.strokeStyle='#00ff88';
+ctx.lineWidth=2;
+ctx.beginPath();
+for(let i=0;i<=steps;i++){
+const x=pad+(i/steps)*plotW;
+const phase=(i/steps)*cycles*ratio*2*Math.PI;
+const y=midY2-(Math.sin(phase)>0?1:-1)*plotH*0.4;
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.stroke();
+}else{
+ctx.fillStyle='#ff6b6b';
+ctx.font='14px Microsoft YaHei';
+ctx.textAlign='center';
+ctx.fillText('💤 低功耗模式 — 无时钟输出',w/2,midY2);
+ctx.textAlign='left';
+}
+}
+
+oscSlider.addEventListener('input',calc);
+pllSelect.addEventListener('change',calc);
+divSelect.addEventListener('change',calc);
+lpSelect.addEventListener('change',calc);
+window.addEventListener('resize',calc);
+calc();
+</script>
+</body>
+</html>

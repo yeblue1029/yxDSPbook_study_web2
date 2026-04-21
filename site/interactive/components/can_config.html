@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAN总线通信 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+input,select{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+input:focus,select:focus{outline:none;border-color:#00d4ff}
+.can-visual{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:20px;margin-top:15px}
+.can-bus{display:flex;justify-content:space-between;align-items:center;padding:40px 0;position:relative}
+.can-node{background:#1e2a5a;border:2px solid #00d4ff;border-radius:50%;width:80px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.can-node.ecan{background:#1a2818;border-color:#00ff88}
+.can-node.can{background:#1a1828;border-color:#ff6b6b}
+.can-node .icon{font-size:1.5em}
+.can-node .label{font-size:0.65em;margin-top:3px;text-align:center}
+.bus-lines{position:absolute;left:50%;transform:translateX(-50%);top:50%;display:flex;flex-direction:column;gap:10px}
+.bus-lines .canh{width:250px;height:4px;background:#00ff88;border-radius:2px}
+.bus-lines .canl{width:250px;height:4px;background:#ff6b6b;border-radius:2px}
+.tx-rx-display{display:flex;justify-content:space-around;margin-top:20px}
+.tx-rx-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;width:45%}
+.tx-rx-box .title{color:#00d4ff;font-size:0.9em;margin-bottom:10px}
+.data-log{max-height:150px;overflow-y:auto;background:#000;border:1px solid #1e2a5a;border-radius:4px;padding:10px;font-family:'Consolas',monospace;font-size:0.8em}
+.data-log .tx{color:#00ff88}
+.data-log .rx{color:#00d4ff}
+.data-log .error{color:#ff6b6b}
+.data-log .info{color:#ffcc00}
+.register-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.1em;font-weight:bold;margin-top:8px;font-family:'Consolas',monospace}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn-send{background:#00ff88}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;line-height:1.5}
+.wave-canvas{width:100%;height:80px;background:#000;border-radius:4px}
+.msg-display{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.msg-display table{width:100%;border-collapse:collapse}
+.msg-display th,.msg-display td{border:1px solid #1e2a5a;padding:8px;text-align:left;font-size:0.85em}
+.msg-display th{background:#1e2a5a;color:#00d4ff}
+.msg-display td{color:#e0e6ff;font-family:Consolas}
+</style>
+</head>
+<body>
+<header>
+<h1>🔄 CAN总线通信</h1>
+<p class="info-text">CAN 2.0B | eCAN-A / eCAN-B | 1Mbps | 消息对象</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">CAN配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>选择CAN模块</label>
+<select id="canSelect" onchange="selectCan()">
+<option value="A">eCAN-A</option>
+<option value="B">eCAN-B</option>
+</select>
+</div>
+<div class="control-group">
+<label>比特率 (kbps)</label>
+<select id="bitRate" onchange="updateConfig()">
+<option value="125">125 kbps</option>
+<option value="250">250 kbps</option>
+<option value="500">500 kbps</option>
+<option value="1000">1000 kbps</option>
+</select>
+</div>
+<div class="control-group">
+<label>采样点 (%)</label>
+<select id="samplePoint" onchange="updateConfig()">
+<option value="75">75%</option>
+<option value="80">80%</option>
+<option value="87.5">87.5%</option>
+</select>
+</div>
+<div class="control-group">
+<label>自身CAN ID</label>
+<input type="text" id="ownCanId" value="0x100" placeholder="0x100">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">CAN总线状态</h3>
+<div class="can-visual">
+<div class="can-bus">
+<div class="can-node ecan">
+<span class="icon">🎯</span>
+<span class="label">F28335<br>eCAN-A</span>
+</div>
+<div class="bus-lines">
+<div class="canh"></div>
+<div class="canl"></div>
+</div>
+<div class="can-node can">
+<span class="icon">📦</span>
+<span class="label">其他CAN节点</span>
+</div>
+</div>
+<canvas id="waveCanvas" class="wave-canvas"></canvas>
+<div class="tx-rx-display">
+<div class="tx-rx-box">
+<div class="title">📤 发送消息</div>
+<div class="data-log" id="txLog">等待发送...</div>
+</div>
+<div class="tx-rx-box">
+<div class="title">📥 接收消息</div>
+<div class="data-log" id="rxLog">等待接收...</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">消息发送</h3>
+<div class="controls">
+<div class="control-group">
+<label>目标CAN ID</label>
+<input type="text" id="destCanId" value="0x200" placeholder="0x200">
+</div>
+<div class="control-group">
+<label>消息类型</label>
+<select id="msgType">
+<option value="0">数据帧</option>
+<option value="1">远程帧</option>
+</select>
+</div>
+<div class="control-group">
+<label>DLC (数据长度)</label>
+<select id="dlc">
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+</div>
+</div>
+<div class="control-group" style="margin-top:10px">
+<label>数据 (十六进制，逗号分隔)</label>
+<input type="text" id="txData" value="0x01,0x02,0x03,0x04" placeholder="0x01,0x02,0x03,0x04">
+</div>
+<div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap">
+<button class="btn btn-send" onclick="canSend()">📤 发送CAN消息</button>
+<button class="btn" onclick="simulateReceive()">📥 模拟接收</button>
+<button class="btn" onclick="sendRemoteFrame()">🔄 发送远程帧</button>
+<button class="btn" onclick="resetCan()">🔄 重置</button>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器状态</h3>
+<div class="register-grid">
+<div class="register-item">
+<div class="name">CAN CTL (控制)</div>
+<div class="value" id="ctlReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">CAN STS (状态)</div>
+<div class="value" id="stsReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">CAN BTC (位定时)</div>
+<div class="value" id="btcReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">CAN RCR (接收控制)</div>
+<div class="value" id="rcrReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">CAN TSC (时间戳)</div>
+<div class="value" id="tscReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">错误计数</div>
+<div class="value" id="errReg">0</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">CAN寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// CAN初始化配置
+void InitCAN(void)
+{
+    // 禁用CAN模块进行配置
+    CanaRegs.CANCTL.all = 0x00000001;
+    
+    // 配置位定时器 (BTC)
+    // BRP = 4, TSEG1 = 13, TSEG2 = 2
+    // 波特率 = 150MHz / (4+1) / (13+2+3) = 1Mbps
+    CanaRegs.CANBTC.all = 0x00000000;
+    CanaRegs.CANBTC.bit.BRP = 4;
+    CanaRegs.CANBTC.bit.TSEG1 = 13;
+    CanaRegs.CANBTC.bit.TSEG2 = 2;
+    CanaRegs.CANBTC.bit.SAM = 1;  // 采样3次
+    
+    // 配置消息对象
+    // 设置局部屏蔽寄存器
+    CanaRegs.CANLAM.all = 0x00000000;
+    
+    // 配置发送消息对象 1
+    CanaRegs.CANMDER.all = 0x00000000;
+    CanaRegs.CANTRS.all = 0x00000000;
+    
+    // 选择消息对象1
+    // MSG1 CTRL: DLC = 8, IDE = 0 (标准帧)
+    CanaRegs.CANMC.all = 0x00000000;
+    CanaRegs.CANMC.bit.CANCCR = 1;
+    
+    // 等待配置完成
+    while(CanaRegs.CANMC.bit.CANCCR);
+    
+    // MSG1 Arbitration
+    // MSG1 MSGID = 0x200
+    CanaRegs.CANMSGID.all = 0x2000000;
+    
+    // MSG1 Control
+    // DLC = 8, MSGVAL = 1, TXIE = 1, RXIE = 1
+    CanaRegs.CANMSGCTRL.all = 0x00000000;
+    CanaRegs.CANMSGCTRL.bit.DLC = 8;
+    CanaRegs.CANMSGCTRL.bit.TXRQ = 0;
+    
+    // 释放CAN模块
+    CanaRegs.CANMC.all = 0x00000000;
+    CanaRegs.CANCTL.all = 0x00000000;
+}
+
+// 发送CAN消息
+void CANSend(uint32_t id, uint8_t *data, uint8_t dlc)
+{
+    // 选择消息对象
+    CanaRegs.CANMC.bit.CANCCR = 1;
+    while(CanaRegs.CANMC.bit.CANCCR);
+    
+    // 设置ID
+    CanaRegs.CANMSGID.all = id << 18;
+    
+    // 设置数据
+    if(dlc > 0) CanaRegs.CANMDL.all = *(uint32_t *)data;
+    if(dlc > 4) CanaRegs.CANMDH.all = *(uint32_t *)(data + 4);
+    
+    // 设置控制
+    CanaRegs.CANMSGCTRL.bit.DLC = dlc;
+    
+    // 发送请求
+    CanaRegs.CANTRS.all = 0x00000001;
+    while(!CanaRegs.CANTA.all & 0x00000001);
+    
+    // 清除应答
+    CanaRegs.CANTA.all = 0x00000001;
+    
+    CanaRegs.CANMC.all = 0x00000000;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const waveCanvas = document.getElementById('waveCanvas');
+const waveCtx = waveCanvas.getContext('2d');
+
+let canState = {
+    module: 'A',
+    bitRate: 1000,
+    samplePoint: 80,
+    ownCanId: 0x100,
+    txCount: 0,
+    rxCount: 0,
+    errorCount: 0,
+    busStatus: '空闲',
+    waveData: [],
+    transmitting: false
+};
+
+function selectCan() {
+    canState.module = document.getElementById('canSelect').value;
+    updateRegisters();
+    updateCode();
+}
+
+function updateConfig() {
+    canState.bitRate = parseInt(document.getElementById('bitRate').value);
+    canState.samplePoint = parseInt(document.getElementById('samplePoint').value);
+    canState.ownCanId = parseInt(document.getElementById('ownCanId').value, 16) || 0x100;
+    
+    updateRegisters();
+    updateCode();
+}
+
+function updateRegisters() {
+    const brp = Math.round(300 / canState.bitRate) - 1;
+    const tseg1 = Math.round((brp + 1) * canState.samplePoint / 100) - 2;
+    const tseg2 = brp - tseg1;
+    
+    const btcVal = (brp << 16) | (tseg1 << 8) | tseg2;
+    document.getElementById('btcReg').textContent = '0x' + btcVal.toString(16).toUpperCase().padStart(8, '0');
+    
+    document.getElementById('ctlReg').textContent = '0x' + (canState.transmitting ? 0x40010000 : 0x40000000).toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('stsReg').textContent = '0x' + (canState.busStatus === '空闲' ? 0x00000000 : 0x00000010).toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('tscReg').textContent = '0x' + (canState.txCount * 100 & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    document.getElementById('errReg').textContent = canState.errorCount;
+}
+
+function addWavePoint(value) {
+    canState.waveData.push(value);
+    if(canState.waveData.length > 300) canState.waveData.shift();
+    drawWaveform();
+}
+
+function drawWaveform() {
+    const w = waveCanvas.offsetWidth;
+    const h = waveCanvas.offsetHeight;
+    
+    waveCanvas.width = w * 2;
+    waveCanvas.height = h * 2;
+    waveCtx.scale(2, 2);
+    
+    waveCtx.clearRect(0, 0, w, h);
+    
+    waveCtx.strokeStyle = '#1e2a5a';
+    waveCtx.lineWidth = 1;
+    waveCtx.beginPath();
+    waveCtx.moveTo(0, h * 0.5);
+    waveCtx.lineTo(w, h * 0.5);
+    waveCtx.stroke();
+    
+    if(canState.waveData.length < 2) return;
+    
+    waveCtx.strokeStyle = '#00d4ff';
+    waveCtx.lineWidth = 2;
+    waveCtx.beginPath();
+    
+    const bitWidth = w / canState.waveData.length;
+    for(let i = 0; i < canState.waveData.length; i++) {
+        const x = i * bitWidth;
+        const y = canState.waveData[i] ? h * 0.3 : h * 0.7;
+        if(i === 0) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+}
+
+function logTx(msg) {
+    const log = document.getElementById('txLog');
+    const time = new Date().toLocaleTimeString();
+    log.innerHTML += `<div class="tx">[${time}] ${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+}
+
+function logRx(msg) {
+    const log = document.getElementById('rxLog');
+    const time = new Date().toLocaleTimeString();
+    log.innerHTML += `<div class="rx">[${time}] ${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+}
+
+function simulateBit() {
+    const dominant = Math.random() > 0.5;
+    addWavePoint(dominant);
+}
+
+async function canSend() {
+    if(canState.transmitting) {
+        logTx('总线忙，等待...');
+        return;
+    }
+    
+    canState.transmitting = true;
+    updateRegisters();
+    
+    const destId = parseInt(document.getElementById('destCanId').value, 16) || 0x200;
+    const dlc = parseInt(document.getElementById('dlc').value);
+    const msgType = document.getElementById('msgType').value;
+    const dataStr = document.getElementById('txData').value;
+    
+    logTx(`发送 ${msgType === '0' ? '数据' : '远程'}帧 - ID: 0x${destId.toString(16).toUpperCase()}, DLC: ${dlc}`);
+    
+    for(let i = 0; i < 50; i++) simulateBit();
+    
+    canState.txCount++;
+    canState.transmitting = false;
+    updateRegisters();
+    
+    logTx(`发送完成 - 帧计数: ${canState.txCount}`);
+    
+    setTimeout(() => {
+        simulateReceive();
+    }, 500);
+}
+
+function simulateReceive() {
+    const srcId = parseInt(document.getElementById('destCanId').value, 16) || 0x200;
+    const dlc = Math.floor(Math.random() * 8) + 1;
+    const data = [];
+    for(let i = 0; i < dlc; i++) {
+        data.push(Math.floor(Math.random() * 256));
+    }
+    
+    logRx(`接收数据帧 - ID: 0x${srcId.toString(16).toUpperCase()}, DLC: ${dlc}, 数据: ${data.map(d => '0x' + d.toString(16).toUpperCase().padStart(2, '0')).join(', ')}`);
+    
+    canState.rxCount++;
+    
+    for(let i = 0; i < 50; i++) simulateBit();
+}
+
+function sendRemoteFrame() {
+    if(canState.transmitting) return;
+    
+    canState.transmitting = true;
+    updateRegisters();
+    
+    const destId = parseInt(document.getElementById('destCanId').value, 16) || 0x200;
+    const dlc = parseInt(document.getElementById('dlc').value);
+    
+    logTx(`发送远程帧 - ID: 0x${destId.toString(16).toUpperCase()}, DLC: ${dlc} (请求数据)`);
+    
+    for(let i = 0; i < 30; i++) simulateBit();
+    
+    canState.txCount++;
+    canState.transmitting = false;
+    updateRegisters();
+}
+
+function resetCan() {
+    canState.txCount = 0;
+    canState.rxCount = 0;
+    canState.errorCount = 0;
+    canState.transmitting = false;
+    canState.waveData = [];
+    
+    document.getElementById('txLog').innerHTML = 'CAN已重置...';
+    document.getElementById('rxLog').innerHTML = '等待接收...';
+    
+    drawWaveform();
+    updateRegisters();
+    updateCode();
+}
+
+function updateCode() {
+    const brp = Math.round(300 / canState.bitRate) - 1;
+    const tseg1 = Math.round((brp + 1) * canState.samplePoint / 100) - 2;
+    const tseg2 = brp - tseg1;
+    
+    const code = `// CAN初始化配置
+void InitCAN${canState.module}(void)
+{
+    // 启用CAN模块配置
+    CanaRegs.CANCTL.all = 0x00000001;
+    
+    // 清除所有中断标志
+    CanaRegs.CANES.all = 0x00000000;
+    CanaRegs.CANTA.all = 0x00000000;
+    
+    // 配置位定时寄存器 (BTC)
+    // BRP = ${brp} -> 波特率 Prescaler
+    // TSEG1 = ${tseg1} -> 采样点前时间
+    // TSEG2 = ${tseg2} -> 采样点后时间
+    // SAM = 1 -> 3次采样
+    CanaRegs.CANBTC.all = 0x00000000;
+    CanaRegs.CANBTC.bit.BRP = ${brp};
+    CanaRegs.CANBTC.bit.TSEG1 = ${tseg1};
+    CanaRegs.CANBTC.bit.TSEG2 = ${tseg2};
+    CanaRegs.CANBTC.bit.SAM = 1;
+    
+    // 配置局部接收屏蔽 (LAM)
+    CanaRegs.CANLAM.all = 0x00000000;
+    
+    // 配置消息对象
+    // MSG1: 发送消息对象
+    // MSG2-16: 接收消息对象
+    
+    // 退出配置模式
+    CanaRegs.CANCTL.all = 0x00000000;
+}
+
+// 发送CAN消息
+void CANSend${canState.module}(uint32_t id, uint8_t *data, uint8_t dlc)
+{
+    uint16_t temp;
+    
+    // 进入配置模式
+    CanaRegs.CANMC.bit.CANCCR = 1;
+    while(CanaRegs.CANMC.bit.CANCCR);
+    
+    // 选择消息对象1
+    CanaRegs.CANMSGID.all = (id << 18);
+    
+    // 写入数据
+    if(dlc > 0) {
+        CanaRegs.CANMDL.all = *(uint32_t *)data;
+    }
+    if(dlc > 4) {
+        CanaRegs.CANMDH.all = *(uint32_t *)(data + 4);
+    }
+    
+    // 配置控制
+    CanaRegs.CANMSGCTRL.bit.DLC = dlc;
+    CanaRegs.CANMSGCTRL.bit.TXRQ = 0;
+    CanaRegs.CANMSGCTRL.bit.RXIE = 1;
+    CanaRegs.CANMSGCTRL.bit.TXIE = 1;
+    
+    // 退出配置模式
+    CanaRegs.CANMC.all = 0x00000000;
+    
+    // 发送
+    CanaRegs.CANTRS.all = 0x00000001;
+    
+    // 等待发送完成
+    while(!(CanaRegs.CANTA.all & 0x00000001));
+    
+    // 清除发送应答
+    CanaRegs.CANTA.all = 0x00000001;
+}
+
+// CAN中断服务程序
+interrupt void ecan${canState.module.toLowerCase()}rxISR(void)
+{
+    uint32_t id;
+    uint8_t dlc;
+    uint8_t data[8];
+    
+    // 读取ID
+    id = (ECanaMboxes.MBOX1.MSGID.all >> 18) & 0x7FF;
+    
+    // 读取DLC
+    dlc = ECanaMboxes.MBOX1.MSGCTRL.bit.DLC;
+    
+    // 读取数据
+    *(uint32_t *)data = ECanaMboxes.MBOX1.MDL.all;
+    if(dlc > 4) {
+        *(uint32_t *)(data + 4) = ECanaMboxes.MBOX1.MDH.all;
+    }
+    
+    // 处理接收数据...
+    
+    // 清除中断标志
+    ECanaRegs.CANRMP.all = 0x00000001;
+    
+    // 应答PIE
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+window.addEventListener('resize', drawWaveform);
+updateConfig();
+drawWaveform();
+</script>
+</body>
+</html>

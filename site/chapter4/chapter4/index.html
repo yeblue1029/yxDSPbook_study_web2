@@ -1,0 +1,3365 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../chapter3/chapter3/">
+      
+      
+        <link rel="next" href="../../chapter5/chapter5/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第4章 时钟与看门狗 - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#f28335" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第4章 时钟与看门狗
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter2/chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F28335的存储器及其地址分配
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="F28335的存储器及其地址分配">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1F28335存储空间的配置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 F28335存储器特点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1saram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.片上SARAM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2boot-rom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.BOOT ROM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3flashotp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.上FLASH和OTP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1）重启或睡眠状态
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)备用状态
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)激活状态
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="(3)激活状态">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#43csm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3代码安全模块CSM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.功能说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2csm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.CSM对片内资源的影响
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.密码匹配流程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.密码匹配流程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#44-xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 外部存储器接XINTF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.外部存储器接XINTF概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2f2812xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.与F2812的XINTF接口的区别
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.访问XINTF区域
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.写后读的流水线保护
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.XINTF的配置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1xintf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)XINTF的配置程序
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)时钟信号
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)写缓冲器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4）XINTF访问的建、有效、跟踪等待时间
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5xready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (5）区域的XREADY采样
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (6）带宽
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7xbank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (7)XBANK区域切换配置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6xintfdma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.XINTF的DMA支持
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.XINTF的相关寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)时序寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2xintfxintcnf2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）XINTF配置寄存器XINTCNF2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3xbank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3）区域切换控制寄存器XBANK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4xreset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）复位寄存器XRESET
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（4）复位寄存器XRESET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#45f28335sram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5手把手教你访问F28335外部SRAM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1sram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1）外扩SRAM硬件原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)程序说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#46f28335flash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6手把手教你访问F28335片外FLASH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1flash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)FLASH擦除程序
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter5/chapter5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter6/chapter6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter7/chapter7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter8/chapter8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter9/chapter9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F28335的存储器及其地址分配
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="F28335的存储器及其地址分配">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1F28335存储空间的配置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 F28335存储器特点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1saram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.片上SARAM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2boot-rom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.BOOT ROM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3flashotp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.上FLASH和OTP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1）重启或睡眠状态
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)备用状态
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)激活状态
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="(3)激活状态">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#43csm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3代码安全模块CSM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.功能说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2csm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.CSM对片内资源的影响
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.密码匹配流程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.密码匹配流程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#44-xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 外部存储器接XINTF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.外部存储器接XINTF概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2f2812xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.与F2812的XINTF接口的区别
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.访问XINTF区域
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.写后读的流水线保护
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.XINTF的配置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1xintf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)XINTF的配置程序
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)时钟信号
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)写缓冲器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4）XINTF访问的建、有效、跟踪等待时间
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5xready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (5）区域的XREADY采样
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (6）带宽
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7xbank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (7)XBANK区域切换配置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6xintfdma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.XINTF的DMA支持
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7xintf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.XINTF的相关寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)时序寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2xintfxintcnf2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）XINTF配置寄存器XINTCNF2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3xbank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3）区域切换控制寄存器XBANK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4xreset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）复位寄存器XRESET
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（4）复位寄存器XRESET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#45f28335sram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5手把手教你访问F28335外部SRAM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1sram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1）外扩SRAM硬件原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)程序说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#46f28335flash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.6手把手教你访问F28335片外FLASH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1flash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)FLASH擦除程序
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>第4章 时钟与看门狗</h1>
+
+<h2 id="f28335">F28335的存储器及其地址分配</h2>
+<p>时钟越快，处理基本逻辑运算的速度越快，处理过程中处理对象（数据）以及处理方法（指令）这些信息都要合理地存放与读取，存放这些信息的存储器以及存储器架构也是影响控制器速度与性能的重要指标。我们购买计算机的时候，除了关注CPU主频外，往往也非常关注存储器的配置情况，例如内存的大小、硬盘的大小。本章介绍TMS320F28335的存储器具体配置。</p>
+<h3 id="41f28335">4.1F28335存储空间的配置</h3>
+<p>20世纪30年代中期，美国天才科学家冯·诺依曼大胆地提出：抛弃十进制，采用二进制作为数字计算机的数制基础。同时，他还说预先编制计算程序，然后由计算机按照人们事前制定的计算顺序执行数值计算工作。由于指令和数据都是二进制码，指令和操作数的地址又密切相关，因此，当初选择指令与数据存储在一起，经由同一总线传输是很自然的。但是，这种指令和数据共享同一总线的结构，取指令和存取数据要从同一个存储空间存取，经由同一总线传输，因而它们无法重叠执行，只有一个完成后再进下一个，使得信息流的传输成为限制计算机性能的瓶颈，影响了数据处理速度的提高。于是哈佛人提出了指令存储和数据存储分开的存储器结构，这样就可以同时读取指令和数据，大批量处理数据的时候效率显著提高，这就是“哈佛结构”。在哈佛结构的基础上，人们又进一步提出了改进的哈佛结构，其结构特点为：使用两个独立的存储器模块，分别存储指令和数据，每个存储模块都不允许指令和数据并存，以便实现并行处理；具有一条独立的地址总线和一条独立的数据总线，利用公用地址总线访问两个存储模块（程序存储模块和数据存储模块），公用数据总线则被用来完成程序存储模块或数据存储模块与CPU之间的数据传输。同时将指令的基本操作，分解为几个基本元操作，这些元操作可以流水执行，并且对程序进行分支预测，进行多级流水线操作，使得数据处理的效率大大提高。</p>
+<p>F28335DSP就是采用多级流水线的增强的哈佛总线结构，能够并访问程序和数据存储空间。在F28335芯内部集成了大量不同的存储介质，F28335上有256KX16位的FLASH,34KX16位的SRAM,8K×16位的BOOTROM,2K×16位的OPTROM，采用统一寻址方式（程序、数据和I/O统一寻址），从而提高了存储空间的利用率，方便程序的开发。除此之外，F28335DSP还提供了外部并扩展接XINTF，可进一步外扩存储空间。</p>
+<p>F28335的CPU内核本身并不包含任何存储器，通过总线访问芯内部集成的或者外部扩展的存储器。其总线按照改进哈佛结构，分成32位的数据读、数据写数据总线，地址读、地址写总线，公用数据总线即程序总线，包括22位的程序地址总线，用于传送程序空间的读/写地址，32位读数据程序总线，用于读取程序空间的指令或者数据。改进的哈佛结构其实是综合了冯·诺依曼结构的简洁，哈佛结构的效。F28335应32位数据地址和22位程序地址控制整个存储器以及外设，最可寻址4G字的数据空间和4M字程序空间。通常写的程序所需存放空间4M足够了，若大于4M意味着程序空间不够处理，在实际中采用分页处理的方式，因为实际寻数据空间为4G，通过分页机制可以扩展实际寻址的程序空间。要找到对应程序的空间地址与数据的空间地址，就需要对空间地址进行编码，将空间地址进行逻辑编码，就是映射。F28335处理器的存储器配置及地址映射如图4.1所示。</p>
+<p>F28335对数据空间和程序空间进了统编址，图4.1的映射表就像是各个空间的地图样，有些空间既可以作为数据空间也可以作为程序空间，有些空间只能作为数据空间，有些空间是受密码模块保护的，有些空间地址是作为保留的，具体内容就要仔细对照这个地图进行查阅。</p>
+<p>图4.1右半部分主要是通过XINTF外扩的存储空间，当内数据存储空间不够的时候，可以外扩存储器。其中的保留区是内存储器所占的地址。</p>
+<p>F28335的各存储器地址都是连续编码的，且空间地址是唯一的。图4.1左半部分，首先对M0SARAM从0x000000开始编码一直到0x000400结束，可以计算出这是1KX16的大小。当STE状态寄存器VMAP=0时,0x000000～0x000040作为中断向量的存储空间。M1SARAM从0x000400～0x000800也是1K×16位大小，接着是外设帧0、1、2、3，这4个空间只能是数据空间，不能是程序空间，这些空间存放着F28335外设寄存器，其中外设帧1、2、3空间还标注着Protected，表示这3个空间存放的寄存器不可以随便配置，若要对存放在Protected空间内的寄存器进行配置，要进行EALLOW声明，以EDIS结束声明，起到保护和警示作用。中间插了个PIE向量存储空间。0x002000～0x005000是保留区，这段保留区被用作外部扩展区0，从这里也可以看到保留区的作用，这个外扩区同样也是受保护区，要改写存放在该区域的寄存器值时同样需要EALLOW声明。外扩区还有两个分别为1M的6区与7区。接下来是L0～L7的SARAM区，均为4K大小，下边是256K的FLASH空间，中间0x33FFF8～0x340000共128位用来保存CSM模块密码，保护FLASH、L0～L7、OTP空间内存放的数据，下边是2K的OTP空间，其中1KOTP空间主要是TI来测试的引导程序，接下来是L0～L3SARAM空间，这是个双映射空间，也就是名字是一样的，但空间地址是不样的，这样有利于数据备份，接下来是个8K的BOOTROM空间，用来存放Bootloader程序，系统初始引导程序。</p>
+<table>
+<thead>
+<tr>
+<th>地址范围 0x000000 0x000040</th>
+<th>片上存储器</th>
+<th>片外扩展存储器</th>
+<th></th>
+<th>0x004000 0x005000</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x000400 0x000800 0x000D00 0x000E00 0x002000</td>
+<td>数据空间 程序空间</td>
+<td>购国</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>M0向量RAM（32×32）</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>M0 SRAM(1K×16)</td>
+<td>大MA 保留</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>M1 SRAM(1K×16)</td>
+<td></td>
+<td>话</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>PFO</td>
+<td></td>
+<td>成供心大</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>PIE中断 向量表</td>
+<td>保留</td>
+<td>国乐火西</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x005000 0x006000 0x007000 0x008000 0x009000 0x00A000 0x00B000 0x00C000 0x00D000 Ox00E000 0x00F000 0x010000 0x300000 0x33FFF8 0x340000 0x380000</td>
+<td>PFO</td>
+<td></td>
+<td>外部区域0扩展4K×16CS0</td>
+<td></td>
+</tr>
+<tr>
+<td>保留 PF3 DMA</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>PF1 PF2</td>
+<td>保留</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>L0SRAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>L1 SRAM(4K×16)</td>
+<td></td>
+<td>保留</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>L2SRAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>L3 SRAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>L4SRAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>外部区域7扩展1M×16CS7</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>L5 SRAM(4K×16)</td>
+<td>外部区域6扩展1M×16CS6</td>
+<td>0x100000</td>
+<td></td>
+</tr>
+<tr>
+<td>L7SRAM(4K×16）</td>
+<td>L6SRAM(4K×16）</td>
+<td></td>
+<td>0x200000 0x300000</td>
+<td></td>
+</tr>
+<tr>
+<td>保留</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FLASH(256K×16) 128位密码</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TIOTP(1K×16)</td>
+<td>保留</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x380400 0x380800</td>
+<td>用户OTP(1K×16)</td>
+<td></td>
+<td>保留</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x3F8000</td>
+<td>保留</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x3F9000</td>
+<td>L0SARAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x3FA000</td>
+<td>L1 SARAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x3FB000 0x3FC000</td>
+<td>L2SARAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>L3 SARAM(4K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x3FE000</td>
+<td>保留</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BootROM(8K×16)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x3FFFFC</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BROM向量表-ROM</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>（32×32)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>图4.1F28335处理器存储器配置及地址映射</p>
+<h3 id="42-f28335">4.2 F28335存储器特点</h3>
+<h2 id="1saram">1.片上SARAM</h2>
+<p>SARAM即为单口随机读/写存储器，有别于双口RAM，双RAM是在一个</p>
+<p>SRAM存储器上具有两套完全独立的数据线、地址线和读写控制线，并允许两个独立的系统同时对该存储器进行随机性访问。即共享式多端口存储器。F28335片内共有34KX16位单周期单次访问随机存储器SRAM，被分成10个块，它们分别为M0、M1、L0~L7。</p>
+<p>M0和M1块SRAM的大小均为1KX16位，当复位后，堆栈指针指向M1块的起始地址，堆栈指针向上生长。MO和M1段都可以映射到程序区和数据区。</p>
+<p>L0～L7块SRAM的大小均为4KX16位，既可映射到程序空间，也可映射到数据空间，其中L0～L3可映射到两块不同的地址空间并且受片上的FLASH中的密码保护，以免存在上面的程序或数据，被他人非法复制。</p>
+<h2 id="2boot-rom">2.BOOT ROM</h2>
+<p>BOOTROM，可以叫做引导ROM，主要装载了TI的引导装载程序，实现DSP的Bootloader功能。MP/MC=0时，DSP被设置为微计算机模式，CPU在复位后，指令跳转到0x3FFC00～0x3FFFBF区间内，执行Bootloader程序，在后续F28335的引导程序章节中会进一步介绍系统是如何引导的。 e, 1H020</p>
+<h2 id="3flashotp">3.上FLASH和OTP</h2>
+<p>F28335片上有256KX16位嵌入式FLASH存储器和2K×16位一次可编程EEPROM存储器，它们均受片上FLASH中的密码保护。FLASH存储器由8个32K×16位扇区组成，用户可以对其中任何一个扇区进行擦除、编程和校验，而其他扇区不变。但是，不能在其中一个扇区上执程序来擦除和编程其他的扇区。其主要有以下特点：</p>
+<p>➢整个存储器分成多段。</p>
+<p>➢代码安全保护。</p>
+<p>》低功耗模式。</p>
+<p>》可根据CPU频率调整等待周期。</p>
+<p>FLASH流水线模式能够提高线性代码的执效率。</p>
+<p>F28335内FLASH存储器的分段情况如表4.1所列。</p>
+<table>
+<thead>
+<tr>
+<th>地址范围</th>
+<th>程序与数据空间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x300000~0x307FFF</td>
+<td>分段H（32K字×16）</td>
+</tr>
+<tr>
+<td>0x308000~0x30FFFF</td>
+<td>分段G（32K字×16）</td>
+</tr>
+<tr>
+<td>0x310000~0x317FFF</td>
+<td>分段F（32K字×16）</td>
+</tr>
+<tr>
+<td>0x318000~0x31FFFF</td>
+<td>分段E（32K字×16）</td>
+</tr>
+<tr>
+<td>0x320000~0x327FFF</td>
+<td>分段D（32K字×16）</td>
+</tr>
+<tr>
+<td>0x328000~0x32FFFF</td>
+<td>分段C（32K字×16）</td>
+</tr>
+</tbody>
+</table>
+<p>表4.1F28335片内FLASH分段</p>
+<p>续表4.1</p>
+<table>
+<thead>
+<tr>
+<th>地址范围</th>
+<th>程序与数据空间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x330000~0x327FFF</td>
+<td>分段B（32K字×16）</td>
+</tr>
+<tr>
+<td>0x338000~0x33FF7F</td>
+<td>分段A（32K字×16）</td>
+</tr>
+<tr>
+<td>0x33FF80~0x33FFF5</td>
+<td>当采用密码保护时，编程为0x0000</td>
+</tr>
+<tr>
+<td>0x33FFF6~0x33FFF7</td>
+<td>FLASH启动入口地址（这里有程序分支指令）</td>
+</tr>
+<tr>
+<td>0x33FFF8~0x33FFFF</td>
+<td>密码（128位）（不要编码成全0）</td>
+</tr>
+</tbody>
+</table>
+<p>28335的OTP存储器也是统一映射到程序和数据存储器空间，即可以为数据存储器也可以为程序存储器，与FLASH存储器不同的是它只能被用户写一次，不能再次被擦除。</p>
+<p>FLASH与OTP存储器的功耗模式有以下3个状态：</p>
+<h2 id="1">(1）重启或睡眠状态</h2>
+<p>芯复位后，FLASH与OTP处于睡眠状态，CPU在FLASH和OTP存储器映射区域读数据或取代码使得状态改变，从睡眠状态变为备用状态，进一步会变为激活状态，在状态转换过程中，CPU自动延迟等待，一旦状态转换完成，CPU的访问恢复正常。</p>
+<h2 id="2">(2)备用状态</h2>
+<p>该状态的功耗要比睡眠状态大，需要较短的时间就转变为激活状态或读状态。在状态转换过程中，CPU动延迟等待，旦状态转换完成，CPU的访问恢复正常。</p>
+<h2 id="3">(3)激活状态</h2>
+<p>在激活状态下，CPU在FLASH与OTP的存储器映射空间内读取访问收到FBANKWAIT寄存器与FOTPWAIT寄存器控制。在状态转换时，从低功耗模式转换到了高功耗模式，延时是必要的，通过延时可以使FLASH能够处在稳定的激活状态。在延时期间，CPU都会自动等待直到延时完成为止。睡眠到备用受FSTDB-WAIT控制，备用到激活受FACTICVEWAIT寄存器控制。</p>
+<p>对FLASH和OTP存储器来说，CPU读写数据操作主要有以下3种形式：</p>
+<p>①32位取指令。</p>
+<p>②16位或32位数据空间读操作。</p>
+<p>③16位程序空间读操作。</p>
+<p>一旦FLASH处于激活状态，那么对存储器映射区的访问可以被分为FLASH访问或OTP访问，OTP存储器小于4M，在22位取址范围内，FLASH则大于4M，所以FLASH访问的时候又分为了存储器的随机访问与存储器的页访问。FLASH存储器是以阵列形式组成，每有2048位。次访问的某称为随机访问，若随后又访问该则被称为页访问，一个随机和页访问的等待状态数可以通过FBANK-</p>
+<p>WAIT寄存器编程配置，随机访问的状态数由RANDWAIT位来控制，指定访问的等待状态数由PAGEWAIT位来控制。</p>
+<p>OTP存储器的访问速度通常可以通过寄存器FOTPWAIT中的OTPWAIT中位来控制。OTP存储器的访问时间FLASH要长。</p>
+<p>FLASH的流水线模式：FLASH存储器数据掉电不丢失，所以通常用来保存应用代码。在代码执期间，除非有中断发生，指令可以从存储器地址中连续获取，连续地址中的部分代码组成了主要的代码，又称为线性代码。为了提高线性代码的执行性能，可以采用FLASH流水线模式。FLASH流水线模式在默认状态下无效，通过设置FOPT寄存器中ENPIPE位使能流线模式，并且FLASH流线模式独于CPU的流水线模式。</p>
+<p>每次从FLASH或OTP中读取64位后访问个取指令，当FLASH流线模式被激活，可以从存储在64位缓冲器中读取，然后指令缓冲器中的内容被送到CPU进处理。</p>
+<p>2个32位指令或者4个16位指令可以存放在个单独的64位访问区域中，F28335的指令多数是16位，因此从FLASH存储器中每取64位指令就像是在预取缓冲器中有4个指令等待CPU处理，在等待处理指令的过程中，FLASH流线会动开始访问FLASH存储器并预取下个64位指令。通过采这种技术，FLASH或OTP存储器连续代码执效率得到提。FLASH或OTP存储器相关配置寄存器如表4.2所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+<th>长度/×16位</th>
+<th>寄存器描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FOPT</td>
+<td>0x000A80</td>
+<td>1</td>
+<td>FLASH选择寄存器</td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>0x00 0A81</td>
+<td>1</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>FPWR</td>
+<td>0x000A82</td>
+<td></td>
+<td>FLASH功耗模式寄存器</td>
+</tr>
+<tr>
+<td>FSTATUS</td>
+<td>0x000A83</td>
+<td>1</td>
+<td>状态寄存器</td>
+</tr>
+<tr>
+<td>FSTDBYWAIT</td>
+<td>0x000A84</td>
+<td></td>
+<td>FLASH由睡眠到备用寄存器</td>
+</tr>
+<tr>
+<td>FACTIVEWAIT</td>
+<td>0x000A85</td>
+<td>1</td>
+<td>FLASH由备用到激活寄存器</td>
+</tr>
+<tr>
+<td>FBANKWAI</td>
+<td>0x000A86</td>
+<td>1</td>
+<td>FLASH读等待状态数寄存器</td>
+</tr>
+<tr>
+<td>FOPTWAIT</td>
+<td>0x000A87</td>
+<td>1</td>
+<td>OTP读等待状态寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表4.2 F28335OTP存储器分段</p>
+<p>FLASH与OTP处于激活状态时，户可以通过执程序读取FLASH寄存器的数据，但是在FLASH和OTP存储器内代码正在运或正在访问存储器时，不能对寄存器进行写操作，这些寄存器也都是受保护的，配置的时候需要EALLOW声明，以EIDS结束。FLASH选择寄存器FOPT字段描述如表4.3所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~1</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>0</td>
+<td>ENPIPE</td>
+<td>使能FLASH流水线模式当该位被置1时，流水线模式被激活，该模式通过预取指令方式提高了取指令的效率，在该模式下，FLASH的访问周期（页访问或随机访问)必须大于0，默认状态为0</td>
+</tr>
+</tbody>
+</table>
+<p>表4.3 F28335FLASH选择寄存器FOPT字段描述</p>
+<p>FLASH功耗模式寄存器FPWR各位信息如表4.4所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~2</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>PWR</td>
+<td>FLASH功耗模式位，向这些位写操作会改变FLASH的BANK和PUMP当前功耗模式00:睡眠模式01:等待状态10：保留11:激活状态使能FLASH模式（高功耗）</td>
+</tr>
+</tbody>
+</table>
+<p>表4.4F28335FLASH功耗模式寄存器器FPWR字段描述</p>
+<h3 id="43csm">4.3代码安全模块CSM</h3>
+<p>代码安全模块(CSM)是F28335上程序安全性的主要段，它禁未授权的户访问内存储器，禁私有代码的复制或者逆向操作。</p>
+<h2 id="1_1">1.功能说明</h2>
+<p>安全模块限制CPU去访问内存储器。实际上，对各种存储器的读/写访问都是通过JTAG端口或外设来进的，而CSM模块所谓的代码安全性主要是针对内存储器的访问来定义的，来禁未经授权去复制私代码或数据。</p>
+<p>当CPU访问内存储器受到限制的时候，器件即处于保密、“安全”的状态。当处于保密状态时，根据程序计数器当前指针的位置，可能有两种保护类型。如果当前代码正运在受保护的内部安全存储器模块上时，仅仅是JTAG（即仿真器)的访问被阻断，而受安全保护的代码是可以访问受安全保护的数据的，相反，如果代码运在不受保护的非安全区时，所有对受保护的安全区的访问都被阻断。户的代码可以动态地跳进或者跳出受保护的安全区，因此允许程序从不受保护的安全区域调用函数，类似地，中断服务程序放在了安全受保护区域，而主程序运在不受保护的非安全区域。因为程序中总是有部分受到保护的。通过一个128位的密码（相当于:8个16位的字)来对安全区来进加密或解密。这段密码保存在FLASH的最后8个字中（0X33FFF8～0X33FFFF），也就是密码区中（PWL），通过密码匹配（PMF），可以解锁器件。</p>
+<p>如果密码保护区中的128位数都是同个数，这个器件不受保护，全是同个数有两种可能，一种全为O，另一种全为1，一个新的FLASH或FLASH被擦除后，就变为全1了，这样只要读一下密码区，就能破解，还一种情况，就是全为0，这时候器件是被加密了，但是不管密钥寄存器的内容是什么，器件都处在加密状态，即该器件无法解锁，这时候芯就被完全锁住了。因此不要用全0作为密码。如果在擦除FLASH的期间，芯片复位了，那这个芯片的密码就不确定了，也不能解锁。A</p>
+<p>芯不能解锁（用全零作为密码、FLASH擦除期间复位、忘记密码），这时候芯就完全锁住了，只能用来调试，而无法重新烧写程序。</p>
+<p>用户用来解锁的寄存器为密钥寄存器，在存储空间映射地址为0x00000AE0～0x00000AE7，该区域受EALLOW保护。当这个128位的密钥为全1时，密钥寄存器不需要与之匹配。当开始调试FLASH区加密的芯时，仿真器取得CPU的控制权需要一定的时间，在此期间，CPU正在开始运行，并且会执行保护加密区的操作，这个操作会引起仿真器断开连接，有两个方法可以解决这个问题。</p>
+<p>①采Wait-in-Reset仿真模式，这种法是让芯保持在复位状态直到仿真器得到控制，这种方法要求仿真器要能支持这种模式。</p>
+<p>②采Branch tocheckbootmode引导。这个法会持续不停地让引导模式选择引脚。可以选择这种引导模式；一旦仿真器通过重新映射PC到另外的地址或者改变引导模式选择引脚以进引导进连接。</p>
+<h2 id="2csm">2.CSM对片内资源的影响</h2>
+<p>CSM影响到的片内资源如表4.5所列。CSM对下述片内资源无影响，如表4.6所列。</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>存储器</th>
+<th>地址</th>
+<th>存储器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x000A80~0x000A87</td>
+<td>FLASH配置寄存器</td>
+<td>0x380000~0x3803FF</td>
+<td>TI（OTP)存储器（1K×16）</td>
+</tr>
+<tr>
+<td>0x008000~0x008FFF</td>
+<td>LOSARAM(4K×16)</td>
+<td>0x380400~0x3807FF</td>
+<td>用户（OTP）存储器（1K×16)</td>
+</tr>
+<tr>
+<td>0x009000~0x009FFF</td>
+<td>L1SARAM(4K×16）</td>
+<td>0x3F8000~0x3F8FFF</td>
+<td>L0SARAM(4K×I6)镜像</td>
+</tr>
+<tr>
+<td>0x00A000~0x00AFFF</td>
+<td>L2 SARAM(4K×16)</td>
+<td>0x3F9000~0x3F9FFF</td>
+<td>L1 SARAM(4K×16）镜像</td>
+</tr>
+<tr>
+<td>0x00B000~0x00BFFF</td>
+<td>L3 SARAM(4K×16)</td>
+<td>0x3FA000~0x3FAFFF</td>
+<td>L2SARAM(4K×16)镜像</td>
+</tr>
+<tr>
+<td>0x300000~0x33FFFF</td>
+<td>FLASH(64K×16,32×16,或者16×16)</td>
+<td>0x3FB000~0x3FBFFF</td>
+<td>L3SARAM(4K×16）镜像</td>
+</tr>
+</tbody>
+</table>
+<p>表4.5受CSM影响的片内资源</p>
+<p>①未指定加密的SARAM。无论芯有没有加密，这块存储器都能够自由访问和在其内部运行程序。</p>
+<p>②引导ROM。ROM内容的可见性不受CSM影响。</p>
+<p>③内外设寄存器。论芯有没有被加密，内外设寄存器都可以通过内外运的代码来进初始化。</p>
+<p>④中断向量表。无论芯有没有被加密，中断向量表都可以被读/写。</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>存储器</th>
+<th>地址</th>
+<th>存储器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x000000~0x0003FF</td>
+<td>MO SARAM(1K×16）</td>
+<td>0x00C000~0x00CFFF</td>
+<td>L4SARAM(4K×16)</td>
+</tr>
+<tr>
+<td>0x000400~0x0007FF</td>
+<td>M1 SARAM(1K×16）</td>
+<td>0x00D000~0×00DFFF</td>
+<td>L5SARAM(4K×16)</td>
+</tr>
+<tr>
+<td>0x008000~0x000CFF</td>
+<td>外设帧0（2K×16）</td>
+<td>0x00E000~0x00EFFF</td>
+<td>L6SARAM(4K×16）</td>
+</tr>
+<tr>
+<td>0x000D00~0x000FFF</td>
+<td>PIE中断向量表RAM（256X16）</td>
+<td>0x00F000~0x00FFFF</td>
+<td>L7 SARAM(4K×16）</td>
+</tr>
+<tr>
+<td>0x006000~0x006FFF</td>
+<td>外设帧1（4K×16）</td>
+<td>0x3FF000~0x3FFFFF</td>
+<td>引导ROM(4K×16）</td>
+</tr>
+<tr>
+<td>0x007000~0x007FFF</td>
+<td>外设帧2（4K×16）</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表4.6不受CSM影响的片内资源</p>
+<p>无论芯有没有被加密，都可以通过JTAG将代码装上表不受CSM影响的存储器内运行，调试代码，并初始化外设寄存器。</p>
+<h2 id="3_1">3.密码匹配流程</h2>
+<p>对芯片解密的过程被称为密码匹配流程（PMF）。图4.2描述了该操作流程。PMF本质上讲就是个从PWL中进8次哑读并对KEY寄存器进8次写的过程。PMF在进解除DSP的安全性操作时可能遇到两种情况：</p>
+<p>情况1：如果DSP在PWL处有密码，需进如下步骤来解除安全保护：</p>
+<p>①从PWL处进8次哑读。</p>
+<p>②写密码到KEY寄存器。</p>
+<p>③如果密码正确，DSP就解锁了，否则DSP仍被锁着。</p>
+<p>情况2：如果DSP没有密码保护，那么在PWL处应该是全1，需进如下步骤：</p>
+<p>①从PWL处进哑读。</p>
+<p>②上面的操作完成后，DSP立马就解锁了，可以随意对存储器进行操作。</p>
+<p>如果要解密芯，在对存储器读/写或编程前，不管DSP受没受到密码保护，一定要先进哑读操作。什么叫哑读？就是PWL中的内容实际上是不能读出的，执读操作后读出的数据与PWL中真正的内容并不一致（全1和全0除外）。下面举个实例，说明如何使用代码安全模块。</p>
+<p>因为在DSP复位后，L0和L1存储器是受安全保护的，所以若要使这两个空间就必须进解密操作，下面是个C语编程的例子，用于说明如何解除DSP对LO和L1的保护。</p>
+<p><img alt="" src="../images/1205b9700034d8c9ebd11b9291982897b570109e35ca8e44472f6ac287518cdd.jpg" /></p>
+<p>//在调试阶段保持所有的密码字为OxFFFF不变，因此下面向KEYO～KEY7寄存器中//写密码字的语句可以省略。否则就要向KEY寄存器中写密码字</p>
+<p>在执了上述程序后，就可以毫无阻碍地对L0和L1存储器进读写了。</p>
+<h3 id="44-xintf">4.4 外部存储器接XINTF</h3>
+<h2 id="1xintf">1.外部存储器接XINTF概述</h2>
+<p>F28335DSP采用增强的哈佛总线结构，能够并行访问程序和数据存储空间。内部集成了量的SRAM、ROM、以及FLASH等存储器，并且采统一寻址式（程序、数据和I/O统寻址），从而提高了存储空间的利用率，方便程序的开发。尽管F28335片内有256KX16位的FLASH，34KX16位的SRAM，8KX16位的BOOTROM，2KX16位的OPTROM，但对于复杂的应而，程序空间与数据空间依然有可能不够，所以需要进一步扩展，外部接XINTF采复异步总线，可用于扩展SRAM、FLASH、ADC、DAC模块等。XINTF接口分别映射到3个固定的存储器映射区域，模块的信号如图4.3所示。</p>
+<p><img alt="" src="../images/16dfa9e1ff6b835ab538f8e52cfcf09f44b6958d8db39c67193308f4c7255fdb.jpg" /></p>
+<p>图4.3XINTF模块信号</p>
+<p>XINTF每个区域都有个选信号线，当对某个区域进读写访问时，就要将信号线置低，某些器件将两个区域的选信号通过内部的与逻辑连接在一起，从而形成个共用的信号线，在这样的情况下，同存储器可以与两个XINTF区域相连，要区分这两个区域就要与区分这两个区域的逻辑电路相连。</p>
+<p>XINTF的存储器的3个区域中的任何一个都可通过编程设定独的等待时间，选通信号建立时间及保持时间，每个区域的读写操作都可以配置成不同的等待时间，另外可以通过XREADY信号线延长等待时间，XINTF接口的这些特性允许其访问不同速率的外部存储器设备。通过XTIMINGx寄存器可配置每个区域的等待时间及选通信号的建于保持时间。XINTF接口的访问时序是以内部时钟XTIMCLK为基准的，XTIMCLK信号频率可配置为系统时钟SYSCLKOUT的频率或其半。</p>
+<p>XINTF接口的信号如表4.7所列。</p>
+<table>
+<thead>
+<tr>
+<th>信号名称</th>
+<th>输人输出特性</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XD[31:0]</td>
+<td>1/0/Z</td>
+<td>双向的数据总线，在16位模式下只是用XD[15:0]</td>
+</tr>
+<tr>
+<td>XA[19:1]</td>
+<td>0/Z</td>
+<td>地址总线，地址在XCLKOUT的上升沿被锁存到地址总线上，并保持到下一次访问操作</td>
+</tr>
+<tr>
+<td>XA0/XWE1</td>
+<td>0/Z</td>
+<td>在16位的数据总线模式下，作为地址线的最低位XA0；在32位数据总线模式下，作为低字节的写操作的选通线XWE1</td>
+</tr>
+<tr>
+<td>XCLKOUT</td>
+<td>0/Z</td>
+<td>输出时钟</td>
+</tr>
+<tr>
+<td>XWE0</td>
+<td>0/Z</td>
+<td>写操作的选通线，低电平有效</td>
+</tr>
+<tr>
+<td>XRD</td>
+<td>0/Z</td>
+<td>读操作的选通线，低电平有效</td>
+</tr>
+<tr>
+<td>XR/W</td>
+<td>0/Z</td>
+<td>读/写信号线，高电平时，表明读操作正在进行，低电平时，表明写操作正在进行</td>
+</tr>
+<tr>
+<td>XZCS0/6/7</td>
+<td>0</td>
+<td>区域0/6/7的片选信号线</td>
+</tr>
+<tr>
+<td>XREADY</td>
+<td>I</td>
+<td>为高电平时，表明外部设备已完成此次访问的相关操作，XINTF可结束此次访问                       00001</td>
+</tr>
+<tr>
+<td>XHOLD</td>
+<td>1</td>
+<td>为低电平时，表明有外部设备请求XINTF释放其总线</td>
+</tr>
+<tr>
+<td>XHOLDA</td>
+<td>O/Z</td>
+<td>当XINTF响应XHOLD请求后，将XHOLDA置低</td>
+</tr>
+</tbody>
+</table>
+<p>表4.7XINTF接口的信号</p>
+<h2 id="2f2812xintf">2.与F2812的XINTF接口的区别</h2>
+<p>F28335的XINTF接口与2812的XINTF接口基本相似，但是需要注意以下点区别：</p>
+<p>①数据总线宽度。F28335的XINTF接每个区域的数据总线宽度可以独配置成16位或32位，在32位模式下，数据吞吐量高，2812的XINTF接口只具有16位的数据总线。</p>
+<p>②地址总线宽度。F28335的XINTF地址总线扩展到20位，区域6与区域7的寻址范围为1M×16，2812中，地址范围为512K×16。具。管</p>
+<p>③ DMA访问。F28335中XINTF的3个区域都与片上的DMA模块相连，支持DMA读写方式，2812中XINTF的3个区域不支持DMA。个</p>
+<p>④XINTF时钟信号使能。F28335中，XINTF时钟信号XTIMCLK默认情况下是被禁的，以节约功耗，通过将PCLKCR3寄存器中的第2位置1，可使能XTIMCLK。在F2812中，XTIMCLK始终处于使能状态。</p>
+<p>⑤XINTF引脚复用。F28335中，XINTF的相关引脚是多路复用的，在使用XINTF的功能前，先要通过GPIOMUX寄存器将相应引脚配置为XINTF状态。2812中XINTF有专用的脚。</p>
+<p>⑥访问区域及选信号。</p>
+<p>⑦F28335中XINTF的存储器缩减为3个：区域0、区域6及区域7，每个区域都有独立的片选信号。在F2812中，一些存储区共用同一个片选信号，如区域0与区域1共用XZCS0AND1，区域6与区域7共用XZCS6AND7。</p>
+<p>⑧区域存储映射地址。F28335中，区域0的存储空间为4K×16，起始地址为0x4000，区域6和区域7的存储空间都为1M×16，起始地址分别为0x100000和0x200000。在F2812中，区域0的存储空间为8K×16，起始地址为0x2000，区域6和区域7的存储空间分别为512K×16和512KX16。</p>
+<p>⑨EALLOW保护。F28335中，XINTF相关寄存器都使用EALLOW保护，F2812中XINTF寄存器没有使EALLOW保护。</p>
+<h2 id="3xintf">3.访问XINTF区域</h2>
+<p>CPU或CCS通过仿真器直接访问XINTF连接的外部存储器。XINTF的3个区域都有独的选信号线，并且各区域的读/写时序可以单独配置，当相应的选信号线被选中（低电平有效）时，该区域可以被访问。</p>
+<p>F28335的地址总线为20位，采用统一寻址，被所有区域共用，总线上的地址由所要访问的具体区域决定：</p>
+<p>①区域0使用的外部地址范围为0x0000～0x00FFF，也就是说，如果要对区域0的第一个存储单元进操作，需要将0X0000送到地址线，并将选信号XZCSO（低电平有效）拉低，如果要对区域0的最后个存储单元进操作，则将0X0OFFF送到地址总线，同样区域0的选信号线要选中。</p>
+<p>②区域6与区域7的地址范围为0x00000～0xFFFFF，对这两个区域的操作同上，也是需要将相应的选线选中，将相应地址送给地址总线。</p>
+<h2 id="4">4.写后读的流水线保护</h2>
+<p>F28335多级流水线的一次操作中，读操作的相位要超前于写操作的相位，基于此时序写然后跟着读，现实中执的是相反的时序，读后写。</p>
+<p>举个例子，假如要实现的功能为先向一个地址单元中写人数据，紧跟着从另一个地址单元中读取数据，但由于CPU的流水线操作，实际执行时，两条指令的顺序将翻转。因为流水线安排的问题，导致了读数据有可能不是实时更新的数据。</p>
+<p>在F28335DSP中，外设寄存器所在的存储单元都使用了硬件保护，以防止类似的访问时序翻转。这些单元被称为“写后读”流线保护区域。XINTF的区域0就具有上述功能，区域0的读/写操作将按照程序编写顺序执行。</p>
+<p>28X的CPU会自动保护在同个存储器区域进写后读操作，这种保护机制同样也会保护在有保护的存储器的区域的不同存储地址内进写后读操作，CPU会动在原来读的操作指令后边插空的时钟周期以便在读操作前完成写操作。（）</p>
+<p>当外设通过XNITF连接映射时，这个执时序就应当引起注意。写一个寄存器也许会更新另外一个寄存器的状态位，这样的话，写入第一个寄存器必须完成后，才能去读后边被更新的那个寄存器，如果读/写操作按照流水线的安排，那么就有可能读到一个错误的状态，因为写发生在读之后。通过XINTF外扩存储器是很正常的，然而这样的执行时序并不常常引起人注意，偶然会采用区域0，就不会有这样执时序的问题，但区域0往往不用来访问存储器，而仅仅来访问些终端设备。那么，如果其他的区域与外设相连，并且需要写后读这样的保护，要采取以下措施：</p>
+<p>①在写与读指令之间插3个NOP指令。至少有3个空指令才能保证代码分解后，流线执时，写操作才能完成，然后读才会执。</p>
+<p>②在写和读操作之间插其他些超过3个时钟周期的指令，这样就能保证写后读操作。</p>
+<p>③如果采编译器的mv优化，那么就会动在读写之间插空指令。要这个选择的时候在当注意，因为这样的时序操作问题只是发在外设映射到XINTF时的存储器访问。</p>
+<h2 id="5xintf">5.XINTF的配置</h2>
+<p>在实际使用XINTF时，需要根据F28335的实际工作频率、XINTF的时序特性以及外部设备或存储器的时序要求来进配置。因为XINTF配置参数的改变会影响相关的访问时序，所以配置代码不能从XINTF扩展的区域执。</p>
+<h2 id="1xintf_1">(1)XINTF的配置程序</h2>
+<p>在XINTF配置或修改时钟寄存器的值期间，不允许程序中访问XINTF相关区域。这包括CPU流线上的指令，XINTF写缓冲区域的写访问，数据的读/写，预取指令操作与DMA访问。为了确定以上这些操作没有发生可遵循以下步骤：</p>
+<p>①确认DMA没有访问XINTE。</p>
+<p>②按照图4.4修改XTIMING0/6/7、XBANK或XINTCNF2寄存器的值。</p>
+<h2 id="2_1">(2)时钟信号</h2>
+<p>XINTF模块使两路时钟信号，XTIMCLK和XCLOUT，图4.5给出了这两路时钟信号与系统时钟信号SYSCLKOUT的关系。</p>
+<p>XINTF区域的所有访问操作都是基于XTIMCLK时钟为基准的，因此配置XINTF时，需要配置XTIMCLK与系统时钟SYSCLKOUT的关系。通过XINTF-CN2寄存器中的XTIMCLK控制位可将XTIMCLK时钟频率设定为与SYSCLK-OUT时钟频率相同或为其半，默认情况为其一半。</p>
+<p>所有的XINTF的操作都由XCLKOUT的上升沿开始，通过XINTFCN2寄存器中的CLKMODE控制位可将XCLKOUT的时钟频率设定为与XTMCLK时钟频率相同，或为其一半；默认情况下为其半，即为SYSCLKOUT时钟频率的1/4。为减系统噪声，通过将XINTCN2[CLKOFF]置1可禁XCLKOUT从引脚输出。</p>
+<h2 id="3_2">(3)写缓冲器</h2>
+<p>默认情况下，写访问缓冲器是被禁止的，为提高XINTF的性能，可使能写缓冲</p>
+<p><img alt="" src="../images/2e071b2c496f14433f637e757770e91d477a5d44d5ac6e870046f98b975214a8.jpg" /></p>
+<p><img alt="" src="../images/af64dcb1b5ea10079c1643f5c8e5cc676dc4e7969eab03418f010f5b1dd8d895.jpg" /></p>
+<p>图4.4XINTF配置流程图4.5XINTF时钟信号</p>
+<p>器。在没有停止CPU的情况下，最多允许3个数据通过缓冲器写XINTF区域，</p>
+<p>写缓冲器的深度可通过XINTCNF2寄存器配置。</p>
+<h2 id="4xintf">(4）XINTF访问的建、有效、跟踪等待时间</h2>
+<p>XINTF区域的读写访问时序可分为3个部分：建时间、有效时间及跟踪时间。通过配置每个区域的XTIMING寄存器可为该区域访问时序的3个部分设定相应值即各个部分的等待时间，等待时间以XTIMCLK周期为最单位，每个区域的读访问时序与写访问时序可以独配置。为与低速外部设备连接，可通过X2TIMING位将各部分等待时间延长一倍。</p>
+<p>在XINTF访问建立期间，所要访问区域的片选信号被拉低，相应存储器的地址被发送到地址总线上，建时间可通过本区域XTIMING寄存器进配置，默认情况下，读/写访问都使用最大的建立时间，即6个XTIMCLK周期。</p>
+<p>在XINTF访问有效期间内，可以访问中断设备。如果是读访问，则读选通信号XRD被拉低，数据被锁存到DSP中;如果是写访问，则写选通信号XWEO被拉低，数据被发送到数据总线上。如果该区采样XREDAY信号，外部设备通过控制XRE-DAY信号可延长有效时间，此时有效时间可超过设定值，如果未使用XREDAY信号，总有效时间包含的XTIMCLK周期数即相应的XTIMING中的设定值再加1。默认情况下，读/写访问的有效时间为14个XTIMCLK周期。</p>
+<p>在XINTF访问跟踪期间内，区域的选信号仍保持低电平，但读写选通信号被重新拉到高电平。跟踪时间可以通过XTIMING寄存器设定，默认情况下，读写访问都使最的跟踪时间，即6个TIMCLK周期。</p>
+<p>根据系统需要，可配置合适的建立、有效、跟踪时间，以满足不同外设需要。在配置过程中，需要考虑如下因素：</p>
+<p>①读写访问3个阶段的最小等待时间要求。</p>
+<p>②XINTF的读/写时序。</p>
+<p>③ 外部存储器或设备的时序要求。</p>
+<p>④DSP器件与外部器件之间的附加延时。</p>
+<h2 id="5xready">(5）区域的XREADY采样</h2>
+<p>如果XINTF模块采用XREADY采样功能，那么外设可扩展XINTF访问有效期间的时间。XINTF的所有区域共个XREDAY输信号线，但每个区域可单独配置为使或不使XREDAY采样功能。每个区域的采样式有两种：</p>
+<p>①同步采样：同步采样中，XREDAY信号在总的有效时间结束前将保持个XTIMCLK周期时间的有效电平。</p>
+<p>②异步采样：异步采样中，XREDAY信号在总的有效时间结束前将保持3个XTIMCLK周期时间的有效电平。</p>
+<p>无论同步还是异步，如果采样到的XREDAY信号为低电平，那么访问阶段的有效时间将增加一个XTIMCLK周期，并且在下一个XTIMCLK周期内将会对XRE-DAY信号重新采样。以上过程将反复进，直到采样到的XREDAY为高电平。</p>
+<p>如果一个区域被配置为使用XREDAY采样，这个区域的读访问与写访问都将使用XREDAY采样功能。默认情况下，每一个区域都使用异步采样方式。当使用XREDAY信号时，必须考虑XINTF最小等待时间的要求。同步采样方式与异步采样方式下的最小等待时间是不同的，主要取决于以下几点：</p>
+<p>①XINTF固有的时序特性。</p>
+<p>②外部设备的时序要求。</p>
+<p>③DSP器件与外部器件之间的附加延时。</p>
+<h2 id="6">(6）带宽</h2>
+<p>XINTF每个区域的数据总线都可以单独配置成16位或32位，XA0/XWE1引脚的功能在两种总线宽度下不同。当一个区域配置成16位的总线模式时，XA0/XWE1引脚的功能为地址的最后一位XA0，如图4.6所示。当一个区域配置成32位的总线模式时，XA0/XWE1引脚的功能为低字段的选通信号XWE1，如图4.7所示。</p>
+<p><img alt="" src="../images/a80e9ffc669c0d1fc03a9d454ed24e3d1f4e83c10deb715e0c0412d3aa639833.jpg" /></p>
+<p>图4.616位数据总线的典型连接方式</p>
+<p><img alt="" src="../images/982dc3173d5213613e2d3d50d63207d8512dc94d465717108cc107c5f18f2ef7.jpg" /></p>
+<p>图4.732位数据总线的典型连接方式</p>
+<h2 id="7xbank">(7)XBANK区域切换配置</h2>
+<p>当访问操作从一个区域跨越到另一个区域时，为了及时释放总线，并让其他设备获得访问权，低速设备需要额外的几个周期。区域切换允许用户指定一个特定的存储区域，当访问操作移该区域或从该区域移出时，允许添加额外的延时周期。所指定的区域以及相应的额外延时周期可通过XBANK寄存器配置。</p>
+<p>额外延时周期的选择要考虑XTIMCLK与XCLKOUT的信号频率，共有3种情况：</p>
+<p>1 时额外延时周期配置位XBANK[BCYC]无限制。</p>
+<p>② 时，XBANK[BCYC]不能为4或6，其他值均可。</p>
+<p>③ 时，当访问操作在两个区域切换时，肯定有个区域发生在延时周期之前，另外一个区域发生在延时周期后。为了能够添加准确的延时周期，要求第一个区域访问的时间要大于添加的延时周期总时间。例如当区域7被指定为特定区域，即移或移出区域7的访问操作都将添加延时周期，如果区域7的访问操作发在区域0的操作之后，则要求区域0访问操作的时间要大于添加的延时周期总时间；如果区域0的访问操作发生在区域7的访问操作之后，则要求区域7访问操作的总时间要大于添加的延时周期总时间。</p>
+<p>通过设定建立时间、有效时间、跟踪时间的值可保证区域的访问时间大于添加的延时周期总时间，由于XREDAY只扩展有效时间，故这不做考虑。以下给出具体的配置原则： 4</p>
+<p>①X2TIMING=0,则须遵循：</p>
+<p>②X2TIMING=1，则须遵循：</p>
+<h2 id="6xintfdma">6.XINTF的DMA支持</h2>
+<p>XINTF持以DMA式访问外程序或数据。这个过程由输信号XHOLD与输出信号XHOLDA完成。当XHOLD输低电平时，意味着DMA请求访问XINTF，将使XINTF所有输出引脚保持在阻状态。当完成XINTF所有的外部访问后，XHOLDA变为低电平，以通知外部设备XINTF已将其所有的输出口保持在高阻状态，并且其他设备可访问外部存储器或设备。</p>
+<p>当检测到XHOLD的有效信号时，XINTCNF2寄存器的HOLD模式位使能XHOLDA信号动产，并允许访问外部总线。在HOLD模式下，CPU仍可正常执连接到存储总线上的内存储空间的程序。当XHOLDA为低电平时，如果CPU访问XINTF，将产未就绪标志，并将处理器挂起。XINTCNF2寄存器中的状态标志位将显示XHOLD与XHOLDA信号的状态。</p>
+<p>当XHOLD信号有效时，CPU向XINTF写数据，此时写缓冲器被禁，数据将不会进写缓冲器，CPU将被挂起。XINTCNF2寄存器中HOLD模式位优先于XHOLD信号，从而用户代码可以判断是否有XHOLD请求。在任何操作发前，输信号XHOLD在XINTF输端被同步，同步时钟与XTIMCLK相关。XINTC-NF2寄存器中的HOLDS位反映XHOLD信号的当前同步状态。复位时，HOLD模式被使能，允许利XHOLD信号从外部存储器加载程序。复位期间，如果输信号XHOLD为低电平，则输出信号XHOLDA也为低电平。在上电期间，XHOLD同步锁存器中的不确定值将被忽略，并且在时钟稳定后将会被刷新，因此同步锁存器不需要复位。如果检测到XHOLD信号为低电平，当所有当前被挂起的XINTF操作完成后，XHOLDA才输出低电平。在XHOLDA有效信号输出之前要一直保持XHOLD处于有效电平。在HOLD模式下，XINTF接口的所有输出信号都将保持在高阻状态。</p>
+<h2 id="7xintf">7.XINTF的相关寄存器</h2>
+<p>XINTF所有相关寄存器的列表以及地址映射如表4.8所列。</p>
+<table>
+<thead>
+<tr>
+<th>寄存器名称</th>
+<th>地址单元</th>
+<th>大小/×16位</th>
+<th>寄存器说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XTIMINGO</td>
+<td>0X00000B20</td>
+<td>2</td>
+<td>XINTF区域0的时序寄存器</td>
+</tr>
+<tr>
+<td>XTIMING6</td>
+<td>0X00000B2C</td>
+<td>2</td>
+<td>XINTF区域6的时序寄存器</td>
+</tr>
+<tr>
+<td>XTIMING7</td>
+<td>0X00000B2E</td>
+<td>2</td>
+<td>XINTF区域7的时序寄存器</td>
+</tr>
+<tr>
+<td>XINTCNF2</td>
+<td>0X00000B34</td>
+<td>2</td>
+<td>XINTF配置寄存器</td>
+</tr>
+<tr>
+<td>XBANK</td>
+<td>0X0000 0B38</td>
+<td>1</td>
+<td>XINTF区域切换控制寄存器</td>
+</tr>
+<tr>
+<td>XREEVISION</td>
+<td>0X00000B3A</td>
+<td>"    1</td>
+<td>XINTF版本修订寄存器</td>
+</tr>
+<tr>
+<td>XRESET</td>
+<td>0X00000B3D</td>
+<td>1</td>
+<td>XINTF模块复位寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表4.8XINTF相关寄存器</p>
+<h2 id="1_2">(1)时序寄存器</h2>
+<p>每个区域都有的时序寄存器，通过配置该寄存器可改变本区域的访问时序，时序寄存器的配置代码不能从本区域内执。时序寄存器各位信息以及功能描述和表4.9所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~23</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>22</td>
+<td>X2TIMING</td>
+<td>该位指定XRDLEAD、XRDACTIVE、XRDTRAIL、XWRLEAD、XWRACTIVE、 XWRTRAIL的实际值与寄存器中的设定值的比值。 0：比值为1:1 1:比值为2:1（上电与复位时的默认值）</td>
+</tr>
+</tbody>
+</table>
+<p>表4.9XTIMING0/6/7功能描述</p>
+<p>续表4.9</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>21~18</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>17~16</td>
+<td>XSIZE</td>
+<td>数据总线宽度设定位，必须设定为01b或11b，其他设定值无效。00或10：无效设定值，将引起XINTF发生错误01:32位数据总线模式，此时XA0/XWE1引脚工作在XWE1功能11:16位数据总线模式，此时XA0/XWE1引脚工作在XA0功能</td>
+</tr>
+<tr>
+<td>15</td>
+<td>READYMODE</td>
+<td>XREADY信号采样方式控制位，仅在USEREADY=1时有效0：同步采样1：异步采样</td>
+</tr>
+<tr>
+<td>14</td>
+<td>USEREADY</td>
+<td>区域XREADY信号采样使能位0:当访问该区域时，忽略XREADY信号1.当访问该区域时，对XREADY信号进行采样</td>
+</tr>
+<tr>
+<td>13~12</td>
+<td>XRDLEAD</td>
+<td>读访问的建时间中等待周期个数设定位。建时间中所包含的等待周期是以XTIMCLK时钟周期为基本单位的，与X2TIMINGG位一起决定所包含的XTIMCLK周期数，建立时间=XTIMCLK周期数×XTIMCLK的周期00为无效数，01～11表示周期数。默认情况为11b，默认X2TIMING=1，即2倍的11，就是周期数为6</td>
+</tr>
+<tr>
+<td>11~9</td>
+<td>XRDACTIVE</td>
+<td>读访问有效时间等待周期个数设定位，有效时间中所包含的等待周期是以XTIMCLK时钟周期为基本单位，与X2TIMING位一起决定所包含的XTIM-CLK周期数。由于有效时间中有个额外的XTIMCLK周期，故总时间=XTIM-CLK周期数×XTIMCLK周期+1，可在000到111之间取值。默认值为111b，即周期数为2×7=14（默认X2TIMING=1）</td>
+</tr>
+<tr>
+<td>8~7</td>
+<td>XRDTRAIL</td>
+<td>读访问跟踪时间等待周期个数设定位，跟踪时间中所包含的等待周期是以XTIMCLK时钟周期为基本单位，与X2TIMING位一起决定所包含的XTIM-CLK周期数。跟踪时间=XTIMCLK周期数XXTIMCLK周期可在00到11之间取值。默认值为11b，即周期数为2×3=6(默认X2TIMING=1)</td>
+</tr>
+<tr>
+<td>出6~5</td>
+<td>电送XWRLEAD</td>
+<td>写访问的建立时间中等待周期个数设定位。建时间中所包含的等待周期是以XTIMCLK时钟周期为基本单位的，与X2TIMINGG位一起决定所包含的XTIMCLK周期数，建立时间=XTIMCLK周期数×XTIMCLK的周期。可在00到11之间取值。默认情况为11b，默认X2TIMING=1，即2倍的11，就是周期数为6</td>
+</tr>
+<tr>
+<td>4~2</td>
+<td>XWRACTIVE</td>
+<td>写访问有效时间等待周期个数设定位，有效时间中所包含的等待周期是以XTIMCLK时钟周期为基本单位，与X2TIMING位一起决定所包含的XTIM-CLK周期数。由于有效时间中有个额外的XTIMCLK周期，故总时间=XTIM-CLK周期数×XTIMCLK周期+1可在000到111之间取值。默认值为111b，即周期数为2×7=14（默认X2TIMING=1)</td>
+</tr>
+</tbody>
+</table>
+<p>7</p>
+<p>续表4.9</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1~0</td>
+<td>XWRTRAIL</td>
+<td>写访问跟踪时间等待周期个数设定位，跟踪时间中所包含的等待周期是以 XTIMCLK时钟周期为基本单位，与X2TIMING位一起决定所包含的XTIM- CLK周期数。跟踪时间=XTIMCLK周期数×XTIMCLK周期 可在00到11之间取值。默认值为11b，即周期数为2×3=6（默认X2TIMING=1)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2xintfxintcnf2">（2）XINTF配置寄存器XINTCNF2</h2>
+<p>XINTCNF2寄存器的各位信息如表4.10所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~19</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>18~16</td>
+<td>XTIMCLK</td>
+<td>基准时钟XTIMCLK与系统时钟SYSCLKOUT之间的关系，XTIMCLK时钟的配置代码不能存放在XINTG区域中 $0 0 0 : \mathrm { { X T I M C L K } = \mathrm { { S Y S C L K O U T } } }$  $0 0 1 : { \mathrm { X T I M C L K } } = { \mathrm { S Y S C L K O U T } } / 2 ($ 默认）注：XTIMCLK默认情况下是禁止的，在写XINTF相关寄存器之前要通过PCLKR3寄存器位使能</td>
+</tr>
+<tr>
+<td>15~12</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>11</td>
+<td>HOLDAS</td>
+<td>此位反映输出信号XHOLDA的当前状态，用户可以通过读取该位判断XINTF接口是否正在进行对外部设备的访问0:XHOLDA为低电平1:XHOLDA为高电平</td>
+</tr>
+<tr>
+<td>10</td>
+<td>HOLDS</td>
+<td>此位反映输出信号XHOLD的当前状态，用户可以通过读取该位判断外部设备是否在请求对XINTF总线的访问0:XHOLD为低电平1:XHOLD为高电平</td>
+</tr>
+<tr>
+<td>9</td>
+<td>HOLD</td>
+<td>此位允许外部设备驱动XHOLD输信号，并允许XHOLDA输出信号。此位为1时，如果XHOLD与XHOLDA都为低电平（允许访问XINTF），那么在当前周期结束时，XHOLDA信号被强制为高电平，XINTF脱离高阻状态。XRS复位时，此位被置O，复位期间，如果XHOLD为低电平，那么数据总线，地址总线及所有选通信号都将为高阻态，同时XHOLDA被驱动到低电平。如果HOLD模式被使能且XHOLDA为低电平，那么CPU内核仍可继续执行片内存储单元中的代码，如果发生XINTF访问，则产生个未准备好信号并将CPU停，直到XHOLDA信号被删除0：自动允许外部设备的请求，并驱动XHOLD与XHOLDA为低电平（默认）1：不允许外部设备的请求，驱动XHOLD为低电平的同时XHOLDA为高电平</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表4.10XINTCNF2寄存器各位信息</p>
+<p>续表4.10</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>7~6</td>
+<td>WIEVEL</td>
+<td>反映写缓冲器中数据的个数00:写缓冲器空01～11（K）：写缓冲器中有K个字符</td>
+</tr>
+<tr>
+<td>5~4</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CLKOFF</td>
+<td>XCLKOUT控制位O:XCLKOUT被使能1:XCLKOUT被禁止</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CLKMODE</td>
+<td>XCLKOUT时钟频率控制位，CLKMODE位的配置代码不能存放在XINTF区域0:XCLKOUT=XTIMCLK1:XCLKOUT=XTIMCLK/2（默认）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>WRBUFF</td>
+<td>写缓冲器深度控制位00：无写缓冲器（默认）01~11（K）：有K个写缓冲器注：写缓冲器的深度可变，但要求在所有缓冲器都为空的情况下改变，否则将会发生不可预测的结果</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3xbank">(3）区域切换控制寄存器XBANK</h2>
+<p>区域切换控制寄存器XBANK各位信息如表4.11所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~6</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>5~3</td>
+<td>BCYC</td>
+<td>区域切换时插人的延时时间，延时时间是以XTIMCLK为最小时间单位的。复位时XRS，默认值为7个XTIMCLK周期（14个SYSCLKOUT周期）000:0个XTIMCLK周期001～111（k）:k个XTIMCLK周期BCYC的默认值为111b</td>
+</tr>
+<tr>
+<td>2~0</td>
+<td>BANK</td>
+<td>指定使用区域切换功能的XINTF存储区域000:区域0被指定110:区域6被指定111:区域7被指定001～101:保留</td>
+</tr>
+</tbody>
+</table>
+<p>表4.11 XBANK功能描述</p>
+<h2 id="4xreset">（4）复位寄存器XRESET</h2>
+<p>复位寄存器XRESET各位信息如表4.12所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>取值及功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~1</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>0</td>
+<td>XHARDRESET</td>
+<td>硬件复位位。在DMA传送中，如果CPU检测到XREADY信号为低电 平，可使用硬件复位位对XINTF进行复位 0:写0无反应，读始终返回0 1:强制产生一次XINTF硬件复位 XTIMING、XBANK及XINTCNF2寄存器将回到默认值，XINTF的信 号线将回到空闲电平，所有悬挂的访问操作都将被清除（包括写缓冲器 中的数据），DMA产生的停止状态将被释放</td>
+</tr>
+</tbody>
+</table>
+<p>表4.12 XRESET功能描述</p>
+<h3 id="45f28335sram">4.5手把手教你访问F28335外部SRAM</h3>
+<h2 id="1_3">1.实验目的</h2>
+<p>①进一步熟悉CCS编程应用——断点的设置、存储器数据查看。</p>
+<p>②掌握TMS320F28335的存储空间。</p>
+<p>③掌握TMS320F28335的总线配置过程。</p>
+<p>④掌握F28335 SRAM外扩。</p>
+<h2 id="2_2">2.实验主要步骤</h2>
+<p>①打开已经配置好的CCS3.3软件。</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③选择CCS中的Debug→Connect菜单项，连接标板，确认目标板连接成功。</p>
+<p>④将EXRAM录复制到CCS开发环境中的Myproject录下。</p>
+<p>⑤在CCS 中选择 project→Open 菜单项，加载 EXRAM录中的EXRAM. pjt。</p>
+<p>⑥在CCS中选择File→Load Program菜单项，加载Debug目录下的EXRAM.out。</p>
+<p>⑦在CCS中按照图4.8所示设置断点(在欲设置断点处所在的双击鼠标即可)。</p>
+<p>⑧在CCS中选择Debug→Run菜单项，此时户可以发现程序运到第1个断点处，然后选择view→memory查看存储器，在地址栏输中0x100000,memory各个地址的值变为0x5555，如图4.9所示。</p>
+<p><img alt="" src="../images/f1e57e2f8283e78d22c800d01accbe083d9e5e427ffd8ce4ad8ee56dab5ce9e4.jpg" /></p>
+<p>图4.8实验断点设置示意图图4.9 初次写SARAM5555的示意图</p>
+<p>⑨在CCS中选择Debug→Run菜单项，此时用户可以发现程序运行到第2个断点，此时memory中各个地址的值变为0XAAAA，如图4.10所示。</p>
+<p>①在CCS中选择Debug→Run菜单项，此时程序运行到第3个断点，此时memory各个地址的值又改变了，如图4.11所示。</p>
+<p><img alt="" src="../images/637dd2dca1e68519d5e2d7980c2b23b762261f114f5b0ffbf814c742a6d8abd2.jpg" /></p>
+<p>图4.10写SARAMAAAA的示意图</p>
+<p><img alt="" src="../images/46004c892c8eb0ae1a7047531cf14d338070e4fa0cb7a221eb26d5198e86de05.jpg" /></p>
+<p>图4.11写SARAM-组顺序值的示意图</p>
+<p>m000010大00mw 图0委个</p>
+<h2 id="3_3">3.实验原理说明</h2>
+<h2 id="1sram">(1）外扩SRAM硬件原理</h2>
+<p>F28335为哈佛结构的DSP，哈佛结构是一种将程序指令存储和数据存储分开的存储器结构，即程序存储器和数据存储器是两个独立的存储器，每个存储器独立编址、独立访问。其存储空间映射如前文所示。</p>
+<p>F28335在逻辑上有4MX16位的程序空间和4MX16位的数据空间，但在物理上已将程序空间和数据空间统成个4MX16位的空间。尽管TMS320F28335上有256KX16位FLASH存储器，34KX16位单周期单次访问随机存储器的SARAM,8KX16位的BOOTROM,1KX16位的OTPROM，但有可能运行程序的开销大于上提供的这些资源，所以需要外扩。</p>
+<p>F28335的外部存储器可以映射到3个存储区域，Zone0，Zone6和Zone7。</p>
+<p>》Zone0存储区域：0X004000～0X004FFF，4KX16位可编程最少个等待周期。</p>
+<p>》Zone6存储区域：0X100000～0X1FFFFF，1MX16位10ns最少个等待周期。</p>
+<p>Zone7存储区域：0X200000～0X2FFFFF，1M×16位70ns最少一个等待周期。</p>
+<p>YX-F28335将512KX16位的SRAM映射到Zone6的前半部分，实现此逻辑的法是将CS6和地址线19通过74HC32与或相或后送给SRAM选线、将DSP其他地址线和数据线直接和SRAM的地址线和数据线相连、将DSP的读写线与SRAM的读写线相连即可。具体连接如图4.12和图4.13所示。</p>
+<table>
+<thead>
+<tr>
+<th>XZCS7   1</th>
+<th></th>
+<th>1A  VCC1B    4BIY    4A</th>
+<th>14  DVDD3.3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2BUF CS7 3</td>
+<td>2</td>
+<td>2</td>
+<td>13</td>
+</tr>
+<tr>
+<td>IY2A</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>XZCS6   4</td>
+<td>IY</td>
+<td>11  BUFCS0</td>
+<td></td>
+</tr>
+<tr>
+<td>XA19    5</td>
+<td>2A</td>
+<td>2B2YGND</td>
+<td>4Y3B3A3Y</td>
+</tr>
+<tr>
+<td>F_CS     6</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DGND    7</td>
+<td>2YGND</td>
+<td>8   R_CS</td>
+<td></td>
+</tr>
+<tr>
+<td>GND  3YU3   74H32</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>图4.12外扩SRAM的与门连接</p>
+<h2 id="2_3">(2)程序说明</h2>
+<p>TMS320F28335的地址线、数据线、选线以及读写线具有多路复用功能，所以在初始化中一定要对这些总线进配置才能使。其配置程序如下：</p>
+<p><img alt="" src="../images/f7efeacca22a52b1d1d92e122c9ccbe49e868c0ce5f1eb353aed7cf31d994f57.jpg" /></p>
+<p>图4.13外扩SRAM的硬件连接</p>
+<table>
+<thead>
+<tr>
+<th>GpioCtrlRegs.GPCMUX1.bit.GPI064= 3;//XD15 GpioCtrlRegs.GPCMUX1.bit.GPIO65= 3;//</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XD14 GpioCtr1Regs.GPCMUx1.bit.GPI066= 3;//XD13</td>
+</tr>
+<tr>
+<td>GpioCtrIRegs.GPCMUx1.bit.GPI067 =3;//XD12 11 XD11</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUX1.bit.GPI068 =3;</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUX1.bit.GPI069 =3;//XD10</td>
+</tr>
+<tr>
+<td>GpioCtrlRegs.GPCMUx1.bit.GPI070 =3；//XD19</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx1.bit.GPI071 = 3;</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx1.bit.GPI072 =3;//xD7</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUX1.bit.GPI073 = 3;//XD6</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx1.bit.GPI074 =3;//XD5</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx1.bit.GPI075 = 3;//xD4</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx1.bit.GPI076 =3；//XD3</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUX1.bit.GPI077= 3;//xD2</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUX1.bit.GPI078 =3；//XD1</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx1.bit.GPI079 =3；//xD0</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPIO40=3;// xA0/xWE1</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs. GPBMUx1.bit.GPI041 =3;//XA1</td>
+</tr>
+<tr>
+<td>GpioCtrlRegs.GPBMUx1.bit.GPI042= 3;//XA2</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPIO43= 3;//xA3</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs. GPBMUx1. bit.GPI044= 3;//XA4</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUX1.bit.GPI0453;// xA5</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPI046 = 3;//xA6</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPI047=3;// xA7</td>
+</tr>
+<tr>
+<td>GpioCtrlRegs.GPCMUX2.bit.GPIO80= 3；//xA8</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx2.bit.GPI081 = 3;//xA9</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx2.bit.GPI082 = 3;//XA10</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx2.bit.GPIO83= 3;//XA11</td>
+</tr>
+<tr>
+<td>GpioCtrIRegs.GPCMUx2.bit.GPIO84= 3;// XA12</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx2.bit.GPIO85= 3;//XA13</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPCMUx2.bit.GPI086= 3;//XA14</td>
+</tr>
+<tr>
+<td>GpioCtrIRegs. GPCMUx2.bit.GPIO87 = 3;// XA15</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs. GPBMUx1.bit. GPIO39= 3;// XA16</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs. GPAMUx2.bit.GPI031 = 3;//XA17</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs. GPAMUx2.bit.GPIO30 = 3;// XA18</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPAMUx2.bit.GPIO29 =3;// xA19</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPIO34= 3;//XREADY</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPIO35= 3;//XRNW</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUX1.bit.GPI038 =3;//XWE0</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUX1.bit.GPI036= 3;//XZCS0</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPBMUx1.bit.GPIO37 = 3;//xZCS7</td>
+</tr>
+<tr>
+<td>GpioCtr1Regs.GPAMUx2.bit.GPI028 = 3;//XZCS6</td>
+</tr>
+<tr>
+<td>EDIS; }</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_1"></h2>
+<h2 id="_2"></h2>
+<p>DSP的第6区域的起始地址为0x100000，所以宏定义个SRAM的起始地址，使得程序更直观易懂。如下所：</p>
+<p>下面的程序就是对SRAM进读/写操作的过程：</p>
+<h2 id="4_1">4.实验观察与思考</h2>
+<p>①DSP向RAM最多可写多少次？次数取决于什么？</p>
+<p>②如何修改程序，让DSP只在RAM的第10～20单元写0～9？</p>
+<h3 id="46f28335flash">4.6手把手教你访问F28335片外FLASH</h3>
+<h2 id="1_4">1.实验目的</h2>
+<p>①掌握F28335的存储空间的配置。</p>
+<p>②掌握F28335总线配置。</p>
+<p>③掌握F28335的FLASH外扩。</p>
+<p>④掌握外部FLASH的访问。</p>
+<h2 id="2_4">2.实验主要步骤</h2>
+<p>①先打开已经配置好的CCS3.3软件。</p>
+<p>②接着连接仿真器的USB与计算机，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③在CCS中选择Debug→Connect菜单项，连接标板，确定标板连接成功。</p>
+<p>④将39VF800目录复制到CCS开发环境中的Myproject目录下。</p>
+<p>⑤在 CCS中选择 project→Open菜单项，加载 39VF800目录中的39VF800.pjt。</p>
+<p>⑥在CCS中选择File→Load Program菜单项，加载Debug目录下的39VF800.out。</p>
+<p>⑦在CCS中按照图4.14所示设置断点(在欲设置断点处所在的双击鼠标即可)。</p>
+<p><img alt="" src="../images/5ded4d68a1d0820a45330b7c1332f6732198bb9f4948f267ce3990a28950c0fa.jpg" /></p>
+<p>图4.14FLASH例程中设置的断点</p>
+<p>⑧在CCS中选择Debug→Run菜单项，此时户可以发现程序运到第1个断点处，然后选择view→memory菜单项，在地址栏输0x180000，memory各个地址的值变为0xFFFF，即擦除FLASH内容，如图4.15所示。</p>
+<p>⑨在CCS中选择Debug→Run菜单项，此时程序运到第2个断点，在地址栏输0x100000,memory各个地址的值如图4.16所示。</p>
+<p>①在CCS中选择Debug→Run菜单项，此时程序运行到第3个断点，在地址栏输入0x180000，memory各个地址的值变为图4.17所示，即对FLASH进行写操作，把SRAM中的值赋给FLASH各单元。</p>
+<p>①在CCS中选择Debug→Run菜单项，此时程序运行到第4个断点，在地址栏输0x100000,memory各个地址的值如图4.18所示，即对SRAM进清零操作。</p>
+<p>②在CCS中选择Debug→Run菜单项，此时程序运到第5个断点，在地址栏输0x100000,memory各个地址的值如图4.19所示，即将从FLASH里面读到的值赋给SRAM。</p>
+<p><img alt="" src="../images/dcb5eb60d1c127f9341f8b6f973f839bd327c993d4b40a86691fe213536811c1.jpg" /></p>
+<p>图4.15FLASH擦除状态查看</p>
+<p><img alt="" src="../images/9330c01dd78a5fd80f42b30425a4af3347fd416831b460560c89c30f2c6346e3.jpg" /></p>
+<p>图4.16SRAM的值</p>
+<p><img alt="" src="../images/8288245e7c71d7c59a39c19221572ee44111ed210d8c1a43a6d490ef04fc8b01.jpg" /></p>
+<p>图4.17 FLASH写入SRAM的值</p>
+<p><img alt="" src="../images/86b0a287a03d487003faee923865740cbba270c5d44ab6ed7baffe1b6033f33f.jpg" /></p>
+<p>图4.18 FLASH 清零</p>
+<h2 id="3_4">3.实验原理说明</h2>
+<p>YX-F28335将256KX16位的FLASH映射到Zone6的后半部分，实现此逻辑的法是将地址线19通过74HC04门芯取反后和CS6相或后送给FLASH的选线、将DSP其他地址线和数据线直接和FLASH的地址线和数据线相连、将DSP的读写线与FLASH的读写线相连即可。其接法和SRAM类似，其原理图如图4.20和图4.21所示。</p>
+<p><img alt="" src="../images/8bc8a3596ed1d832e703872678937ea8890ccdaffec957696dd835e28fbb076a.jpg" /></p>
+<p>图4.19读FLASH值写入SRAM</p>
+<p><img alt="" src="../images/34f93e41578beda7ce57c9b136fdcec8659ebc4adf393cac40a87d413ad935ab.jpg" /></p>
+<p>图4.20FLASH外扩片选</p>
+<p><img alt="" src="../images/6ca4f86f057e14f952a4d6378e7ac5f51ba65d9c4fe351baef9a8c598b41ef15.jpg" /></p>
+<p>图4.21FLASH引脚接线</p>
+<p>同访问SRAM实验样，此实验也需要对DSP的总线进配置，详细配置过程参照SRAM。此实验需要重点了解的是FLASH的擦除、写、读操作。FLASH的操作相对SRAM的操作要复杂些，其操作过程及命令如图4.22所示。</p>
+<table>
+<thead>
+<tr>
+<th>命令序列</th>
+<th>1st BusWrite Cycle</th>
+<th>2nd BusWrite Cycle</th>
+<th>3rd BusWrite Cycle</th>
+<th>4th BusWrite Cycle</th>
+<th>5th BusWrite Cycle</th>
+<th>6th BusWrite Cycle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Addr</td>
+<td>Data</td>
+<td>Addr</td>
+<td>Data</td>
+<td>Addr(</td>
+<td>Data</td>
+<td>Addr()</td>
+</tr>
+<tr>
+<td>字一程序</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>AOH</td>
+</tr>
+<tr>
+<td>段-擦除</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>80H</td>
+</tr>
+<tr>
+<td>块-擦除</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>80H</td>
+</tr>
+<tr>
+<td>芯片-擦除</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>80H</td>
+</tr>
+<tr>
+<td>软件ID入口</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>90H</td>
+</tr>
+<tr>
+<td>CFI查询入口</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>98H</td>
+</tr>
+<tr>
+<td>软件D出口/CFI出口</td>
+<td>XXH</td>
+<td>FDH</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>软件D出口/CFI出口</td>
+<td>5555H</td>
+<td>AAH</td>
+<td>2AAAH</td>
+<td>55H</td>
+<td>5555H</td>
+<td>FOH</td>
+</tr>
+</tbody>
+</table>
+<p>注意：(1)A14~A0的16进制地址为格式，A15、A16、A17在命令序列中可以忽略</p>
+<p>(2)SA用于块擦除：采用A17~A11地址线 BA用于块擦除：采用A17~A15地址线</p>
+<p>(4)软件ID出口与CFI出口地址相等</p>
+<p>(5)DQ15~DQ8在命令序列中可以忽略</p>
+<p>图4.22FLASH操作过程及命令</p>
+<p>下通过程序介绍FLASH的擦除、写、读操作过程（其详细原理需要参照其数据手册）。</p>
+<h2 id="1flash">(1)FLASH擦除程序</h2>
+<h2 id="4_2">4.实验观察与思考</h2>
+<p>①RAM和ROM的区别用立発系腦中己8E8理</p>
+<p>②怎样通过修改上的程序检测出它们的区别?</p>
+<p>平期</p>
+<h2 id="_3"></h2>
+<p>中</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

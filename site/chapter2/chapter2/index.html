@@ -1,0 +1,2663 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../../chapter3/chapter3/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第2章 芯片资源 - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第2章 芯片资源
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tms320f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TMS320F28335芯资源
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TMS320F28335芯资源">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1F28335的封装信息
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2F28335内核主要特点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要特点如下：
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要特点如下：">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#23-dsp2812" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 与DSP2812的性能对比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4F28335的引脚分布及其引脚功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter4/chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter5/chapter5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter6/chapter6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter7/chapter7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter8/chapter8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter9/chapter9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tms320f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TMS320F28335芯资源
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TMS320F28335芯资源">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1F28335的封装信息
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2F28335内核主要特点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要特点如下：
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要特点如下：">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#23-dsp2812" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 与DSP2812的性能对比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4F28335的引脚分布及其引脚功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="2">第 2 章</h1>
+<h2 id="tms320f28335">TMS320F28335芯资源</h2>
+<p>CPU性能的好坏不仅仅取决于主频，需要看其整体架构集成性能、运算能力与指令体系。TMS320C2000系列DSP集微控制器和性能DSP的特点于一身，具有强大的控制和信号处理能力，能够实现复杂的控制算法。TMS320C2000系列DSP片上整合了Flash存储器、快速的A/D转换器、增强的CAN模块、事件管理器、正交编码电路接口及多通道缓冲串口等外设，此种整合使用户能够以很便宜的价格开发高性能数字控制系统。随着制造工艺的成熟，生产规模扩大，芯片价格在不断下降，目前该系列DSP市场占有率非常高，在工业自动化控制、电力电子技术应用、智能化仪器仪表、电机伺服控制方面均有着泛的应用。F283X系列DSP更是在原来F28系列定点DSP的基础上增加了浮点运算内核，保持原有DSP芯片优点的同时，能够更高效地执行复杂的浮点运算，在处理速度、处理精度方面要求较高的领域，比原F28系列DSP有着更的性价比。本章将详细介绍F28335的结构、资源以及性能。</p>
+<h3 id="21f28335">2.1F28335的封装信息</h3>
+<p>F28335芯型号表示如图2.1所，根据芯上的字母能够识别器件的型号、封装、版本等信息，版本信息如表2.1所列。主8</p>
+<table>
+<thead>
+<tr>
+<th>版本号</th>
+<th>版本信息</th>
+<th>版本ID(0x0833）</th>
+<th>备注</th>
+<th>版本号</th>
+<th>版本信息</th>
+<th>版本ID（0x0833）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空白</td>
+<td>0</td>
+<td>0x0000</td>
+<td>TMX</td>
+<td>D</td>
+<td>D</td>
+<td>0x0004</td>
+<td>内部</td>
+</tr>
+<tr>
+<td>A</td>
+<td>A</td>
+<td>0x0001</td>
+<td>TMX</td>
+<td>E</td>
+<td>E</td>
+<td>0x0005</td>
+<td>TMS</td>
+</tr>
+<tr>
+<td>B</td>
+<td>B</td>
+<td>0x0002</td>
+<td>内部</td>
+<td>F</td>
+<td>F</td>
+<td>0x0006</td>
+<td>内部</td>
+</tr>
+<tr>
+<td>C</td>
+<td>C</td>
+<td>0x0003</td>
+<td>TMS/TMP/TMX</td>
+<td>G</td>
+<td>G</td>
+<td>0x0007 高</td>
+<td>TMS</td>
+</tr>
+</tbody>
+</table>
+<p>表2.1版本信息</p>
+<p>在器件型号后边还有串版本信息，通过版本前两位可以进一步判断所的芯是合格设备还是实验设备。后边为厂地以及芯具体批次。不</p>
+<p>另外，该系列除了上述标准产品外，还有特殊产品，分别为：</p>
+<p>①SM320F28335-EP(enhancedproduct)：增强产品，产品生产过程控制更加严苛</p>
+<p><img alt="" src="../images/2cf459fc81a4acb213e31e1eb6b80f5cbb8785806ae6e832fb02492165d3be7b.jpg" /></p>
+<p>具有Flash的DSP，在DEVICE之后若有A符号，表示对Flash内容可加密，如TMS320LC2406A</p>
+<p>图2.1F28335芯片标识信息</p>
+<p>格，工作温度一55～125℃，适合国防、航空及医疗等领域应用。</p>
+<p>②SM320F28335-HT（high-tempreture)：高温产品，陶瓷封装，工作温度一55～220℃，适合严苛酷环境应用。</p>
+<p>③SMJ320F28335：真正军品产品，通过美军标，陶瓷封装，适合军事、国防应用。</p>
+<p>更具体的信息以及芯片参考价格可以在TI主页www.ti.com搜索，但网站上搜不到军品，更搜不到军品数据手册。</p>
+<h3 id="22f28335">2.2F28335内核主要特点</h3>
+<h2 id="_1"></h2>
+<p>F28335DSP集成了DSP和微控制器的长处，如DSP的主要特征、单周期乘法运算，F28335能够在一个周期内完成32×32位的乘法累加运算，或两个16×16位乘法累加运算，而同样32位的普通单机则需要4个周期以上才能完成；拥有完成64位的数据处理能力，从而使该处理器能够实现更高精度的处理任务。快速的中断响应使F28335能够保护关键的寄存器以及快速（更的中断延时)地响应外部异步事件。F28335有8级带有流线存储器访问的流线保护机制，因此，F28335运算时不需要容量的快速存储器。专门的分跳转（Branch-Iook-ahead)硬件减少了条件指令执的反应时间，条件存储操作更进一步提了F28335的性能。</p>
+<p>F28335控制器还具有许多独特的功能，如可在任何内存位置进单周期读、修改、写操作，不仅提供了性能和代码效编程，还提供了许多其他原始指令，一般普通MCU则需要2个以上周期。F28335系列控制器在一个闪存节点上可以提供</p>
+<p>150MIPS的性能，普通单片机与MCU均在30MIPS以下。</p>
+<p>F28335处理器可采用C/C++编写软件，效率非常高。因此，用户不仅可以应用高级语言编写系统程序，也能够采用C/C++开发高效的数学算法，甚至可以与MATLAB、LabVIEW等高级语系统接口。F28335系列DSP完成数学算法和系统控制等任务都具有相当高的性能。F2833x浮点控制器设计，让设计人员可以轻松地开发浮点算法，并在符合成本效益的情况下与定点机器无缝结合。与同主频的定点DSPF2812比较，浮点算法速度是其5~8倍。</p>
+<p>下面为TMS320F28335型号的处理器主要资源：</p>
+<p>①32位浮点DSP，主频是150MHz，方便电机控制、电力设备控制及工业控制等。</p>
+<p>②片上存储器：FLASH：256K×16位；SRAM：34K×16位；BOOTROM：8K×16位;OPTROM:2KX16位。其中FLASH、OPTROM受口令保护，可以保护用户程序。</p>
+<p>③片上外设：PWM：18路；HRPWM:6路;CAP：6路;QEP:2通道；ADC：2×8通道，12位，80ns转换时间,0~3V输入量程;SCI:3通道；MCBPS:2通道;CAN：2通道;SPI：一通道； 一通道；外部存储器扩展接口：XINTF；通用输人/输出I/O：88；看门狗电路。</p>
+<h2 id="_2">主要特点如下：</h2>
+<p>①F28335的CPU时钟电路可以有两种提供方式，一种是在XCLKIN引脚提供一定频率的时钟信号；另一种是在X1和X2两个引脚间连接一个晶体，配合内部的振荡电路，产生时钟源。此时钟源可以经过内部的PLL锁相环电路进倍频以及分频后，提供给28335的CPU核。CPU核接受的时钟最高频率可以达到150MHz。CPU内核指令周期为6.67ns;内核电压为1.9V，I/O引脚电压为3.3V。</p>
+<p>②F28335为哈佛结构的DSP，在逻辑上有4MX16位的程序空间和4MX16位的数据空间，物理上将程序空间和数据空间统一成一个4MX16位的空间。F28335片内共有34KX16位单周期单次访问随机存储器SARAM，分成10个块，分别为M0、M1、L0～L7。M0和M1块SARAM的大小均为1KX16位，当复位后，堆栈指针指向M1块的起始地址，堆栈指针向上生长。M0和M1段都可以映射到程序区和数据区。L0～L7块SARAM的大小均为4KX16位，既可映射到程序空间，也可映射到数据空间，其中L0～L3可映射到两块不同的地址空间并且受片上FLASH中的密码保护，以免存在上面的程序或数据，被他人非法复制。F28335片上有256KX16位嵌式FLASH存储器和1KX16位次可编程EEPROM存储器，均受上Flash中的密码保护。FLASH存储器由8个32KX16位扇区组成，用户可以对其中任何个扇区进擦除、编程和校验，而其他扇区不变。但是，不能在其中一个扇区上执程序来擦除和编程其他的扇区。</p>
+<p>③F28335中有6组互补对称的脉宽调制PWM，每组中包含两路PWM，分别为</p>
+<p>PWMxA和PWMxB。每一组中都有7个单元：时基模块TB、计数比较模块CC、动作模块AQ、死区产生模块DB、PWM斩波模块PC、错误联防模块TZ、事件触发模块ET。为了PWM精度考虑，TI还设计了HRPWM，即每一组的PWMxA都可以配置为高精度PWM。</p>
+<p>④F28335中有6组增强型捕获单元CAP，CAP模块应用定时器实现事件捕获功能，主要应用在速度测量、脉冲序列周期等方面。并且每一路CAP单元还可以通过软件配置为APWM，由于CAP单元的时基计数器为32位，所以APWM的时基计数器也是32位，这样APWM可以产生更低频率的PWM。</p>
+<p>⑤F28335中有2组增强型正交编码单元QEP。正交编码脉冲是两个频率变化且正交(即相位相差90°）的脉冲，当它由电机轴上的光电编码器产时，电机的旋转方向可通过检测两个脉冲序列中的哪一列先到达来确定，角位置和转速可由脉冲频率（即齿脉冲或圈脉冲）来决定。</p>
+<p>⑥F28335上有个12位A/D转换器，其前端为2个8选多路切换器和2路同时采样/保持器，构成16个模拟输入通道，模拟通道的切换由硬件自动控制，并将各模拟通道的转换结果顺序存入16个结果寄存器中。</p>
+<p>⑦F28335中有3组SCI异步串口，也就是通常所说的UART。SCI模块支持在CPU和其他异步外设之间的数字通信。SCI的串口接收和发送均为双缓冲，接收和发送都有独的使能和中断位。在全双工模式下，两者可以独立或同步运。为了确保数据的完整性，SCI模块检查接收数据的断点、校验位和帧错误。</p>
+<p>SCI特点：</p>
+<p>外部引脚：2个SCI发送引脚：SCITXDSCI接收引脚：SCIRXD。</p>
+<p>波特率可编程：有64K种设置当 时：波特率=LSRCLK÷（（BRR+1)×8);当BRR=0时波特率=LSPCLK÷16。</p>
+<p>数据格式：一个开始位，1～8个数据位，奇校验/偶检验/无校验可选，一或两个停止位。</p>
+<p>4个错误检测标志：校验，溢出，帧和断点检测。</p>
+<p>全双工和半双工模式双缓冲接收和发送。</p>
+<p>串口数据发送和接收过程可以通过中断方式或查寻方式。</p>
+<p>⑧F28335上有两个多通道缓冲型同步串口McBSP。McBSP是MultichannelBufferedSerialPort的缩写，即多通道缓冲型串行接口，是一种多功能的同步串行接口，具有很强的可编程能力，可以配置为多种同步串口标准，直接与各种器件高速</p>
+<p>T1/E1标准：通信器件。</p>
+<p>MVIP和ST-BUS标准：通信器件。</p>
+<p>标准：ISDN器件。</p>
+<p>AC97标准：PCAudio Codec器件。</p>
+<p>IIS标准：Codec器件。</p>
+<p>》SPI：串行A/D、D/A，串行存储器等器件。</p>
+<p>F28335上有两个增强型CAN总线控制器，符合CAN2.0B协议。CAN是一种多主总线，通信介质可以是双绞线、同轴电缆或光导纤维。通信速率可达1Mbps。CAN总线通信接口中集成了CAN协议的物理层和数据链路层功能，可完成对通信数据的成帧处理，包括位填充、数据块编码、循环冗余检验、优先级判别等项工作。</p>
+<p>CAN特点如下：</p>
+<p>a.符合CAN2.0 协议。</p>
+<p>b.数据传输率高达1Mbps。</p>
+<p>c.32个邮箱，每个支持以下特点：</p>
+<p>可配置成接收和发送。</p>
+<p>》可配置成标准或扩展的标识。</p>
+<p>》可编程接收屏蔽。</p>
+<p>》支持数据和远帧。</p>
+<p>》数据长度08字节。</p>
+<p>在接收或发送信息时，使用32位的时间标志。</p>
+<p>新信息的接收保护。</p>
+<p>》发送信息的动态优先级。</p>
+<p>》带有两级中断的中断配置。</p>
+<p>发送和接收操作时，可发出超时警报。</p>
+<p>d.低功耗模式。</p>
+<p>e.可编程设定的总线激活。</p>
+<p>f.远方请求信息的自动答复。</p>
+<p>g.无裁决或错误时，数据帧自动重新发送。</p>
+<p>h.32位的本地网络时间计数器同步于指定的信息。</p>
+<p>i，支持自测模式。</p>
+<p>F28335有一通道的SPI接口。SPI是一个高速同步的串行输入/输出口，通信速率和通信数据长度都是可以编程的，DSP可以采用SPI接口同外设或其他处理器实现通信。串行外设接口主要应用于系统扩展显示驱动器、ADC以及日历时钟等器件，也可以采用主/从模式实现多处理器间的数据交换。</p>
+<p>F2833x的SPI有如下特点：</p>
+<p>a.4个外部引脚：SPISOMI：SPI从输出/主输引脚。SPISIMO：SPI从输入/主输出引脚。SPISTE:SPI从发送使能引脚。SPICLK：SPI串时钟引脚。</p>
+<p>b.2种工作方式：主和从工作方式。</p>
+<p>c.波特率：125种可编程波特率。</p>
+<p>d.数据字长：可编程的1～16个数据长度。</p>
+<p>e.4种时钟模式(由时钟极性和时钟相应控制）。</p>
+<p>f.无相位延时的下降沿;SPICLK为高电平有效。在SPICLK信号的下降沿发送数据，在SPICLK信号的上升沿接收数据。</p>
+<p>g.有相位延时的下降沿：SPICLK为高电平有效。在SPICLK信号的下降沿之前的半个周期发送数据，在SPICLK信号的下降沿接收数据。</p>
+<p>h．相位延迟的上升沿：SPICLK为低电平有效。在SPICLK信号的上升沿发送数据，在SPICLK信号的下降沿接收数据。</p>
+<p>i．有相位延迟的上升沿：SPICLK为低电平有效。在SPICLK信号的下降沿之前的半个周期发送数据，而在SPICLK信号的上升沿接收数据。</p>
+<p>j．接收和发送可同时操作（可以通过软件屏蔽发送功能）。</p>
+<p>k.通过中断或查询式实现发送和接收操作。</p>
+<p>1.9个SPI模块控制寄存器。</p>
+<p>m，增强特点：16级发送/接收FIFO。延时发送控制。</p>
+<p>①F28335上有一个I²C同步串口。I²C(Inter-IntegratedCircuit)总线是一种由NXP公司开发的两线式串总线，用于连接微控制器及其外围设备。它是由数据线SDA和时钟SCL构成的串总线，可发送和接收数据。F28335包含一个I²C主从兼容的串行接口模块。I²C特点如下：兼容Philips I²CSpecificationRevision2.1(2000年1月）；最大传输速率可达400kbps；噪声滤波，可以滤除50ns的噪声；7位和10位地址模式；一个16bit接收FIFO和一个16bit发送FIFO;主从功能I²C引脚描述： 时钟SDA：I²C数据。</p>
+<p>F28335的外部存储器接口包括：20位地址线，16（最大32）位数据线，3个片选控制线及读/写控制线。这3个选线映射到3个存储区域，Zone0、Zone6和Zone7。这3个存储器可分别设置不同的等待周期。</p>
+<p>③F28335一共有88个通用输/输出接口，也就是常说的 此88个GPIO都可以通过软件配置为特殊功能或者通输输出接。而且GPIO0～GPIO63可以通过外部中断寄存器配置为外部中断功能，即当某一个GPIO外部中断使能的时候，外部电平发生变化时，此引脚可以触发中断。</p>
+<p>F28335有6通道的DMA处理器，大大改进了大规模数据传输的效率。</p>
+<h3 id="23-dsp2812">2.3 与DSP2812的性能对比</h3>
+<p>当前C2000系列DSP以2812与28335应最，两者主要性能对如表2.2所列。</p>
+<table>
+<thead>
+<tr>
+<th>性能</th>
+<th>F28335</th>
+<th>F2812</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CpU</td>
+<td>32位定点+单精度浮点单元FPU</td>
+<td>32位定点CPU</td>
+</tr>
+<tr>
+<td>系统频率</td>
+<td>150MHz</td>
+<td>150MHz</td>
+</tr>
+<tr>
+<td>片内FLASH</td>
+<td>256KX16位</td>
+<td>128K×16位</td>
+</tr>
+<tr>
+<td>Boot ROM</td>
+<td>8KX16位</td>
+<td>8K×16位</td>
+</tr>
+<tr>
+<td>OTP</td>
+<td>1K×16位</td>
+<td>1K×16位</td>
+</tr>
+<tr>
+<td>32位CPU定时器</td>
+<td>3个</td>
+<td>3个</td>
+</tr>
+<tr>
+<td>SRAM</td>
+<td>34KX16位</td>
+<td>18K×16位</td>
+</tr>
+<tr>
+<td>128位密码保护</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>系统外部接口（XNTF）</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>通用1/O口(GPIO)</td>
+<td>88个（可配置4种工作模式）</td>
+<td>56个（可配置2种工作模式）</td>
+</tr>
+<tr>
+<td>ADC</td>
+<td>12位、16通道、12.5MSPS</td>
+<td>12位、16通道、12.5MSPS</td>
+</tr>
+<tr>
+<td>电机控制外设</td>
+<td>ePWM（最多18路，包括6路HRPWM）6路32位eCAP输入（可配置为PWM)2个32位eQEP</td>
+<td>EVAEVB</td>
+</tr>
+<tr>
+<td>SPI</td>
+<td>1个</td>
+<td>1个</td>
+</tr>
+<tr>
+<td>SCI</td>
+<td>3个</td>
+<td>2个</td>
+</tr>
+<tr>
+<td>Ecan</td>
+<td>2个</td>
+<td>1个</td>
+</tr>
+<tr>
+<td>$1²c$</td>
+<td>1个</td>
+<td>无</td>
+</tr>
+<tr>
+<td>」    McBSP/SPI</td>
+<td>2个</td>
+<td>1个</td>
+</tr>
+<tr>
+<td>外部中断</td>
+<td>8个</td>
+<td>3个</td>
+</tr>
+<tr>
+<td>PIE</td>
+<td>支持58个外设中断</td>
+<td>持45个外设中断</td>
+</tr>
+<tr>
+<td>DMA</td>
+<td>6个</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<p>表2.2 F28335与F2812的性能对比</p>
+<h3 id="24f28335">2.4F28335的引脚分布及其引脚功能</h3>
+<p>F28335包含多种封装，176引脚PGF/PTP薄型四扁平封装（LQFP)的顶视图如图2.2所。引脚信号说明如表2.3~表2.9所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>TRST</td>
+<td>78</td>
+<td>M10</td>
+</tr>
+<tr>
+<td></td>
+<td>TCK</td>
+<td>87</td>
+</tr>
+<tr>
+<td></td>
+<td>TMs</td>
+<td>79</td>
+</tr>
+<tr>
+<td></td>
+<td>TDI</td>
+<td>76</td>
+</tr>
+<tr>
+<td></td>
+<td>TDO</td>
+<td>77</td>
+</tr>
+<tr>
+<td>EMUO</td>
+<td>85</td>
+<td>L11</td>
+</tr>
+<tr>
+<td>EMU1</td>
+<td>86</td>
+<td>P12</td>
+</tr>
+</tbody>
+</table>
+<p>表2.3F28335引脚说明—JTAG</p>
+<p><img alt="" src="../images/be128ccd54e7dcecad717003bcefa960256766607fb2d930c8e36f40080a0b0d.jpg" /></p>
+<p>图2.2 F28335的176引I脚PGF/PTP薄型四方扁平封装(LQFP)的顶视图</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>VDD3VFL</td>
+<td>84</td>
+<td>M11</td>
+</tr>
+<tr>
+<td>TEST1</td>
+<td>81</td>
+<td>K10</td>
+</tr>
+<tr>
+<td>TEST2</td>
+<td>82</td>
+<td>P11</td>
+</tr>
+</tbody>
+</table>
+<p>表2.4F28335引脚说明——FLASH</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>XCLKOUT</td>
+<td>138</td>
+<td>C11</td>
+</tr>
+<tr>
+<td>XCLKIN</td>
+<td>105</td>
+<td>J14</td>
+</tr>
+<tr>
+<td>X1</td>
+<td>104</td>
+<td>J13</td>
+</tr>
+<tr>
+<td>X2</td>
+<td>102</td>
+<td>J11</td>
+</tr>
+</tbody>
+</table>
+<p>表2.5F28335引脚说明——时钟</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>XRS</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>80</td>
+<td>L10</td>
+<td>M13</td>
+</tr>
+</tbody>
+</table>
+<p>表2.6F28335引脚说明-复位</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>ADCINA7</td>
+<td>35</td>
+<td>K4</td>
+</tr>
+<tr>
+<td>ADCINA6</td>
+<td>36</td>
+<td>J5</td>
+</tr>
+<tr>
+<td>ADCINA5</td>
+<td>37</td>
+<td>L1</td>
+</tr>
+<tr>
+<td>ADCINA4</td>
+<td>38</td>
+<td>1.2</td>
+</tr>
+<tr>
+<td>器A的8通道</td>
+<td>模拟输入(1)</td>
+<td></td>
+</tr>
+<tr>
+<td>ADCINA3</td>
+<td>39</td>
+<td>L3</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADCINA2</td>
+<td>40</td>
+<td>M1</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADCINA1</td>
+<td>41</td>
+<td>N1</td>
+</tr>
+<tr>
+<td>ADCINAO</td>
+<td>42</td>
+<td>M3</td>
+</tr>
+<tr>
+<td>ADCINB7</td>
+<td>53</td>
+<td>K5</td>
+</tr>
+<tr>
+<td>ADCINB6</td>
+<td>52</td>
+<td>P4</td>
+</tr>
+<tr>
+<td>ADCINB5</td>
+<td>51</td>
+<td>N4</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADCINB4</td>
+<td>50</td>
+<td>M4</td>
+</tr>
+<tr>
+<td>ADCINB3</td>
+<td>49</td>
+<td>L4</td>
+</tr>
+<tr>
+<td>ADCINB2</td>
+<td>48</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>ADCINB1</td>
+<td>47</td>
+<td>N3</td>
+</tr>
+<tr>
+<td>ADCINBO</td>
+<td>46</td>
+<td>$P2$</td>
+</tr>
+<tr>
+<td>ADCLO</td>
+<td>43</td>
+<td>M2</td>
+</tr>
+<tr>
+<td>ADCRESEXT</td>
+<td>57</td>
+<td>M5</td>
+</tr>
+<tr>
+<td>ADCREFIN</td>
+<td>54</td>
+<td>L5</td>
+</tr>
+<tr>
+<td>ADCREFP</td>
+<td>56</td>
+<td>P5 m°</td>
+</tr>
+<tr>
+<td>ADCREFM</td>
+<td>53</td>
+<td>15N5</td>
+</tr>
+</tbody>
+</table>
+<p>表2.7F28335引脚说明——ADC信号</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>VDDA2</td>
+<td>34</td>
+<td>K2</td>
+</tr>
+<tr>
+<td>VSSA2</td>
+<td>33</td>
+<td>K3</td>
+</tr>
+<tr>
+<td>VDDAIO</td>
+<td>45</td>
+<td>N2</td>
+</tr>
+</tbody>
+</table>
+<p>表2.8 F28335引脚说明——CPU和输入/输出电源引脚</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th></th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+<td></td>
+</tr>
+<tr>
+<td>VSSAIO</td>
+<td>44</td>
+<td>P1</td>
+<td>N1</td>
+</tr>
+<tr>
+<td>VDD2A18</td>
+<td>31</td>
+<td>J4</td>
+<td>K3</td>
+</tr>
+<tr>
+<td>VSS1AGND</td>
+<td>32</td>
+<td>K1</td>
+<td>L4</td>
+</tr>
+<tr>
+<td>VDD2A18</td>
+<td>59</td>
+<td>M6</td>
+<td>L6</td>
+</tr>
+<tr>
+<td>VSS2AGND</td>
+<td>58</td>
+<td>K6</td>
+<td>P2</td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>4</td>
+<td>B1</td>
+<td>D4</td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>15</td>
+<td>B5</td>
+<td>D5</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>23</td>
+<td>B11</td>
+<td>D8</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>29</td>
+<td>C8</td>
+<td>D9</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>61</td>
+<td>D13</td>
+<td>E11</td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>101</td>
+<td>E9</td>
+<td>F4</td>
+</tr>
+<tr>
+<td></td>
+<td>CPU和数字电源引脚</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>109</td>
+<td>F3</td>
+<td>F11</td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>117</td>
+<td>F13</td>
+<td>H4</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>126</td>
+<td>H1</td>
+<td>J4</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>139</td>
+<td>H12</td>
+<td>J11</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>146</td>
+<td>J2</td>
+<td>K11</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>154</td>
+<td>K14</td>
+<td>L8</td>
+</tr>
+<tr>
+<td>VDD</td>
+<td>167</td>
+<td>N6</td>
+<td></td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>9</td>
+<td>A4</td>
+<td>A13</td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>71位</td>
+<td>B10</td>
+<td>B1</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>93</td>
+<td>E7</td>
+<td>[)D7</td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>107</td>
+<td>E12</td>
+<td>D11</td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>121</td>
+<td>F5</td>
+<td>E4</td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>143</td>
+<td>L8</td>
+<td>G4</td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>159</td>
+<td>H11</td>
+<td>G11</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td>170</td>
+<td>N14</td>
+<td>L10</td>
+</tr>
+<tr>
+<td>VDDIO</td>
+<td></td>
+<td></td>
+<td>N14</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>3</td>
+<td>A5</td>
+<td>A1</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>8</td>
+<td>A10</td>
+<td>A2$</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>14</td>
+<td>A11</td>
+<td>A14</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>22</td>
+<td>B4</td>
+<td>B14</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>30</td>
+<td>C3</td>
+<td>F6</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.8</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>60</td>
+<td>C7</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>70</td>
+<td>C9</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>83</td>
+<td>D1</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>92</td>
+<td>D6</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>103</td>
+<td>D14</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>106</td>
+<td>E8</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>108</td>
+<td>E14</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>118</td>
+<td>F4</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>120</td>
+<td>F12</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>125</td>
+<td>G1</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>140</td>
+<td>H10</td>
+</tr>
+<tr>
+<td>VSs</td>
+<td>144</td>
+<td>H13</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>147</td>
+<td>J3</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>155</td>
+<td>J10</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>160</td>
+<td>J12</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>166</td>
+<td>M12</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>171</td>
+<td>N10M</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td>明</td>
+<td>N11</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td></td>
+<td>P6</td>
+</tr>
+<tr>
+<td>VSS</td>
+<td></td>
+<td>P8</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th></th>
+<th>说明</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO0EPWM1A</td>
+<td>5</td>
+<td>C1</td>
+<td>D1</td>
+<td>通用1/O引脚0(1/O/Z）增强型PWM1输出A通道和HRPWM通道(O)</td>
+</tr>
+<tr>
+<td>GPIO1EPWM1BeCAP6MFSRB</td>
+<td>6</td>
+<td>D321</td>
+<td>D2</td>
+<td>通用1/0引脚1(1/O/Z)增强型PWM1输出B通道(O)增强型捕获1/O口6(1/O)多通道缓冲串口B(MCBSP-B)的接收帧同步(I/O)</td>
+</tr>
+<tr>
+<td>GPIO2EPWM2A</td>
+<td>7</td>
+<td>D2</td>
+<td>D3</td>
+<td>通用I/O引脚2(I/O/Z）增强型PWM2输出A通道和HRPWM通道（O)</td>
+</tr>
+</tbody>
+</table>
+<p>表2.9F28335引脚说明—GPIOA和外设信号</p>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>GPIO3EPWM2BeCAP5MCLKRB</td>
+<td>10</td>
+<td>E4</td>
+</tr>
+<tr>
+<td>GPIO4EPWM3A</td>
+<td>11</td>
+<td>E2</td>
+</tr>
+<tr>
+<td>GPIO5EPWM3BeCAP1MFSRA</td>
+<td>12</td>
+<td>E3</td>
+</tr>
+<tr>
+<td>GPIO6EPWM4AMSYNCLEPWMSYNCO</td>
+<td>13</td>
+<td>E1</td>
+</tr>
+<tr>
+<td>GPIO7EPWM4BMCLKRAEcap2</td>
+<td>16</td>
+<td>F2</td>
+</tr>
+<tr>
+<td>GPIO8</td>
+<td>17</td>
+<td></td>
+</tr>
+<tr>
+<td>EPWM5ACANTXB</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADCSOCA</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO9EPWM5BSCITXDBEcap3</td>
+<td>18</td>
+<td>G5</td>
+</tr>
+<tr>
+<td>GPIO10EPWM6ACANRXB</td>
+<td>119</td>
+<td>G4</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>GPIO11EPWM6BSCIRXDBEcap4</td>
+<td>20</td>
+<td>G2</td>
+</tr>
+<tr>
+<td>GPIO12TZ1CANTXBMDXB</td>
+<td>21</td>
+<td>G3</td>
+</tr>
+<tr>
+<td>GPIO13TZ2CANRXBmdrB</td>
+<td>24</td>
+<td>H3</td>
+</tr>
+<tr>
+<td>GPIO14TZ3/XHOLDSCITXDBMCLKXB</td>
+<td>25</td>
+<td>H2</td>
+</tr>
+<tr>
+<td>GPIO15TZ4/XHOLDASCIRXDBMCLKXB</td>
+<td>26</td>
+<td>H4</td>
+</tr>
+<tr>
+<td>GPIO16SPISIMOACANTXB5(1)</td>
+<td>27</td>
+<td>H5</td>
+</tr>
+<tr>
+<td>GPIO17SPISOMIACANRXB6(I)</td>
+<td>28</td>
+<td>J1</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO18SPICLKASCITXDBCANRXA</td>
+<td>62</td>
+<td>L6</td>
+<td>N8</td>
+</tr>
+<tr>
+<td>GPIO19SPISTEASCIRXDBCANTXA</td>
+<td>63</td>
+<td>K7</td>
+<td>M8</td>
+</tr>
+<tr>
+<td>GPIO20EQEP1AMDXACANTXB</td>
+<td>64</td>
+<td>L7</td>
+<td>P9</td>
+</tr>
+<tr>
+<td>GPIO21EQEP1BMDRACANRXB</td>
+<td>65</td>
+<td>P7</td>
+<td>N9</td>
+</tr>
+<tr>
+<td>GP1O22EQEP1SMCLKXASCITXDB</td>
+<td>66</td>
+<td>N7</td>
+<td>M9</td>
+</tr>
+<tr>
+<td>GPIO23EQEP1IMFSXASCIRXDB</td>
+<td>67</td>
+<td>M7</td>
+<td>P10</td>
+</tr>
+<tr>
+<td>GPIO24ECAP1EQEP2AMDXB</td>
+<td>681</td>
+<td>M8</td>
+<td>N10</td>
+</tr>
+<tr>
+<td>GPIO25ECAP2EQEP2BMDRB</td>
+<td>69</td>
+<td>N8</td>
+<td>M10</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明         中</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>GPIO26ECAP3EQEP2IMCLKXB</td>
+<td>72</td>
+<td>然K86</td>
+</tr>
+<tr>
+<td>GPIO27ECAP4EQEP2SMFSXB</td>
+<td>73</td>
+<td>L9</td>
+</tr>
+<tr>
+<td>GPIO28SCIRXDAXZCS6</td>
+<td>141</td>
+<td>E10</td>
+</tr>
+<tr>
+<td>GPIO29SCITXDAXA19</td>
+<td>2</td>
+<td>C2</td>
+</tr>
+<tr>
+<td>GPIO30CANRXAXA18</td>
+<td>1</td>
+<td>B2</td>
+</tr>
+<tr>
+<td>1K01</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO31CANTXAXA17</td>
+<td>176</td>
+<td>A2</td>
+</tr>
+<tr>
+<td>GPIO32SDAAEPWMSYNCIADCSOCAO</td>
+<td>74</td>
+<td>期！</td>
+</tr>
+<tr>
+<td>N9</td>
+<td>M11国国</td>
+<td>I²C的数据时钟开漏双向口(I/OD)增强型PWM外部同步脉冲输入(O)ADC启动转换A(I/O)</td>
+</tr>
+<tr>
+<td>M1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO33SCLAEPWMSYNCOADCSOCBO</td>
+<td>75</td>
+<td>0P9</td>
+</tr>
+<tr>
+<td>44</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADC启动转换B(I/O)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO34ECAP1XREADY</td>
+<td>142</td>
+<td>D10</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>GPIO35SCITXDAXR/W</td>
+<td>148</td>
+<td>A9</td>
+</tr>
+<tr>
+<td>GPIO36SCIRXDAXZCS0</td>
+<td>145</td>
+<td>C10件加</td>
+</tr>
+<tr>
+<td>GPIO37ECAP2XZCS7</td>
+<td>150</td>
+<td>D9</td>
+</tr>
+<tr>
+<td>GPIO38XWEO</td>
+<td>137</td>
+<td>D11</td>
+</tr>
+<tr>
+<td>GPIO39XA16</td>
+<td>175</td>
+<td>B3</td>
+</tr>
+<tr>
+<td>GPIO40XA0/XWE1</td>
+<td>151</td>
+<td>D8</td>
+</tr>
+<tr>
+<td>GPIO41XA1</td>
+<td>152</td>
+<td>A8</td>
+</tr>
+<tr>
+<td>GPIO42XA2</td>
+<td>153</td>
+<td>B8</td>
+</tr>
+<tr>
+<td>GPIO43XA3</td>
+<td>156</td>
+<td>B7品</td>
+</tr>
+<tr>
+<td>GPIO44XA4</td>
+<td>1157人</td>
+<td>A7</td>
+</tr>
+<tr>
+<td>GPIO45XA5</td>
+<td>158</td>
+<td>D7</td>
+</tr>
+<tr>
+<td>GPIO46XA6</td>
+<td>161</td>
+<td>B6</td>
+</tr>
+<tr>
+<td>GPIO47XA7</td>
+<td>162</td>
+<td>A6</td>
+</tr>
+<tr>
+<td>GPIO48ECAP5XD31</td>
+<td>88</td>
+<td>P13</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+<th>章  3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO49ECAP6XD30</td>
+<td>89</td>
+<td>N13点</td>
+<td>U:L13</td>
+</tr>
+<tr>
+<td>GPIO50EQEP1AXD29</td>
+<td>90</td>
+<td>P14</td>
+<td>L12</td>
+</tr>
+<tr>
+<td>GPIO51EQEP1BXD28</td>
+<td>91</td>
+<td>M132</td>
+<td>K14</td>
+</tr>
+<tr>
+<td>GPIO52EQEP1SXD27</td>
+<td>94</td>
+<td>M14</td>
+<td>K13</td>
+</tr>
+<tr>
+<td>GPIO53EQEP1IXD26</td>
+<td>95</td>
+<td>L12</td>
+<td>K12</td>
+</tr>
+<tr>
+<td>GPIO54SPISIMOAXD25</td>
+<td>96</td>
+<td>L13</td>
+<td>11J14</td>
+</tr>
+<tr>
+<td>GPIO55SPISOMIAXD24</td>
+<td>97</td>
+<td>L14民</td>
+<td>J13味鼎</td>
+</tr>
+<tr>
+<td>GPIO56SPICLKAXD23</td>
+<td>98</td>
+<td>K11</td>
+<td>J1210</td>
+</tr>
+<tr>
+<td>GPIO57SPISTEAXD22</td>
+<td>99</td>
+<td>K13</td>
+<td>i=1H13a1:</td>
+</tr>
+<tr>
+<td>GPIO58MCLKRAXD21</td>
+<td>100</td>
+<td>K12lua,L</td>
+<td>H12国临</td>
+</tr>
+<tr>
+<td>GPIO59MFSRAXD20</td>
+<td>110</td>
+<td>H14</td>
+<td>H11</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+</tr>
+<tr>
+<td>GPIO60MCLKRBXD19</td>
+<td>111</td>
+<td>G14</td>
+</tr>
+<tr>
+<td>GPIO61MFSRBXD18</td>
+<td>112</td>
+<td>G1225</td>
+</tr>
+<tr>
+<td>GPIO62SCIRXDCXD17</td>
+<td>113</td>
+<td>G13</td>
+</tr>
+<tr>
+<td>GPIO63SCITXDCXD16</td>
+<td>114</td>
+<td>G11</td>
+</tr>
+<tr>
+<td>GPIO64XD15</td>
+<td>115</td>
+<td>G10</td>
+</tr>
+<tr>
+<td>GPIO65XD14</td>
+<td>116</td>
+<td>F14</td>
+</tr>
+<tr>
+<td>GPIO66XD13</td>
+<td>119</td>
+<td>69F11</td>
+</tr>
+<tr>
+<td>GPIO67XD12</td>
+<td>122</td>
+<td>E13</td>
+</tr>
+<tr>
+<td>GPIO68XD11</td>
+<td>123</td>
+<td>E111</td>
+</tr>
+<tr>
+<td>GPIO69XD10</td>
+<td>124</td>
+<td>F10</td>
+</tr>
+<tr>
+<td>GPIO70XD9</td>
+<td>127</td>
+<td>D12中满财</td>
+</tr>
+<tr>
+<td>GPIO71XD8</td>
+<td>128a</td>
+<td>C14</td>
+</tr>
+<tr>
+<td>GPIO72XD7</td>
+<td>129</td>
+<td>器B14</td>
+</tr>
+<tr>
+<td>GPIO73XD6</td>
+<td>130</td>
+<td>C12</td>
+</tr>
+</tbody>
+</table>
+<p>续表2.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>引脚编号</th>
+<th></th>
+<th>说 明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGF/PTP</td>
+<td>ZHH/BALL</td>
+<td>ZHH/BALL</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO74XD5</td>
+<td>131</td>
+<td>C13</td>
+<td>B12</td>
+</tr>
+<tr>
+<td>GPIO75XD4</td>
+<td>132</td>
+<td>A14</td>
+<td>C12</td>
+</tr>
+<tr>
+<td>GPIO76XD3</td>
+<td>133</td>
+<td>B13</td>
+<td>A11</td>
+</tr>
+<tr>
+<td>GPIO77XD2</td>
+<td>134</td>
+<td>A13</td>
+<td>B11</td>
+</tr>
+<tr>
+<td>GPIO78XD1</td>
+<td>135</td>
+<td>B12</td>
+<td>C11</td>
+</tr>
+<tr>
+<td>GPIO79XDO</td>
+<td>136</td>
+<td>A12</td>
+<td>B10</td>
+</tr>
+<tr>
+<td>GPIO80XA8</td>
+<td>163</td>
+<td>C6</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO81XA9</td>
+<td>164</td>
+<td>E6</td>
+<td>B5</td>
+</tr>
+<tr>
+<td>GPIO82XA10</td>
+<td>165</td>
+<td></td>
+<td>C5</td>
+</tr>
+<tr>
+<td>GPIO83XA11</td>
+<td>168</td>
+<td>D5</td>
+<td>A4</td>
+</tr>
+<tr>
+<td>GPIO84XA12</td>
+<td>T0X169.1</td>
+<td>E5</td>
+<td>B4OJV</td>
+</tr>
+<tr>
+<td>GPIO85XA13</td>
+<td>172</td>
+<td>C4</td>
+<td>C4</td>
+</tr>
+<tr>
+<td>GPIO86XA14</td>
+<td>173</td>
+<td>D4</td>
+<td>A3</td>
+</tr>
+<tr>
+<td>GPIO87XA15</td>
+<td>174</td>
+<td>A3</td>
+<td>B3</td>
+</tr>
+<tr>
+<td>XRD</td>
+<td>149</td>
+<td>B9</td>
+<td>A8</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

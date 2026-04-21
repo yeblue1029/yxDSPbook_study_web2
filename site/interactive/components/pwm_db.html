@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ePWM死区发生器(DB) — 互补PWM波死区防直通演示</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.5em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:15px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1500px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:18px;flex:1;min-width:320px}
+.panel-title{color:#00d4ff;font-size:1em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1e2a5a}
+.control-group{margin-bottom:14px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:4px;font-size:0.82em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right;font-family:'Consolas',monospace}
+input[type=range]{width:100%;height:5px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#00d4ff;cursor:pointer}
+select{width:100%;padding:6px 10px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;font-size:0.85em;cursor:pointer}
+.switch-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.switch-row .label{color:#7a8ba8;min-width:120px;font-size:0.82em;font-family:'Consolas',monospace}
+.switch{position:relative;width:44px;height:22px;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;top:0;left:0;right:0;bottom:0;background:#1e2a5a;border-radius:11px;transition:0.3s}
+.slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#555;border-radius:50%;transition:0.3s}
+.switch input:checked+.slider{background:#00d4ff}
+.switch input:checked+.slider:before{transform:translateX(22px);background:#fff}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:12px;margin-top:8px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111633;font-size:0.85em}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{color:#00ff88;font-weight:bold;font-family:'Consolas',monospace}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.danger-zone{background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:8px;padding:10px;margin-top:10px;text-align:center}
+.danger-zone .icon{font-size:1.5em}
+.danger-zone .text{color:#ff6b6b;font-size:0.85em;margin-top:5px}
+</style>
+</head>
+<body>
+<h1>🔧 ePWM死区发生器 (Dead-Band)</h1>
+<p class="subtitle">第7章 7.6 死区产生模块DB — 互补PWM波死区防直通演示</p>
+
+<div class="container">
+<div class="panel" style="max-width:380px">
+<div class="panel-title">⚙️ 输入PWM信号</div>
+
+<div class="control-group">
+<label>TBPRD (周期) <span class="value" id="prdVal">1000</span></label>
+<input type="range" id="tbprd" min="100" max="4000" value="1000" step="10">
+</div>
+
+<div class="control-group">
+<label>CMPA (比较值) <span class="value" id="cmpaVal">500</span></label>
+<input type="range" id="cmpa" min="0" max="4000" value="500" step="1">
+</div>
+
+<div class="panel-title" style="margin-top:12px">💀 死区配置</div>
+
+<div class="control-group">
+<label>RED (上升沿延时) <span class="value" id="redVal">50 TBCLK</span></label>
+<input type="range" id="red" min="0" max="200" value="50" step="1">
+<div style="color:#7a8ba8;font-size:0.72em;margin-top:2px">DBRED寄存器 — 延时EPWMxA上升沿</div>
+</div>
+
+<div class="control-group">
+<label>FED (下降沿延时) <span class="value" id="fedVal">50 TBCLK</span></label>
+<input type="range" id="fed" min="0" max="200" value="50" step="1">
+<div style="color:#7a8ba8;font-size:0.72em;margin-top:2px">DBFED寄存器 — 延时EPWMxB下降沿</div>
+</div>
+
+<div class="panel-title" style="margin-top:12px">🔀 极性控制</div>
+
+<div class="switch-row">
+<span class="label">DBCTL.IN_MODE</span>
+<select id="inMode">
+<option value="0" selected>AQ输出→RED, AQ输出→FED</option>
+<option value="1">EPWMxA→RED, EPWMxA→FED</option>
+<option value="2">EPWMxB→RED, EPWMxB→FED</option>
+<option value="3">EPWMxB→RED, EPWMxA→FED</option>
+</select>
+</div>
+
+<div class="switch-row">
+<span class="label">DBCTL.POLSEL</span>
+<select id="polSel">
+<option value="0" selected>Active High (AH)</option>
+<option value="1">Active Low (AL)</option>
+<option value="2">Active High Complement (AHC)</option>
+<option value="3">Active Low Complement (ALC)</option>
+</select>
+</div>
+
+<div class="switch-row">
+<span class="label">DBCTL.OUT_MODE</span>
+<select id="outMode">
+<option value="0">旁路死区 (Bypass)</option>
+<option value="1">仅A路使能</option>
+<option value="2">仅B路使能</option>
+<option value="3" selected>AB两路都使能</option>
+</select>
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">RED延时时间</span>
+<span class="result-value" id="r_red_time">333 ns</span>
+</div>
+<div class="result-row">
+<span class="result-label">FED延时时间</span>
+<span class="result-value" id="r_fed_time">333 ns</span>
+</div>
+<div class="result-row">
+<span class="result-label">死区时间</span>
+<span class="result-value" id="r_db_time">333 ns</span>
+</div>
+<div class="result-row">
+<span class="result-label">直通风险</span>
+<span class="result-value" id="r_shoot">✅ 安全</span>
+</div>
+</div>
+
+<div class="danger-zone" id="dangerZone" style="display:none">
+<div class="icon">⚠️</div>
+<div class="text">死区时间不足，存在上下桥臂直通风险！</div>
+</div>
+</div>
+
+<div class="panel" style="flex:2;min-width:500px">
+<div class="panel-title">📊 示波器波形</div>
+<canvas id="scopeCanvas" height="480"></canvas>
+
+<div class="result-box" style="margin-top:10px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 6px 0;font-size:0.9em">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.75em;white-space:pre-wrap;line-height:1.5"></pre>
+</div>
+</div>
+</div>
+
+<script>
+const canvas=document.getElementById('scopeCanvas');
+const ctx=canvas.getContext('2d');
+
+function calc(){
+const tbprd=parseInt(document.getElementById('tbprd').value);
+const cmpa=parseInt(document.getElementById('cmpa').value);
+const red=parseInt(document.getElementById('red').value);
+const fed=parseInt(document.getElementById('fed').value);
+const polSel=parseInt(document.getElementById('polSel').value);
+const outMode=parseInt(document.getElementById('outMode').value);
+
+document.getElementById('prdVal').textContent=tbprd;
+document.getElementById('cmpaVal').textContent=Math.min(cmpa,tbprd);
+document.getElementById('redVal').textContent=red+' TBCLK';
+document.getElementById('fedVal').textContent=fed+' TBCLK';
+
+const tbclkNs=1000/150;
+const redNs=red*tbclkNs;
+const fedNs=fed*tbclkNs;
+const dbTime=Math.min(redNs,fedNs);
+
+document.getElementById('r_red_time').textContent=redNs.toFixed(1)+' ns';
+document.getElementById('r_fed_time').textContent=fedNs.toFixed(1)+' ns';
+document.getElementById('r_db_time').textContent=dbTime.toFixed(1)+' ns';
+
+const shootThresh=200;
+const dangerEl=document.getElementById('dangerZone');
+const shootEl=document.getElementById('r_shoot');
+if(dbTime<shootThresh&&outMode>0){
+dangerEl.style.display='block';
+shootEl.textContent='⚠️ 危险! <'+shootThresh+'ns';
+shootEl.style.color='#ff6b6b';
+}else{
+dangerEl.style.display='none';
+shootEl.textContent='✅ 安全';
+shootEl.style.color='#00ff88';
+}
+
+const cA=Math.min(cmpa,tbprd);
+const steps=1200;
+let idealA=[];
+let idealB=[];
+let outA=[];
+let outB=[];
+
+for(let i=0;i<steps;i++){
+const phase=i/steps;
+const t=phase*2;
+let cnt;
+if(t<1)cnt=t*tbprd;
+else cnt=(2-t)*tbprd;
+
+let a=0,b=0;
+if(cnt>=cA)a=1;
+if(cnt<cA)b=1;
+
+if(polSel===1){a=1-a;b=1-b}
+else if(polSel===2){const tmp=a;a=1-b;b=tmp}
+else if(polSel===3){a=1-a;b=a}
+
+idealA.push(a);
+idealB.push(b);
+}
+
+if(outMode===0){
+outA=[...idealA];
+outB=[...idealB];
+}else{
+for(let i=0;i<steps;i++){
+const x=i/steps*2*tbprd;
+
+if(outMode===1||outMode===3){
+if(idealA[i]===1){
+const riseTime=red;
+const risePhase=i-red;
+if(risePhase>=0&&idealA[risePhase]===0&&red>0){
+outA.push(0);
+}else{
+outA.push(1);
+}
+}else{
+outA.push(0);
+}
+}
+
+if(outMode===2||outMode===3){
+if(idealB[i]===0){
+const fallTime=fed;
+const fallPhase=i-fed;
+if(fallPhase>=0&&idealB[fallPhase]===1&&fed>0){
+outB.push(1);
+}else{
+outB.push(0);
+}
+}else{
+outB.push(1);
+}
+}
+
+if(outMode===1)outB=[...idealB];
+if(outMode===2)outA=[...idealA];
+}
+
+drawScope(idealA,idealB,outA,outB,red,fed,tbprd);
+
+const polNames=['Active High (AH)','Active Low (AL)','AHC','ALC'];
+const outNames=['旁路','仅A路','仅B路','AB都使能'];
+const code=`// ePWM Dead-Band 配置
+EPwm1Regs.TBPRD = ${tbprd};              // 周期
+EPwm1Regs.CMPA.half.CMPA = ${cA};        // 比较值
+
+// 死区模块
+EPwm1Regs.DBCTL.bit.IN_MODE  = 0;        // AQ输出作为输入
+EPwm1Regs.DBCTL.bit.POLSEL   = ${polSel};  // ${polNames[polSel]}
+EPwm1Regs.DBCTL.bit.OUT_MODE = ${outMode}; // ${outNames[outMode]}
+EPwm1Regs.DBRED = ${red};                // 上升沿延时: ${redNs.toFixed(1)}ns
+EPwm1Regs.DBFED = ${fed};                // 下降沿延时: ${fedNs.toFixed(1)}ns`;
+document.getElementById('codeOutput').textContent=code;
+}
+
+function drawScope(idealA,idealB,outA,outB,red,fed,tbprd){
+const dpr=window.devicePixelRatio||1;
+const w=canvas.clientWidth;
+const h=480;
+canvas.width=w*dpr;canvas.height=h*dpr;
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
+
+const pad={l:55,r:15,t:20,b:15};
+const plotW=w-pad.l-pad.r;
+const sections=4;
+const secH=(h-pad.t-pad.b)/sections;
+
+drawCh(0,'理想 EPWMxA (AQ输出)',idealA,'#00d4ff');
+drawCh(1,'理想 EPWMxB (AQ输出)',idealB,'#aa66ff');
+drawCh(2,'实际 EPWMxA (含死区)',outA,'#00ff88');
+drawCh(3,'实际 EPWMxB (含死区)',outB,'#ffaa00');
+
+drawDeadTimeMarkers(2,3,idealA,idealB,outA,outB,red,fed);
+
+function drawCh(idx,label,data,color){
+const y0=pad.t+idx*secH;
+const plotH=secH-25;
+
+ctx.fillStyle='#7a8ba8';ctx.font='10px Microsoft YaHei';
+ctx.textAlign='left';ctx.fillText(label,pad.l,y0-3);
+
+ctx.strokeStyle='#1e2a5a';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(pad.l,y0+5);ctx.lineTo(pad.l+plotW,y0+5);ctx.stroke();
+ctx.beginPath();ctx.moveTo(pad.l,y0+5+plotH);ctx.lineTo(pad.l+plotW,y0+5+plotH);ctx.stroke();
+
+ctx.fillStyle='#555';ctx.font='8px Consolas';ctx.textAlign='right';
+ctx.fillText('H',pad.l-4,y0+12);
+ctx.fillText('L',pad.l-4,y0+5+plotH);
+
+ctx.strokeStyle=color;ctx.lineWidth=2;
+ctx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/data.length)*plotW;
+const y=y0+5+plotH-data[i]*plotH;
+if(i===0)ctx.moveTo(x,y);
+else{
+const prevY=y0+5+plotH-data[i-1]*plotH;
+if(data[i]!==data[i-1]){ctx.lineTo(x,prevY);ctx.lineTo(x,y)}
+ctx.lineTo(x,y);
+}
+}
+ctx.stroke();
+
+ctx.globalAlpha=0.08;
+ctx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/data.length)*plotW;
+const y=y0+5+plotH-data[i]*plotH;
+if(i===0)ctx.moveTo(x,y);
+else{
+const prevY=y0+5+plotH-data[i-1]*plotH;
+if(data[i]!==data[i-1]){ctx.lineTo(x,prevY);ctx.lineTo(x,y)}
+ctx.lineTo(x,y);
+}
+}
+ctx.lineTo(pad.l+plotW,y0+5+plotH);ctx.lineTo(pad.l,y0+5+plotH);
+ctx.closePath();ctx.fillStyle=color;ctx.fill();
+ctx.globalAlpha=1;
+}
+}
+
+function drawDeadTimeMarkers(chA,chB,idealA,idealB,outA,outB,red,fed){
+if(red===0&&fed===0)return;
+const pad={l:55,r:15,t:20,b:15};
+const plotW=canvas.clientWidth-pad.l-pad.r;
+const secH=(480-pad.t-pad.b)/4;
+
+for(let i=1;i<outA.length;i++){
+if(outA[i]===1&&outA[i-1]===0){
+const x=pad.l+(i/outA.length)*plotW;
+const xPrev=pad.l+((i-red)/outA.length)*plotW;
+const y0=pad.t+chA*secH;
+const plotH=secH-25;
+
+ctx.fillStyle='rgba(255,107,107,0.15)';
+ctx.fillRect(xPrev,y0+5,x-xPrev,plotH);
+
+ctx.strokeStyle='#ff6b6b';ctx.lineWidth=1;ctx.setLineDash([2,2]);
+ctx.beginPath();ctx.moveTo(xPrev,y0+5);ctx.lineTo(xPrev,y0+5+plotH);ctx.stroke();
+ctx.beginPath();ctx.moveTo(x,y0+5);ctx.lineTo(x,y0+5+plotH);ctx.stroke();
+ctx.setLineDash([]);
+
+if(red>5){
+ctx.fillStyle='#ff6b6b';ctx.font='8px Consolas';ctx.textAlign='center';
+ctx.fillText('RED',(xPrev+x)/2,y0+5+plotH+10);
+}
+}
+}
+
+for(let i=1;i<outB.length;i++){
+if(outB[i]===0&&outB[i-1]===1){
+const x=pad.l+(i/outB.length)*plotW;
+const xPrev=pad.l+((i-fed)/outB.length)*plotW;
+const y0=pad.t+chB*secH;
+const plotH=secH-25;
+
+ctx.fillStyle='rgba(255,170,0,0.15)';
+ctx.fillRect(xPrev,y0+5,x-xPrev,plotH);
+
+ctx.strokeStyle='#ffaa00';ctx.lineWidth=1;ctx.setLineDash([2,2]);
+ctx.beginPath();ctx.moveTo(xPrev,y0+5);ctx.lineTo(xPrev,y0+5+plotH);ctx.stroke();
+ctx.beginPath();ctx.moveTo(x,y0+5);ctx.lineTo(x,y0+5+plotH);ctx.stroke();
+ctx.setLineDash([]);
+
+if(fed>5){
+ctx.fillStyle='#ffaa00';ctx.font='8px Consolas';ctx.textAlign='center';
+ctx.fillText('FED',(xPrev+x)/2,y0+5+plotH+10);
+}
+}
+}
+}
+
+document.querySelectorAll('input,select').forEach(el=>{
+el.addEventListener('input',calc);
+el.addEventListener('change',calc);
+});
+window.addEventListener('resize',calc);
+calc();
+</script>
+</body>
+</html>

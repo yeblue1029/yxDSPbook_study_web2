@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADC采样窗口与充放电物理模型</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.5em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:15px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:18px;flex:1;min-width:320px}
+.panel-title{color:#00d4ff;font-size:1em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1e2a5a}
+.control-group{margin-bottom:14px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:4px;font-size:0.82em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right;font-family:'Consolas',monospace}
+input[type=range]{width:100%;height:5px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#00d4ff;cursor:pointer}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:12px;margin-top:8px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111633;font-size:0.85em}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{font-weight:bold;font-family:'Consolas',monospace}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.error-bar{margin:10px 0;padding:10px;border-radius:8px;font-size:0.85em;text-align:center}
+.error-bar.ok{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88}
+.error-bar.warn{background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.3);color:#ffaa00}
+.error-bar.danger{background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:#ff6b6b}
+</style>
+</head>
+<body>
+<h1>🔧 ADC采样窗口(ACQPS)与充放电物理模型</h1>
+<p class="subtitle">第10章 10.4-10.5 ADC时钟控制与电气特性 — 采样误差可视化</p>
+
+<div class="container">
+<div class="panel" style="max-width:380px">
+<div class="panel-title">⚙️ 参数配置</div>
+
+<div class="control-group">
+<label>外部信号源内阻 Rs <span class="value" id="rsVal">1.0 kΩ</span></label>
+<input type="range" id="rs" min="100" max="10000" value="1000" step="100">
+</div>
+
+<div class="control-group">
+<label>内部采样电容 Ch <span class="value" id="chVal">1.6 pF</span></label>
+<input type="range" id="ch" min="0.5" max="10" value="1.6" step="0.1">
+</div>
+
+<div class="control-group">
+<label>ACQPS (采样窗口宽度) <span class="value" id="acqpsVal">6</span></label>
+<input type="range" id="acqps" min="0" max="63" value="6" step="1">
+<div style="color:#7a8ba8;font-size:0.72em;margin-top:2px">采样窗口 = (ACQPS+1) × ADCCLK周期</div>
+</div>
+
+<div class="control-group">
+<label>ADCCLK 分频 (ADCTRL3.ADCCLKPS) <span class="value" id="clkpsVal">÷1</span></label>
+<select id="clkps">
+<option value="0" selected>00 — ÷1 (CORECLK)</option>
+<option value="1">01 — ÷2</option>
+<option value="2">10 — ÷4</option>
+<option value="3">11 — ÷8</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>输入信号电压 <span class="value" id="vinVal">2.50 V</span></label>
+<input type="range" id="vin" min="0" max="3" value="2.5" step="0.01">
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">RC时间常数 τ</span>
+<span class="result-value" id="r_tau" style="color:#00d4ff">1.60 ns</span>
+</div>
+<div class="result-row">
+<span class="result-label">采样窗口时间</span>
+<span class="result-value" id="r_window" style="color:#00d4ff">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">充电到达比例</span>
+<span class="result-value" id="r_ratio">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">采样电压</span>
+<span class="result-value" id="r_vsampled">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">采样误差</span>
+<span class="result-value" id="r_error">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">ADC数字量</span>
+<span class="result-value" id="r_adcval">—</span>
+</div>
+</div>
+
+<div class="error-bar ok" id="errorBar">✅ 采样精度良好</div>
+</div>
+
+<div class="panel" style="flex:2;min-width:500px">
+<div class="panel-title">📊 采样电容充电曲线</div>
+<canvas id="chargeCanvas" height="350"></canvas>
+
+<div class="panel-title" style="margin-top:12px">🔬 RC等效电路</div>
+<canvas id="circuitCanvas" height="200"></canvas>
+
+<div class="result-box" style="margin-top:10px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 6px 0;font-size:0.9em">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.75em;white-space:pre-wrap;line-height:1.5"></pre>
+</div>
+</div>
+</div>
+
+<script>
+const chargeCanvas=document.getElementById('chargeCanvas');
+const chargeCtx=chargeCanvas.getContext('2d');
+const circuitCanvas=document.getElementById('circuitCanvas');
+const circuitCtx=circuitCanvas.getContext('2d');
+
+function calc(){
+const rs=parseFloat(document.getElementById('rs').value);
+const ch=parseFloat(document.getElementById('ch').value);
+const acqps=parseInt(document.getElementById('acqps').value);
+const clkps=parseInt(document.getElementById('clkps').value);
+const vin=parseFloat(document.getElementById('vin').value);
+
+document.getElementById('rsVal').textContent=(rs/1000).toFixed(1)+' kΩ';
+document.getElementById('chVal').textContent=ch.toFixed(1)+' pF';
+document.getElementById('acqpsVal').textContent=acqps;
+
+const divisors=[1,2,4,8];
+const div=divisors[clkps];
+document.getElementById('clkpsVal').textContent='÷'+div;
+
+const coreclk=150;
+const adcclk=coreclk/div;
+const adcclkPeriod=1000/adcclk;
+const sampleWindow=(acqps+1)*adcclkPeriod;
+
+const tau=rs*ch*1e-6;
+const ratio=1-Math.exp(-sampleWindow/tau);
+const vSampled=vin*ratio;
+const error=Math.abs(vin-vSampled);
+const errorPct=(error/vin*100);
+const adcVal=Math.round(vSampled/3.0*4095);
+
+document.getElementById('vinVal').textContent=vin.toFixed(2)+' V';
+document.getElementById('r_tau').textContent=(tau).toFixed(2)+' ns';
+document.getElementById('r_window').textContent=sampleWindow.toFixed(2)+' ns';
+document.getElementById('r_ratio').textContent=(ratio*100).toFixed(2)+'%';
+document.getElementById('r_vsampled').textContent=vSampled.toFixed(4)+' V';
+document.getElementById('r_error').textContent=errorPct.toFixed(2)+'% ('+error.toFixed(4)+'V)';
+document.getElementById('r_adcval').textContent=adcVal+' (0x'+adcVal.toString(16).toUpperCase()+')';
+
+const errBar=document.getElementById('errorBar');
+if(errorPct<0.1){
+errBar.className='error-bar ok';
+errBar.textContent='✅ 采样精度良好 (误差<0.1%)';
+}else if(errorPct<1){
+errBar.className='error-bar warn';
+errBar.textContent='⚠️ 采样误差偏大 ('+errorPct.toFixed(2)+'%) — 建议增大ACQPS或减小Rs';
+}else{
+errBar.className='error-bar danger';
+errBar.textContent='🚨 采样误差严重! ('+errorPct.toFixed(2)+'%) — 电容未充满，数据不可靠!';
+}
+
+drawCharge(tau,sampleWindow,vin,vSampled,ratio);
+drawCircuit(rs,ch);
+
+const code=`// ADC采样窗口配置
+AdcRegs.ADCTRL3.bit.ADCCLKPS = ${clkps};  // ADCCLK = SYSCLK/${div} = ${adcclk}MHz
+AdcRegs.ADCMAXCONV.bit.MAX_CONV1 = 0;     // 1个转换
+AdcRegs.ADCCHSELSEQ1.bit.CONV00 = 0;      // 通道AIN0
+
+// ACQPS设置 (在ADCCTL1中)
+// 采样窗口 = (ACQPS+1) × ADCCLK周期 = ${sampleWindow.toFixed(1)}ns
+// RC时间常数 τ = Rs×Ch = ${tau.toFixed(2)}ns
+// 充电比例 = ${(ratio*100).toFixed(2)}%
+// 采样误差 = ${errorPct.toFixed(2)}%
+${errorPct>1?'// ⚠️ 建议增大ACQPS或降低外部阻抗!':''}`;
+document.getElementById('codeOutput').textContent=code;
+}
+
+function drawCharge(tau,window,vin,vSampled,ratio){
+const dpr=window.devicePixelRatio||1;
+const w=chargeCanvas.clientWidth;
+const h=350;
+chargeCanvas.width=w*dpr;chargeCanvas.height=h*dpr;
+chargeCtx.scale(dpr,dpr);
+chargeCtx.clearRect(0,0,w,h);
+
+const pad={l:60,r:30,t:30,b:40};
+const plotW=w-pad.l-pad.r;
+const plotH=h-pad.t-pad.b;
+
+const maxTime=Math.max(window*3,tau*5);
+const timeScale=plotW/maxTime;
+
+chargeCtx.strokeStyle='#1e2a5a';chargeCtx.lineWidth=0.5;
+for(let i=0;i<=5;i++){
+const y=pad.t+plotH*i/5;
+chargeCtx.beginPath();chargeCtx.moveTo(pad.l,y);chargeCtx.lineTo(pad.l+plotW,y);chargeCtx.stroke();
+chargeCtx.fillStyle='#555';chargeCtx.font='9px Consolas';chargeCtx.textAlign='right';
+chargeCtx.fillText((3-3*i/5).toFixed(1)+'V',pad.l-5,y+3);
+}
+
+for(let i=0;i<=5;i++){
+const x=pad.l+plotW*i/5;
+chargeCtx.beginPath();chargeCtx.moveTo(x,pad.t);chargeCtx.lineTo(x,pad.t+plotH);chargeCtx.stroke();
+chargeCtx.fillStyle='#555';chargeCtx.font='9px Consolas';chargeCtx.textAlign='center';
+chargeCtx.fillText((maxTime*i/5).toFixed(0)+'ns',x,pad.t+plotH+15);
+}
+
+chargeCtx.strokeStyle='#00d4ff';chargeCtx.lineWidth=2;
+chargeCtx.beginPath();
+for(let i=0;i<=plotW;i++){
+const t=i/timeScale;
+const v=vin*(1-Math.exp(-t/tau));
+const x=pad.l+i;
+const y=pad.t+plotH-(v/3)*plotH;
+if(i===0)chargeCtx.moveTo(x,y);else chargeCtx.lineTo(x,y);
+}
+chargeCtx.stroke();
+
+chargeCtx.strokeStyle='rgba(0,212,255,0.3)';chargeCtx.lineWidth=1;chargeCtx.setLineDash([4,4]);
+chargeCtx.beginPath();
+chargeCtx.moveTo(pad.l,pad.t+plotH-(vin/3)*plotH);
+chargeCtx.lineTo(pad.l+plotW,pad.t+plotH-(vin/3)*plotH);
+chargeCtx.stroke();
+chargeCtx.setLineDash([]);
+chargeCtx.fillStyle='#00d4ff';chargeCtx.font='10px Microsoft YaHei';chargeCtx.textAlign='left';
+chargeCtx.fillText('目标电压 '+vin.toFixed(2)+'V',pad.l+5,pad.t+plotH-(vin/3)*plotH-5);
+
+const winX=pad.l+window*timeScale;
+chargeCtx.strokeStyle='#ffaa00';chargeCtx.lineWidth=2;chargeCtx.setLineDash([6,3]);
+chargeCtx.beginPath();chargeCtx.moveTo(winX,pad.t);chargeCtx.lineTo(winX,pad.t+plotH);chargeCtx.stroke();
+chargeCtx.setLineDash([]);
+chargeCtx.fillStyle='#ffaa00';chargeCtx.font='10px Microsoft YaHei';chargeCtx.textAlign='center';
+chargeCtx.fillText('采样窗口截止',winX,pad.t-5);
+chargeCtx.fillText('ACQPS='+document.getElementById('acqps').value,winX,pad.t+plotH+28);
+
+chargeCtx.fillStyle='rgba(255,170,0,0.08)';
+chargeCtx.fillRect(pad.l,pad.t,window*timeScale,plotH);
+
+const sampledY=pad.t+plotH-(vSampled/3)*plotH;
+chargeCtx.strokeStyle='#ff6b6b';chargeCtx.lineWidth=1;chargeCtx.setLineDash([3,3]);
+chargeCtx.beginPath();chargeCtx.moveTo(pad.l,sampledY);chargeCtx.lineTo(winX,sampledY);chargeCtx.stroke();
+chargeCtx.beginPath();chargeCtx.moveTo(winX,sampledY);chargeCtx.lineTo(winX,pad.t+plotH);chargeCtx.stroke();
+chargeCtx.setLineDash([]);
+
+chargeCtx.fillStyle='#ff6b6b';chargeCtx.beginPath();
+chargeCtx.arc(winX,sampledY,5,0,Math.PI*2);chargeCtx.fill();
+chargeCtx.font='10px Consolas';chargeCtx.textAlign='left';
+chargeCtx.fillText(vSampled.toFixed(3)+'V',winX+8,sampledY-5);
+
+const targetY=pad.t+plotH-(vin/3)*plotH;
+if(Math.abs(targetY-sampledY)>10){
+chargeCtx.strokeStyle='#ff6b6b';chargeCtx.lineWidth=1.5;
+chargeCtx.annotate='';chargeCtx.beginPath();
+chargeCtx.moveTo(winX+3,targetY);chargeCtx.lineTo(winX+3,sampledY);chargeCtx.stroke();
+chargeCtx.font='9px Consolas';chargeCtx.fillStyle='#ff6b6b';chargeCtx.textAlign='left';
+chargeCtx.fillText('误差:'+(vin-vSampled).toFixed(4)+'V',winX+8,(targetY+sampledY)/2);
+}
+}
+
+function drawCircuit(rs,ch){
+const dpr=window.devicePixelRatio||1;
+const w=circuitCanvas.clientWidth;
+const h=200;
+circuitCanvas.width=w*dpr;circuitCanvas.height=h*dpr;
+circuitCtx.scale(dpr,dpr);
+circuitCtx.clearRect(0,0,w,h);
+
+const cx=w/2;const cy=h/2;
+
+circuitCtx.strokeStyle='#00d4ff';circuitCtx.lineWidth=2;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx-200,cy-40);circuitCtx.lineTo(cx-80,cy-40);
+circuitCtx.stroke();
+
+circuitCtx.strokeStyle='#00d4ff';circuitCtx.lineWidth=2;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx-80,cy-55);circuitCtx.lineTo(cx-80,cy-25);
+circuitCtx.stroke();
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx-70,cy-55);circuitCtx.lineTo(cx-70,cy-25);
+circuitCtx.stroke();
+
+circuitCtx.fillStyle='#00d4ff';circuitCtx.font='11px Consolas';circuitCtx.textAlign='center';
+circuitCtx.fillText('Rs='+(rs/1000).toFixed(1)+'kΩ',cx-75,cy-60);
+
+circuitCtx.strokeStyle='#00d4ff';circuitCtx.lineWidth=2;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx-70,cy-40);circuitCtx.lineTo(cx+20,cy-40);
+circuitCtx.stroke();
+
+circuitCtx.strokeStyle='#ffaa00';circuitCtx.lineWidth=2;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx+20,cy-40);circuitCtx.lineTo(cx+20,cy+40);
+circuitCtx.stroke();
+
+circuitCtx.fillStyle='#ffaa00';circuitCtx.font='11px Consolas';circuitCtx.textAlign='left';
+circuitCtx.fillText('开关',cx+25,cy);
+
+circuitCtx.strokeStyle='#00ff88';circuitCtx.lineWidth=2;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx+20,cy+40);circuitCtx.lineTo(cx+120,cy+40);
+circuitCtx.stroke();
+
+circuitCtx.strokeStyle='#00ff88';circuitCtx.lineWidth=2;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx+120,cy+25);circuitCtx.lineTo(cx+120,cy+55);
+circuitCtx.stroke();
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx+130,cy+25);circuitCtx.lineTo(cx+130,cy+55);
+circuitCtx.stroke();
+circuitCtx.fillStyle='#00ff88';circuitCtx.font='11px Consolas';circuitCtx.textAlign='center';
+circuitCtx.fillText('Ch='+ch.toFixed(1)+'pF',cx+125,cy+20);
+
+circuitCtx.strokeStyle='#555';circuitCtx.lineWidth=1;
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx+130,cy+40);circuitCtx.lineTo(cx+200,cy+40);
+circuitCtx.lineTo(cx+200,cy+60);circuitCtx.stroke();
+circuitCtx.beginPath();
+circuitCtx.moveTo(cx-200,cy+60);circuitCtx.lineTo(cx+200,cy+60);circuitCtx.stroke();
+
+circuitCtx.fillStyle='#7a8ba8';circuitCtx.font='10px Microsoft YaHei';
+circuitCtx.textAlign='center';
+circuitCtx.fillText('Vin='+parseFloat(document.getElementById('vin').value).toFixed(2)+'V',cx-200,cy-50);
+circuitCtx.fillText('GND',cx,cy+75);
+
+circuitCtx.fillStyle='#ff6b6b';circuitCtx.font='10px Microsoft YaHei';
+circuitCtx.fillText('τ = Rs×Ch = '+(rs*ch*1e-6).toFixed(2)+'ns',cx,cy+95);
+}
+
+document.querySelectorAll('input,select').forEach(el=>{
+el.addEventListener('input',calc);
+el.addEventListener('change',calc);
+});
+window.addEventListener('resize',calc);
+calc();
+</script>
+</body>
+</html>

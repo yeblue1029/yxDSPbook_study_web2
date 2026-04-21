@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eCAP脉冲捕获模块 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+select,input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+select:focus,input:focus{outline:none;border-color:#00d4ff}
+.waveform-container{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.canvas-wrapper{position:relative;width:100%;height:200px}
+canvas{width:100%;height:100%}
+.register-display{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:6px;padding:12px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.2em;font-weight:bold;margin-top:5px}
+.calculation-result{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.calculation-result h4{color:#00d4ff;margin-bottom:10px}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.result-item{text-align:center;padding:10px;background:#111633;border-radius:6px}
+.result-item .label{color:#7a8ba8;font-size:0.8em}
+.result-item .value{color:#00ff88;font-size:1.4em;font-weight:bold;margin-top:5px}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.mode-indicator{display:inline-block;padding:5px 15px;background:#00d4ff;color:#0a0e27;border-radius:20px;font-size:0.9em;margin-left:10px}
+.info-text{color:#7a8ba8;font-size:0.85em;line-height:1.6}
+.edge-btns{display:flex;gap:10px;flex-wrap:wrap}
+.edge-btn{padding:8px 16px;border:1px solid #2a3a7a;border-radius:6px;background:#1e2a5a;color:#e0e6ff;cursor:pointer;transition:all 0.2s}
+.edge-btn.active{background:#00d4ff;color:#0a0e27;border-color:#00d4ff}
+.edge-btn:hover{transform:translateY(-1px)}
+</style>
+</head>
+<body>
+<header>
+<h1>🔷 eCAP脉冲捕获模块</h1>
+<p class="info-text">增强型脉冲捕获模块 - 测量脉冲周期、脉宽和占空比</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">模式配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>工作模式</label>
+<select id="workMode" onchange="updateMode()">
+<option value="capture">捕获模式 (CAP)</option>
+<option value="apwm">APWM输出模式</option>
+</select>
+<span class="mode-indicator" id="modeIndicator">捕获模式</span>
+</div>
+<div class="control-group">
+<label>连续/单次模式</label>
+<select id="contMode">
+<option value="continuous">连续模式</option>
+<option value="oneshot">单次模式</option>
+</select>
+</div>
+<div class="control-group">
+<label>输入信号频率 (Hz)</label>
+<input type="number" id="inputFreq" value="10000" min="1" max="10000000" onchange="updateWaveform()">
+</div>
+<div class="control-group">
+<label>系统时钟 (MHz)</label>
+<input type="number" id="sysClk" value="150" min="1" max="200" onchange="updateWaveform()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">捕获沿配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>预分频系数</label>
+<select id="prescale" onchange="updateWaveform()">
+<option value="1">1分频</option>
+<option value="2">2分频</option>
+<option value="4">4分频</option>
+<option value="6">6分频</option>
+<option value="8">8分频</option>
+<option value="10">10分频</option>
+<option value="12">12分频</option>
+<option value="14">14分频</option>
+<option value="16">16分频</option>
+</select>
+</div>
+<div class="control-group">
+<label>停止值 (STOP_WRAP)</label>
+<select id="stopWrap">
+<option value="1">1个事件后停止</option>
+<option value="2">2个事件后停止</option>
+<option value="3">3个事件后停止</option>
+<option value="4" selected>4个事件后停止</option>
+</select>
+</div>
+</div>
+<div class="edge-btns" style="margin-top:15px">
+<div class="control-group" style="flex:1">
+<label>事件1边沿</label>
+<select id="edge1">
+<option value="rising" selected>上升沿</option>
+<option value="falling">下降沿</option>
+</select>
+</div>
+<div class="control-group" style="flex:1">
+<label>事件2边沿</label>
+<select id="edge2">
+<option value="rising" selected>上升沿</option>
+<option value="falling">下降沿</option>
+</select>
+</div>
+<div class="control-group" style="flex:1">
+<label>事件3边沿</label>
+<select id="edge3">
+<option value="rising">上升沿</option>
+<option value="falling" selected>下降沿</option>
+</select>
+</div>
+<div class="control-group" style="flex:1">
+<label>事件4边沿</label>
+<select id="edge4">
+<option value="rising" selected>上升沿</option>
+<option value="falling">下降沿</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">信号波形与时序 <button class="btn" onclick="simulateCapture()" style="margin-left:20px">▶ 模拟捕获</button></h3>
+<div class="waveform-container">
+<div class="canvas-wrapper">
+<canvas id="waveformCanvas"></canvas>
+</div>
+</div>
+<div class="register-display">
+<div class="register-item">
+<div class="name">TSCTR (时基计数器)</div>
+<div class="value" id="tsctrVal">0</div>
+</div>
+<div class="register-item">
+<div class="name">CAP1 (事件1时间)</div>
+<div class="value" id="cap1Val">-</div>
+</div>
+<div class="register-item">
+<div class="name">CAP2 (事件2时间)</div>
+<div class="value" id="cap2Val">-</div>
+</div>
+<div class="register-item">
+<div class="name">CAP3 (事件3时间)</div>
+<div class="value" id="cap3Val">-</div>
+</div>
+<div class="register-item">
+<div class="name">CAP4 (事件4时间)</div>
+<div class="value" id="cap4Val">-</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">计算结果</h3>
+<div class="calculation-result">
+<div class="result-grid">
+<div class="result-item">
+<div class="label">脉冲周期</div>
+<div class="value" id="periodVal">-</div>
+</div>
+<div class="result-item">
+<div class="label">高电平宽度</div>
+<div class="value" id="highWidthVal">-</div>
+</div>
+<div class="result-item">
+<div class="label">低电平宽度</div>
+<div class="value" id="lowWidthVal">-</div>
+</div>
+<div class="result-item">
+<div class="label">占空比</div>
+<div class="value" id="dutyCycleVal">-</div>
+</div>
+<div class="result-item">
+<div class="label">频率</div>
+<div class="value" id="freqVal">-</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器配置代码</h3>
+<div class="calculation-result">
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.9em;line-height:1.5">
+// eCAP初始化配置
+void InitECap(void)
+{
+    // 禁用ECAP
+    ECap1Regs.ECCTL2.bit.TSCTRSTOP = 0;
+    
+    // 配置捕获沿
+    ECap1Regs.ECCTL1.bit.CAP1POL = 0;  // 上升沿
+    ECap1Regs.ECCTL1.bit.CAP2POL = 0;  // 上升沿
+    ECap1Regs.ECCTL1.bit.CAP3POL = 1;  // 下降沿
+    ECap1Regs.ECCTL1.bit.CAP4POL = 0;  // 上升沿
+    
+    // 配置预分频
+    ECap1Regs.ECCTL1.bit.PRESCALE = 0;  // 1分频
+    
+    // 使能捕获寄存器加载
+    ECap1Regs.ECCTL1.bit.CAPLDEN = 1;
+    
+    // 配置连续/单次模式
+    ECap1Regs.ECCTL2.bit.CONT/ONESHT = 0;  // 连续模式
+    
+    // 启动计数器
+    ECap1Regs.ECCTL2.bit.TSCTRSTOP = 1;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<script>
+const canvas = document.getElementById('waveformCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = canvas.offsetHeight * 2;
+    ctx.scale(2, 2);
+    updateWaveform();
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+let captureData = { cap1: null, cap2: null, cap3: null, cap4: null, tsctr: 0 };
+
+function updateMode() {
+    const mode = document.getElementById('workMode').value;
+    document.getElementById('modeIndicator').textContent = mode === 'capture' ? '捕获模式' : 'APWM模式';
+    updateCode();
+}
+
+function updateWaveform() {
+    const inputFreq = parseFloat(document.getElementById('inputFreq').value) || 10000;
+    const sysClk = parseFloat(document.getElementById('sysClk').value) || 150;
+    const prescale = parseInt(document.getElementById('prescale').value) || 1;
+    
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    ctx.strokeStyle = '#1e2a5a';
+    ctx.lineWidth = 1;
+    for(let i = 0; i <= 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, height * i / 4);
+        ctx.lineTo(width, height * i / 4);
+        ctx.stroke();
+    }
+    
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
+    const period = 1 / inputFreq;
+    const dutyCycle = 0.3;
+    const highTime = period * dutyCycle;
+    const lowTime = period * (1 - dutyCycle);
+    
+    const pixelsPerUs = width / (period * 1000000 * 2);
+    
+    const edge1 = document.getElementById('edge1').value === 'rising';
+    const edge2 = document.getElementById('edge2').value === 'rising';
+    const edge3 = document.getElementById('edge3').value === 'rising';
+    const edge4 = document.getElementById('edge4').value === 'rising';
+    
+    let x = 0;
+    let level = 0;
+    const high = height * 0.3;
+    const low = height * 0.7;
+    
+    ctx.moveTo(x, low);
+    
+    while(x < width) {
+        const edgeTime = level === 0 ? 
+            (edge1 ? highTime : lowTime) : 
+            (edge2 ? highTime : lowTime);
+        
+        const edgeX = x + edgeTime * 1000000 * pixelsPerUs;
+        
+        if(level === 0) {
+            ctx.lineTo(x, high);
+            ctx.lineTo(edgeX, high);
+            level = 1;
+        } else {
+            ctx.lineTo(x, low);
+            ctx.lineTo(edgeX, low);
+            level = 0;
+        }
+        x = edgeX;
+        
+        if(x > width) break;
+    }
+    
+    ctx.stroke();
+    
+    ctx.fillStyle = '#00ff88';
+    ctx.font = '10px Microsoft YaHei';
+    
+    const timeScale = period * 1000000;
+    let timeLabel = '';
+    if(timeScale >= 1) timeLabel = timeScale.toFixed(0) + 'us';
+    else if(timeScale >= 0.001) timeLabel = (timeScale * 1000).toFixed(0) + 'ns';
+    else timeLabel = (timeScale * 1000000).toFixed(0) + 'ns';
+    
+    ctx.fillText('周期: ' + timeLabel, 10, 15);
+    ctx.fillText('高电平: ' + (timeScale * dutyCycle).toFixed(2) + 'us', 10, 30);
+    ctx.fillText('低电平: ' + (timeScale * (1-dutyCycle)).toFixed(2) + 'us', 10, 45);
+    
+    updateCode();
+}
+
+function simulateCapture() {
+    const inputFreq = parseFloat(document.getElementById('inputFreq').value) || 10000;
+    const sysClk = parseFloat(document.getElementById('sysClk').value) || 150;
+    const prescale = parseInt(document.getElementById('prescale').value) || 1;
+    
+    const clkPeriod = 1 / (sysClk * 1000000);
+    const pulsePeriod = 1 / inputFreq;
+    
+    const dutyCycle = 0.3;
+    const highCounts = Math.floor(pulsePeriod * dutyCycle / (clkPeriod * prescale));
+    const lowCounts = Math.floor(pulsePeriod * (1 - dutyCycle) / (clkPeriod * prescale));
+    
+    captureData.tsctr = 0;
+    captureData.cap1 = highCounts;
+    captureData.cap2 = highCounts + lowCounts;
+    captureData.cap3 = highCounts + lowCounts + highCounts;
+    captureData.cap4 = highCounts + lowCounts + highCounts + lowCounts;
+    
+    document.getElementById('tsctrVal').textContent = captureData.tsctr;
+    document.getElementById('cap1Val').textContent = captureData.cap1;
+    document.getElementById('cap2Val').textContent = captureData.cap2;
+    document.getElementById('cap3Val').textContent = captureData.cap3;
+    document.getElementById('cap4Val').textContent = captureData.cap4;
+    
+    const periodCounts = captureData.cap2 - captureData.cap1;
+    const highWidthCounts = captureData.cap3 - captureData.cap2;
+    const lowWidthCounts = captureData.cap4 - captureData.cap3;
+    
+    const actualPeriod = periodCounts * clkPeriod * prescale * 1000000;
+    const actualHighWidth = highWidthCounts * clkPeriod * prescale * 1000000;
+    const actualLowWidth = lowWidthCounts * clkPeriod * prescale * 1000000;
+    const actualDutyCycle = (actualHighWidth / actualPeriod * 100).toFixed(1);
+    const actualFreq = 1 / (actualPeriod / 1000000);
+    
+    document.getElementById('periodVal').textContent = actualPeriod.toFixed(2) + 'us';
+    document.getElementById('highWidthVal').textContent = actualHighWidth.toFixed(2) + 'us';
+    document.getElementById('lowWidthVal').textContent = actualLowWidth.toFixed(2) + 'us';
+    document.getElementById('dutyCycleVal').textContent = actualDutyCycle + '%';
+    document.getElementById('freqVal').textContent = (actualFreq / 1000).toFixed(2) + 'kHz';
+    
+    drawCaptureMarkers();
+}
+
+function drawCaptureMarkers() {
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    const inputFreq = parseFloat(document.getElementById('inputFreq').value) || 10000;
+    const prescale = parseInt(document.getElementById('prescale').value) || 1;
+    
+    const dutyCycle = 0.3;
+    const period = 1 / inputFreq;
+    const pixelsPerUs = width / (period * 1000000 * 2);
+    
+    const high = height * 0.3;
+    const low = height * 0.7;
+    
+    ctx.fillStyle = '#ff6b6b';
+    
+    if(captureData.cap1 !== null) {
+        const x1 = captureData.cap1 * (1/(parseFloat(document.getElementById('sysClk').value) * 1000000) * prescale) * pixelsPerUs * 1000000;
+        ctx.beginPath();
+        ctx.arc(Math.min(x1, width-10), high - 15, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Microsoft YaHei';
+        ctx.fillText('CAP1', Math.min(x1, width-30), high - 25);
+        ctx.fillStyle = '#ff6b6b';
+    }
+    
+    if(captureData.cap2 !== null) {
+        const x2 = captureData.cap2 * (1/(parseFloat(document.getElementById('sysClk').value) * 1000000) * prescale) * pixelsPerUs * 1000000;
+        ctx.beginPath();
+        ctx.arc(Math.min(x2, width-10), low + 15, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Microsoft YaHei';
+        ctx.fillText('CAP2', Math.min(x2, width-30), low + 30);
+        ctx.fillStyle = '#ff6b6b';
+    }
+    
+    if(captureData.cap3 !== null) {
+        const x3 = captureData.cap3 * (1/(parseFloat(document.getElementById('sysClk').value) * 1000000) * prescale) * pixelsPerUs * 1000000;
+        ctx.beginPath();
+        ctx.arc(Math.min(x3, width-10), high - 15, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Microsoft YaHei';
+        ctx.fillText('CAP3', Math.min(x3, width-30), high - 25);
+        ctx.fillStyle = '#ff6b6b';
+    }
+    
+    if(captureData.cap4 !== null) {
+        const x4 = captureData.cap4 * (1/(parseFloat(document.getElementById('sysClk').value) * 1000000) * prescale) * pixelsPerUs * 1000000;
+        ctx.beginPath();
+        ctx.arc(Math.min(x4, width-10), low + 15, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Microsoft YaHei';
+        ctx.fillText('CAP4', Math.min(x4, width-30), low + 30);
+    }
+}
+
+function updateCode() {
+    const prescale = parseInt(document.getElementById('prescale').value) || 1;
+    const prescaleVal = [0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15][prescale/2] || 0;
+    
+    const edge1Pol = document.getElementById('edge1').value === 'rising' ? 0 : 1;
+    const edge2Pol = document.getElementById('edge2').value === 'rising' ? 0 : 1;
+    const edge3Pol = document.getElementById('edge3').value === 'rising' ? 0 : 1;
+    const edge4Pol = document.getElementById('edge4').value === 'rising' ? 0 : 1;
+    
+    const stopWrap = parseInt(document.getElementById('stopWrap').value) - 1;
+    const contMode = document.getElementById('contMode').value === 'continuous' ? 0 : 1;
+    
+    const code = `// eCAP初始化配置
+void InitECap(void)
+{
+    // 禁用ECAP，停止计数器
+    ECap1Regs.ECCTL2.bit.TSCTRSTOP = 0;
+    
+    // 配置捕获沿极性
+    ECap1Regs.ECCTL1.bit.CAP1POL = ${edge1Pol};  // ${edge1Pol === 0 ? '上升沿' : '下降沿'}
+    ECap1Regs.ECCTL1.bit.CAP2POL = ${edge2Pol};  // ${edge2Pol === 0 ? '上升沿' : '下降沿'}
+    ECap1Regs.ECCTL1.bit.CAP3POL = ${edge3Pol};  // ${edge3Pol === 0 ? '上升沿' : '下降沿'}
+    ECap1Regs.ECCTL1.bit.CAP4POL = ${edge4Pol};  // ${edge4Pol === 0 ? '上升沿' : '下降沿'}
+    
+    // 配置计数器复位
+    ECap1Regs.ECCTL1.bit.CTRRST1 = 0;
+    ECap1Regs.ECCTL1.bit.CTRRST2 = 0;
+    ECap1Regs.ECCTL1.bit.CTRRST3 = 0;
+    ECap1Regs.ECCTL1.bit.CTRRST4 = 0;
+    
+    // 配置预分频: ${prescale}分频
+    ECap1Regs.ECCTL1.bit.PRESCALE = ${prescaleVal};
+    
+    // 使能捕获寄存器加载
+    ECap1Regs.ECCTL1.bit.CAPLDEN = 1;
+    
+    // 配置连续/单次模式
+    ECap1Regs.ECCTL2.bit.CONT/ONESHT = ${contMode};  // ${contMode === 0 ? '连续模式' : '单次模式'}
+    
+    // 配置停止值
+    ECap1Regs.ECCTL2.bit.STOP_WRAP = ${stopWrap};
+    
+    // 启动计数器
+    ECap1Regs.ECCTL2.bit.TSCTRSTOP = 1;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+updateWaveform();
+updateCode();
+</script>
+</body>
+</html>

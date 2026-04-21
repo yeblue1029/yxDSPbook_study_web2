@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPIO引脚配置 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1400px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+select,input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+select:focus,input:focus{outline:none;border-color:#00d4ff}
+.pin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:15px}
+.pin{background:#080c1f;border:1px solid #1e2a5a;border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:all 0.2s}
+.pin:hover{border-color:#00d4ff;transform:translateY(-2px)}
+.pin.selected{border-color:#00ff88;background:#0d2818}
+.pin-number{color:#00d4ff;font-size:1.1em;font-weight:bold}
+.pin-state{font-size:0.75em;margin-top:5px}
+.pin-state.high{color:#ff6b6b}
+.pin-state.low{color:#00ff88}
+.pin-state.input{color:#ffcc00}
+.register-display{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.9em}
+.register-item .value{color:#00ff88;font-size:1.1em;font-weight:bold;margin-top:8px;word-break:break-all}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.85em;line-height:1.5;overflow-x:auto}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.function-indicator{display:inline-block;padding:4px 8px;background:#1e2a5a;border-radius:4px;font-size:0.8em;margin-top:5px}
+.function-indicator.gpio{background:#00d4ff;color:#0a0e27}
+.function-indicator.peripheral{background:#ff6b6b;color:#fff}
+.details-panel{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.info-text{color:#7a8ba8;font-size:0.85em;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+<h1>🔌 GPIO引脚配置模块</h1>
+<p class="info-text">通用数字量输入/输出 - 88个可配置引脚 | 多功能复用</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">GPIO组选择</h3>
+<div class="controls">
+<div class="control-group">
+<label>选择GPIO组</label>
+<select id="gpioGroup" onchange="selectGroup()">
+<option value="A">GPIO组A (GPIO0-GPIO31)</option>
+<option value="B">GPIO组B (GPIO32-GPIO63)</option>
+<option value="C">GPIO组C (GPIO64-GPIO87)</option>
+</select>
+</div>
+<div class="control-group">
+<label>引脚数量</label>
+<input type="text" id="pinCount" readonly style="background:#080c1f">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">引脚配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>选择引脚</label>
+<select id="selectedPin" onchange="updatePinDetails()">
+</select>
+</div>
+<div class="control-group">
+<label>复用功能 (GPAMUX)</label>
+<select id="pinMux" onchange="updatePinConfig()">
+<option value="0">GPIO功能</option>
+<option value="1">外设功能1</option>
+<option value="2">外设功能2</option>
+<option value="3">外设功能3</option>
+</select>
+</div>
+<div class="control-group">
+<label>方向 (GPADIR)</label>
+<select id="pinDir" onchange="updatePinConfig()">
+<option value="0">输入</option>
+<option value="1">输出</option>
+</select>
+</div>
+<div class="control-group">
+<label>上拉/下拉 (GPIOxPUD)</label>
+<select id="pinPull" onchange="updatePinConfig()">
+<option value="0">上拉使能</option>
+<option value="1">上拉禁止</option>
+</select>
+</div>
+</div>
+
+<div class="details-panel">
+<h4 style="color:#00d4ff;margin-bottom:10px">引脚详情 - GPIO<span id="detailPinNum">0</span></h4>
+<div class="controls">
+<div class="control-group">
+<label>输入量化模式 (GPAQSEL)</label>
+<select id="qualMode" onchange="updatePinConfig()">
+<option value="0">SYSCLKOUT同步</option>
+<option value="1">3次采样</option>
+<option value="2">6次采样</option>
+<option value="3">异步模式</option>
+</select>
+</div>
+<div class="control-group">
+<label>量化周期 (GPACTRL QUALPRD)</label>
+<select id="qualPeriod" onchange="updatePinConfig()">
+<option value="0">SYSCLKOUT</option>
+<option value="1">2×SYSCLKOUT</option>
+<option value="2">4×SYSCLKOUT</option>
+<option value="3">6×SYSCLKOUT</option>
+<option value="4">8×SYSCLKOUT</option>
+<option value="5">10×SYSCLKOUT</option>
+<option value="10">20×SYSCLKOUT</option>
+<option value="50">100×SYSCLKOUT</option>
+<option value="100">200×SYSCLKOUT</option>
+<option value="255">510×SYSCLKOUT</option>
+</select>
+</div>
+<div class="control-group">
+<label>模拟引脚状态</label>
+<select id="pinLevel" onchange="updatePinState()">
+<option value="high">高电平 (1)</option>
+<option value="low">低电平 (0)</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">GPIO引脚状态 <button class="btn" onclick="resetAllPins()" style="margin-left:20px">重置所有</button></h3>
+<div class="pin-grid" id="pinGrid"></div>
+<div class="register-display">
+<div class="register-item">
+<div class="name">GPxMUX (复用选择)</div>
+<div class="value" id="muxReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">GPxDIR (方向)</div>
+<div class="value" id="dirReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">GPxDAT (数据)</div>
+<div class="value" id="datReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">GPxPUD (上拉)</div>
+<div class="value" id="pudReg">0x00000000</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">GPIO操作演示</h3>
+<div class="btn-group">
+<button class="btn" onclick="togglePin()">🔄 翻转当前引脚</button>
+<button class="btn" onclick="setPinHigh()">⬆ 置高</button>
+<button class="btn" onclick="setPinLow()">⬇ 置低</button>
+<button class="btn" onclick="readPin()">📖 读取引脚</button>
+</div>
+<div class="details-panel" style="margin-top:15px">
+<h4 style="color:#00d4ff;margin-bottom:10px">操作结果</h4>
+<p id="operationResult" class="info-text">选择引脚并执行操作查看结果...</p>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// GPIO初始化配置
+void InitGpio(void)
+{
+    // 将所有GPIO配置为GPIO功能（而非外设功能）
+    EALLOW;
+    
+    // 配置GPIO0-GPIO31为通用GPIO
+    GpioCtrlRegs.GPAMUX1.all = 0x00000000;  // GPIO功能
+    GpioCtrlRegs.GPAMUX2.all = 0x00000000;  // GPIO功能
+    
+    // 配置方向：GPIO0-GPIO5为输出（LED），其余为输入
+    GpioCtrlRegs.GPADIR.all = 0x0000003F;   // 位0-5输出，位6-31输入
+    
+    // 禁止上拉
+    GpioCtrlRegs.GPAPUD.all = 0x00000000;   // 所有引脚上拉使能
+    
+    // 配置输入量化
+    GpioCtrlRegs.GPAQSEL1.all = 0x00000000; // SYSCLKOUT同步
+    GpioCtrlRegs.GPAQSEL2.all = 0x00000000; // SYSCLKOUT同步
+    
+    EDIS;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const gpioData = {
+    A: { pins: 32, muxReg: 0, dirReg: 0, datReg: 0, pudReg: 0, qualReg: 0, ctrlReg: 0 },
+    B: { pins: 32, muxReg: 0, dirReg: 0, datReg: 0, pudReg: 0, qualReg: 0, ctrlReg: 0 },
+    C: { pins: 24, muxReg: 0, dirReg: 0, datReg: 0, pudReg: 0, qualReg: 0, ctrlReg: 0 }
+};
+
+let currentGroup = 'A';
+let selectedPin = 0;
+
+function selectGroup() {
+    currentGroup = document.getElementById('gpioGroup').value;
+    document.getElementById('pinCount').value = `GPIO${currentGroup}: ${gpioData[currentGroup].pins}个引脚`;
+    
+    const pinSelect = document.getElementById('selectedPin');
+    pinSelect.innerHTML = '';
+    
+    const startPin = currentGroup === 'A' ? 0 : (currentGroup === 'B' ? 32 : 64);
+    for(let i = 0; i < gpioData[currentGroup].pins; i++) {
+        const option = document.createElement('option');
+        option.value = startPin + i;
+        option.textContent = `GPIO${startPin + i}`;
+        pinSelect.appendChild(option);
+    }
+    
+    renderPinGrid();
+    updatePinDetails();
+}
+
+function renderPinGrid() {
+    const grid = document.getElementById('pinGrid');
+    grid.innerHTML = '';
+    
+    const startPin = currentGroup === 'A' ? 0 : (currentGroup === 'B' ? 32 : 64);
+    
+    for(let i = 0; i < gpioData[currentGroup].pins; i++) {
+        const pinNum = startPin + i;
+        const pin = document.createElement('div');
+        pin.className = 'pin';
+        pin.id = `pin-${pinNum}`;
+        pin.onclick = () => selectPin(pinNum);
+        
+        const muxBit = (gpioData[currentGroup].muxReg >> (i * 2)) & 0x03;
+        const dirBit = (gpioData[currentGroup].dirReg >> i) & 0x01;
+        const datBit = (gpioData[currentGroup].datReg >> i) & 0x01;
+        
+        let funcClass = muxBit === 0 ? 'gpio' : 'peripheral';
+        let funcName = muxBit === 0 ? 'GPIO' : `P${muxBit}`;
+        let stateClass = '';
+        let stateText = '';
+        
+        if(muxBit === 0) {
+            if(dirBit === 0) {
+                stateClass = 'input';
+                stateText = '输入';
+            } else {
+                stateClass = datBit === 1 ? 'high' : 'low';
+                stateText = datBit === 1 ? '高' : '低';
+            }
+        } else {
+            stateText = funcName;
+        }
+        
+        pin.innerHTML = `
+            <div class="pin-number">${pinNum}</div>
+            <div class="pin-state ${stateClass}">${stateText}</div>
+            <span class="function-indicator ${funcClass}">${muxBit === 0 ? 'GPIO' : 'PERI'}</span>
+        `;
+        
+        grid.appendChild(pin);
+    }
+}
+
+function selectPin(pinNum) {
+    document.querySelectorAll('.pin').forEach(p => p.classList.remove('selected'));
+    const pin = document.getElementById(`pin-${pinNum}`);
+    if(pin) pin.classList.add('selected');
+    
+    document.getElementById('selectedPin').value = pinNum;
+    selectedPin = pinNum;
+    updatePinDetails();
+}
+
+function updatePinDetails() {
+    selectedPin = parseInt(document.getElementById('selectedPin').value);
+    document.getElementById('detailPinNum').textContent = selectedPin;
+    
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    
+    if(localIndex >= 0 && localIndex < gpioData[currentGroup].pins) {
+        const muxBit = (gpioData[currentGroup].muxReg >> (localIndex * 2)) & 0x03;
+        const dirBit = (gpioData[currentGroup].dirReg >> localIndex) & 0x01;
+        const pudBit = (gpioData[currentGroup].pudReg >> localIndex) & 0x01;
+        const qualBits = (gpioData[currentGroup].qualReg >> (localIndex * 2)) & 0x03;
+        
+        document.getElementById('pinMux').value = muxBit;
+        document.getElementById('pinDir').value = dirBit;
+        document.getElementById('pinPull').value = pudBit;
+        document.getElementById('qualMode').value = qualBits;
+        
+        updatePinConfig();
+    }
+}
+
+function updatePinConfig() {
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    
+    if(localIndex < 0 || localIndex >= gpioData[currentGroup].pins) return;
+    
+    const muxVal = parseInt(document.getElementById('pinMux').value);
+    const dirVal = parseInt(document.getElementById('pinDir').value);
+    const pudVal = parseInt(document.getElementById('pinPull').value);
+    const qualVal = parseInt(document.getElementById('qualMode').value);
+    const qualPeriod = parseInt(document.getElementById('qualPeriod').value);
+    
+    gpioData[currentGroup].muxReg &= ~(0x03 << (localIndex * 2));
+    gpioData[currentGroup].muxReg |= (muxVal << (localIndex * 2));
+    
+    gpioData[currentGroup].dirReg &= ~(1 << localIndex);
+    gpioData[currentGroup].dirReg |= (dirVal << localIndex);
+    
+    gpioData[currentGroup].pudReg &= ~(1 << localIndex);
+    gpioData[currentGroup].pudReg |= (pudVal << localIndex);
+    
+    gpioData[currentGroup].qualReg &= ~(0x03 << (localIndex * 2));
+    gpioData[currentGroup].qualReg |= (qualVal << (localIndex * 2));
+    
+    const qualPeriodShift = Math.floor(localIndex / 8) * 8;
+    gpioData[currentGroup].ctrlReg &= ~(0xFF << qualPeriodShift);
+    gpioData[currentGroup].ctrlReg |= (qualPeriod << qualPeriodShift);
+    
+    updateRegisterDisplay();
+    renderPinGrid();
+    
+    const pin = document.getElementById(`pin-${selectedPin}`);
+    if(pin) pin.classList.add('selected');
+    
+    updateCode();
+}
+
+function updateRegisterDisplay() {
+    document.getElementById('muxReg').textContent = '0x' + gpioData[currentGroup].muxReg.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('dirReg').textContent = '0x' + gpioData[currentGroup].dirReg.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('datReg').textContent = '0x' + gpioData[currentGroup].datReg.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('pudReg').textContent = '0x' + gpioData[currentGroup].pudReg.toString(16).toUpperCase().padStart(8, '0');
+}
+
+function updatePinState() {
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    const level = document.getElementById('pinLevel').value === 'high' ? 1 : 0;
+    
+    gpioData[currentGroup].datReg &= ~(1 << localIndex);
+    gpioData[currentGroup].datReg |= (level << localIndex);
+    
+    updateRegisterDisplay();
+    renderPinGrid();
+    
+    const pin = document.getElementById(`pin-${selectedPin}`);
+    if(pin) pin.classList.add('selected');
+}
+
+function togglePin() {
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    gpioData[currentGroup].datReg ^= (1 << localIndex);
+    
+    updateRegisterDisplay();
+    renderPinGrid();
+    
+    const newLevel = (gpioData[currentGroup].datReg >> localIndex) & 0x01;
+    document.getElementById('operationResult').innerHTML = `
+        <strong style="color:#00ff88">GPIO${selectedPin}</strong> 翻转成功<br>
+        当前状态: <strong style="color:${newLevel ? '#ff6b6b' : '#00ff88'}">${newLevel ? '高电平' : '低电平'}</strong><br>
+        GPxDAT寄存器值: 0x${gpioData[currentGroup].datReg.toString(16).toUpperCase().padStart(8, '0')}
+    `;
+}
+
+function setPinHigh() {
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    gpioData[currentGroup].datReg |= (1 << localIndex);
+    
+    updateRegisterDisplay();
+    renderPinGrid();
+    
+    document.getElementById('operationResult').innerHTML = `
+        <strong style="color:#00ff88">GPIO${selectedPin}</strong> 置高成功<br>
+        当前状态: <strong style="color:#ff6b6b">高电平</strong>
+    `;
+}
+
+function setPinLow() {
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    gpioData[currentGroup].datReg &= ~(1 << localIndex);
+    
+    updateRegisterDisplay();
+    renderPinGrid();
+    
+    document.getElementById('operationResult').innerHTML = `
+        <strong style="color:#00ff88">GPIO${selectedPin}</strong> 置低成功<br>
+        当前状态: <strong style="color:#00ff88">低电平</strong>
+    `;
+}
+
+function readPin() {
+    const localIndex = currentGroup === 'A' ? selectedPin : (currentGroup === 'B' ? selectedPin - 32 : selectedPin - 64);
+    const muxBit = (gpioData[currentGroup].muxReg >> (localIndex * 2)) & 0x03;
+    const dirBit = (gpioData[currentGroup].dirReg >> localIndex) & 0x01;
+    const datBit = (gpioData[currentGroup].datReg >> localIndex) & 0x01;
+    
+    let result = `<strong style="color:#00d4ff">GPIO${selectedPin}</strong> 读取结果<br>`;
+    result += `功能模式: ${muxBit === 0 ? 'GPIO' : '外设功能' + muxBit}<br>`;
+    result += `方向: ${dirBit === 0 ? '输入' : '输出'}<br>`;
+    
+    if(muxBit === 0 && dirBit === 0) {
+        result += `<strong style="color:${datBit ? '#ff6b6b' : '#00ff88'}">引脚电平: ${datBit ? '高' : '低'}</strong>`;
+    } else if(muxBit === 0 && dirBit === 1) {
+        result += `输出状态: <strong style="color:${datBit ? '#ff6b6b' : '#00ff88'}">${datBit ? '高' : '低'}</strong>`;
+    } else {
+        result += `<span style="color:#ffcc00">外设模式，无法直接读写GPIO数据</span>`;
+    }
+    
+    document.getElementById('operationResult').innerHTML = result;
+}
+
+function resetAllPins() {
+    gpioData[currentGroup] = { pins: gpioData[currentGroup].pins, muxReg: 0, dirReg: 0, datReg: 0, pudReg: 0, qualReg: 0, ctrlReg: 0 };
+    
+    updateRegisterDisplay();
+    renderPinGrid();
+    updatePinDetails();
+    updateCode();
+    
+    document.getElementById('operationResult').innerHTML = '<span style="color:#00ff88">所有引脚已重置为默认值</span>';
+}
+
+function updateCode() {
+    const mux1Val = gpioData['A'].muxReg & 0xFFFFFFFF;
+    const mux2Val = (gpioData['A'].muxReg >> 32) & 0xFFFFFFFF;
+    const dirVal = gpioData['A'].dirReg;
+    const pudVal = gpioData['A'].pudReg;
+    
+    const code = `// GPIO初始化配置
+void InitGpio(void)
+{
+    EALLOW;
+    
+    // 配置GPIO0-GPIO31复用功能
+    // 00=GPIO, 01=外设1, 10=外设2, 11=外设3
+    GpioCtrlRegs.GPAMUX1.all = 0x${mux1Val.toString(16).toUpperCase().padStart(8, '0')};
+    GpioCtrlRegs.GPAMUX2.all = 0x${mux2Val.toString(16).toUpperCase().padStart(8, '0')};
+    
+    // 配置GPIO方向
+    // 0=输入, 1=输出
+    GpioCtrlRegs.GPADIR.all = 0x${dirVal.toString(16).toUpperCase().padStart(8, '0')};
+    
+    // 配置上拉/下拉
+    // 0=上拉使能, 1=上拉禁止
+    GpioCtrlRegs.GPAPUD.all = 0x${pudVal.toString(16).toUpperCase().padStart(8, '0')};
+    
+    // 配置输入量化模式
+    GpioCtrlRegs.GPAQSEL1.all = 0x${gpioData['A'].qualReg.toString(16).toUpperCase().padStart(8, '0')};
+    GpioCtrlRegs.GPAQSEL2.all = 0x${((gpioData['A'].qualReg >> 32) & 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0')};
+    
+    EDIS;
+}
+
+// GPIO输出操作
+// 置高
+GpioDataRegs.GPASET.bit.GPIO0 = 1;
+
+// 置低
+GpioDataRegs.GPACLEAR.bit.GPIO0 = 1;
+
+// 翻转
+GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
+
+// 读取输入
+uint16_t level = GpioDataRegs.GPADAT.bit.GPIO0;`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+selectGroup();
+</script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XINTF外部接口配置 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+select,input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+select:focus,input:focus{outline:none;border-color:#00d4ff}
+.zone-visual{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin-top:15px}
+.zone-card{background:#080c1f;border:2px solid #1e2a5a;border-radius:8px;padding:15px;transition:all 0.3s}
+.zone-card.active{border-color:#00ff88}
+.zone-card .zone-title{color:#00d4ff;font-size:1em;margin-bottom:10px;display:flex;justify-content:space-between}
+.zone-card .zone-addr{color:#ffcc00;font-family:'Consolas',monospace;font-size:0.85em}
+.zone-card .zone-info{color:#7a8ba8;font-size:0.8em;margin-top:8px}
+.zone-card .zone-bar{height:6px;background:#1e2a5a;border-radius:3px;margin-top:10px;overflow:hidden}
+.zone-card .zone-fill{height:100%;background:#00ff88;transition:width 0.3s}
+.register-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.1em;font-weight:bold;margin-top:8px;font-family:'Consolas',monospace}
+.timing-diagram{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.timing-canvas{width:100%;height:150px;background:#000;border-radius:4px}
+.timing-legend{display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:0.85em}
+.timing-legend span{color:#7a8ba8}
+.timing-legend strong{color:#00d4ff}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn-zone{background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a}
+.btn-zone.active{background:#0d2818;color:#00ff88;border-color:#00ff88}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;line-height:1.5}
+.access-log{max-height:150px;overflow-y:auto;background:#000;border:1px solid #1e2a5a;border-radius:4px;padding:10px;font-family:'Consolas',monospace;font-size:0.8em}
+.access-log .read{color:#00d4ff}
+.access-log .write{color:#00ff88}
+.access-log .access{color:#ffcc00}
+</style>
+</head>
+<body>
+<header>
+<h1>🔌 XINTF外部接口配置</h1>
+<p class="info-text">外部存储接口 | 异步总线 | 区域0/6/7/8 | 16/32位数据总线</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">XINTF区域选择与配置</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px">
+<button class="btn btn-zone active" onclick="selectZone(0)">Zone 0</button>
+<button class="btn btn-zone" onclick="selectZone(6)">Zone 6</button>
+<button class="btn btn-zone" onclick="selectZone(7)">Zone 7</button>
+<button class="btn btn-zone" onclick="selectZone(8)">Zone 8</button>
+</div>
+<div class="controls">
+<div class="control-group">
+<label>基地址</label>
+<select id="baseAddr" onchange="updateZoneConfig()">
+<option value="0">0x000000 - Zone 0</option>
+<option value="1">0x100000 - Zone 6</option>
+<option value="2">0x200000 - Zone 7</option>
+<option value="3">3">0x300000 - Zone 8</option>
+</select>
+</div>
+<div class="control-group">
+<label>区域大小</label>
+<select id="zoneSize" onchange="updateZoneConfig()">
+<option value="0">1K × 16位</option>
+<option value="1">2K × 16位</option>
+<option value="2">4K × 16位</option>
+<option value="3">8K × 16位</option>
+<option value="4">16K × 16位</option>
+<option value="5">32K × 16位</option>
+<option value="6">64K × 16位</option>
+<option value="7">128K × 16位</option>
+<option value="8">256K × 16位</option>
+<option value="9">512K × 16位</option>
+<option value="10">1M × 16位</option>
+<option value="11">2M × 16位</option>
+<option value="12">4M × 16位</option>
+</select>
+</div>
+<div class="control-group">
+<label>リード育豫时间 (RREADY)</label>
+<select id="rleadtime" onchange="updateZoneConfig()">
+<option value="0">1 SYSCLKOUT</option>
+<option value="1">2 SYSCLKOUT</option>
+<option value="2">3 SYSCLKOUT</option>
+<option value="3">4 SYSCLKOUT</option>
+<option value="4">5 SYSCLKOUT</option>
+</select>
+</div>
+<div class="control-group">
+<label>写育豫时间 (WPLUS)</label>
+<select id="wplus" onchange="updateZoneConfig()">
+<option value="0">无额外周期</option>
+<option value="1">1额外周期</option>
+<option value="2">2额外周期</option>
+</select>
+</div>
+</div>
+<div class="controls">
+<div class="control-group">
+<label>XR/W高有效</label>
+<select id="xrwHigh" onchange="updateZoneConfig()">
+<option value="0">低有效</option>
+<option value="1">高有效</option>
+</select>
+</div>
+<div class="control-group">
+<label>CHIPSEL片选</label>
+<select id="chipSel" onchange="updateZoneConfig()">
+<option value="0">无片选</option>
+<option value="1">CS0</option>
+<option value="2">CS1</option>
+<option value="3">CS2</option>
+</select>
+</div>
+<div class="control-group">
+<label>同步/异步模式</label>
+<select id="syncMode" onchange="updateZoneConfig()">
+<option value="0">异步模式</option>
+<option value="1">同步模式</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">XINTF区域映射</h3>
+<div class="zone-visual">
+<div class="zone-card" id="zone0Card">
+<div class="zone-title">
+<span>Zone 0</span>
+<span class="zone-addr">0x000000 - 0x00FFFF</span>
+</div>
+<div class="zone-info">1K-64K × 16位 | 异步SRAM/Flash</div>
+<div class="zone-bar"><div class="zone-fill" id="zone0Fill" style="width:30%"></div></div>
+</div>
+<div class="zone-card" id="zone6Card">
+<div class="zone-title">
+<span>Zone 6</span>
+<span class="zone-addr">0x100000 - 0x1FFFFF</span>
+</div>
+<div class="zone-info">1M × 16位 | 异步SRAM</div>
+<div class="zone-bar"><div class="zone-fill" id="zone6Fill" style="width:50%"></div></div>
+</div>
+<div class="zone-card" id="zone7Card">
+<div class="zone-title">
+<span>Zone 7</span>
+<span class="zone-addr">0x200000 - 0x2FFFFF</span>
+</div>
+<div class="zone-info">1M × 16位 | 异步SRAM</div>
+<div class="zone-bar"><div class="zone-fill" id="zone7Fill" style="width:40%"></div></div>
+</div>
+<div class="zone-card" id="zone8Card">
+<div class="zone-title">
+<span>Zone 8</span>
+<span class="zone-addr">0x300000 - 0x3FFFFF</span>
+</div>
+<div class="zone-info">1M × 16位 | 保留</div>
+<div class="zone-bar"><div class="zone-fill" id="zone8Fill" style="width:10%"></div></div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">时序图</h3>
+<div class="timing-diagram">
+<canvas id="timingCanvas" class="timing-canvas"></canvas>
+<div class="timing-legend">
+<span><strong>CLK</strong> - 时钟</span>
+<span><strong>CS</strong> - 片选</span>
+<span><strong>WE</strong> - 写使能</span>
+<span><strong>OE</strong> - 输出使能</span>
+<span><strong>ADVR</strong> - 地址有效</span>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器状态</h3>
+<div class="register-grid">
+<div class="register-item">
+<div class="name">XINTCNF2</div>
+<div class="value" id="xintcnf2Reg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">XINTFCNF3</div>
+<div class="value" id="xintfconf3Reg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">Zone0 CS</div>
+<div class="value" id="zone0CsReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">Zone6 CS</div>
+<div class="value" id="zone6CsReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">Zone7 CS</div>
+<div class="value" id="zone7CsReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div name="name">访问计数">XINTFRD</div>
+<div class="value" id="accessCount">0</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">模拟访问测试</h3>
+<div class="controls">
+<div class="control-group">
+<label>访问地址 (十六进制)</label>
+<input type="text" id="accessAddr" value="0x100000" placeholder="0x100000">
+</div>
+<div class="control-group">
+<label>访问数据 (十六进制)</label>
+<input type="text" id="accessData" value="0xABCD" placeholder="写入的数据">
+</div>
+</div>
+<div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap">
+<button class="btn" onclick="simulateRead()">📖 读取引动访问</button>
+<button class="btn" onclick="simulateWrite()">📝 模拟写入</button>
+<button class="btn" onclick="simulateBurst()">🔥 突发传输</button>
+</div>
+<div class="access-log" id="accessLog" style="margin-top:15px">等待访问操作...</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// XINTF初始化配置
+void InitXintf(void)
+{
+    // 关闭所有zone访问
+    XintfRegs.XINTCNF2.bit.WRBUFFER = 0;
+    XintfRegs.XINTCNF2.bit.CLKMODE = 0;
+    XintfRegs.XINTCNF2.bit.CLKOFF = 1;
+    
+    // 配置Zone0
+    // XRDLEAD: 2 SYSCLKOUT
+    // XRD1: 1 SYSCLKOUT
+    // XRD2: 1 SYSCLKOUT
+    // XWRLEAD: 2 SYSCLKOUT
+    // XWR1: 1 SYSCLKOUT
+    // XWR2: 1 SYSCLKOUT
+    XintfRegs.XTIMCNT0.all = 0x00002211;
+    
+    // Zone6配置
+    XintfRegs.XTIMCNT6.all = 0x00003322;
+    XintfRegs.Z6ADDR.all = 0x100000;
+    XintfRegs.Z6CSCTL.all = 0x00000001;
+    
+    // Zone7配置
+    XintfRegs.XTIMCNT7.all = 0x00003322;
+    XintfRegs.Z7ADDR.all = 0x200000;
+    XintfRegs.Z7CSCTL.all = 0x00000001;
+    
+    // 切换到XINTF时钟
+    asm(" OR #0x0010, 0x26");
+}
+
+// 读取XINTF区域数据
+uint16_t XintfRead(uint32_t addr)
+{
+    return *(uint16_t *)addr;
+}
+
+// 写入XINTF区域数据
+void XintfWrite(uint32_t addr, uint16_t data)
+{
+    *(uint16_t *)addr = data;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const timingCanvas = document.getElementById('timingCanvas');
+const timingCtx = timingCanvas.getContext('2d');
+
+const zoneConfig = {
+    0: { enabled: true, base: 0x00000, size: 64, lead: 2, active: 1, rdy: 0, wplus: 0 },
+    6: { enabled: true, base: 0x100000, size: 1024, lead: 3, active: 3, rdy: 1, wplus: 0 },
+    7: { enabled: true, base: 0x200000, size: 1024, lead: 3, active: 3, rdy: 1, wplus: 0 },
+    8: { enabled: false, base: 0x300000, size: 1024, lead: 3, active: 3, rdy: 0, wplus: 0 }
+};
+
+let currentZone = 0;
+let accessCount = 0;
+let timingPhase = 0;
+let animationId = null;
+
+function selectZone(zone) {
+    currentZone = zone;
+    document.querySelectorAll('.btn-zone').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    drawTimingDiagram();
+}
+
+function updateZoneConfig() {
+    const lead = parseInt(document.getElementById('rleadtime').value);
+    const wplus = parseInt(document.getElementById('wplus').value);
+    const chipSel = parseInt(document.getElementById('chipSel').value);
+    
+    zoneConfig[currentZone] = {
+        enabled: chipSel > 0,
+        base: zoneConfig[currentZone].base,
+        size: zoneConfig[currentZone].size,
+        lead: lead + 1,
+        active: lead + 2,
+        rdy: document.getElementById('syncMode').value === '1' ? 1 : 0,
+        wplus: wplus
+    };
+    
+    updateRegisters();
+    updateZoneCards();
+    updateCode();
+    drawTimingDiagram();
+}
+
+function updateZoneCards() {
+    Object.keys(zoneConfig).forEach(zone => {
+        const card = document.getElementById(`zone${zone}Card`);
+        const fill = document.getElementById(`zone${zone}Fill`);
+        if(zoneConfig[zone].enabled) {
+            card.classList.add('active');
+            fill.style.width = (20 + Math.random() * 60) + '%';
+        } else {
+            card.classList.remove('active');
+            fill.style.width = '5%';
+        }
+    });
+}
+
+function updateRegisters() {
+    const xintcnf2 = 0x00080000 | (zoneConfig[6].rdy << 2);
+    document.getElementById('xintcnf2Reg').textContent = '0x' + xintcnf2.toString(16).toUpperCase().padStart(8, '0');
+    
+    const xintfconf3 = 0x00003000 | zoneConfig[0].lead;
+    document.getElementById('xintfconf3Reg').textContent = '0x' + xintfconf3.toString(16).toUpperCase().padStart(8, '0');
+    
+    document.getElementById('zone0CsReg').textContent = '0x' + (0x00002211 | (zoneConfig[0].enabled ? 0x00010000 : 0)).toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('zone6CsReg').textContent = '0x' + (0x00003322 | (zoneConfig[6].enabled ? 0x00010000 : 0)).toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('zone7CsReg').textContent = '0x' + (0x00003322 | (zoneConfig[7].enabled ? 0x00010000 : 0)).toString(16).toUpperCase().padStart(8, '0');
+}
+
+function drawTimingDiagram() {
+    const w = timingCanvas.offsetWidth;
+    const h = timingCanvas.offsetHeight;
+    
+    timingCanvas.width = w * 2;
+    timingCanvas.height = h * 2;
+    timingCtx.scale(2, 2);
+    
+    timingCtx.clearRect(0, 0, w, h);
+    
+    const signals = ['CLK', 'CS', 'WE', 'OE', 'ADVR', 'DATA'];
+    const signalHeight = h / (signals.length + 1);
+    
+    signals.forEach((name, i) => {
+        const y = (i + 0.5) * signalHeight;
+        
+        timingCtx.strokeStyle = '#1e2a5a';
+        timingCtx.lineWidth = 1;
+        timingCtx.beginPath();
+        timingCtx.moveTo(0, y);
+        timingCtx.lineTo(w, y);
+        timingCtx.stroke();
+        
+        timingCtx.fillStyle = '#7a8ba8';
+        timingCtx.font = '10px Consolas';
+        timingCtx.fillText(name, 5, y - 5);
+    });
+    
+    const zone = zoneConfig[currentZone];
+    const lead = zone.lead;
+    const active = zone.active;
+    const trail = 2;
+    const total = lead + active + trail;
+    
+    const drawHigh = (signalIdx, start, end) => {
+        const y = (signalIdx + 0.5) * signalHeight;
+        const x1 = (start / total) * w * 0.8 + w * 0.1;
+        const x2 = (end / total) * w * 0.8 + w * 0.1;
+        
+        timingCtx.strokeStyle = '#00d4ff';
+        timingCtx.lineWidth = 2;
+        timingCtx.beginPath();
+        timingCtx.moveTo(x1, y);
+        timingCtx.lineTo(x2, y);
+        timingCtx.stroke();
+    };
+    
+    const drawPulse = (signalIdx, start, mid, end, high) => {
+        const y = (signalIdx + 0.5) * signalHeight;
+        const x1 = (start / total) * w * 0.8 + w * 0.1;
+        const x2 = (mid / total) * w * 0.8 + w * 0.1;
+        const x3 = (end / total) * w * 0.8 + w * 0.1;
+        
+        timingCtx.strokeStyle = '#00d4ff';
+        timingCtx.lineWidth = 2;
+        timingCtx.beginPath();
+        timingCtx.moveTo(x1, y);
+        timingCtx.lineTo(x2, high ? y - 8 : y + 8);
+        timingCtx.lineTo(x3, y);
+        timingCtx.stroke();
+    };
+    
+    drawHigh(0, 0, total);
+    timingCtx.fillStyle = '#ff6b6b';
+    timingCtx.fillText('↑', (lead / total) * w * 0.8 + w * 0.1 - 10, signalHeight * 0.5 - 5);
+    
+    drawHigh(1, lead, lead + active);
+    drawHigh(2, lead + 1, lead + active - 1);
+    drawHigh(3, lead, lead + active);
+    
+    drawPulse(4, lead, lead + 1, lead + 2, false);
+    drawPulse(5, lead + active - 1, lead + active, lead + active + 1, true);
+    
+    timingCtx.fillStyle = '#00ff88';
+    timingCtx.font = '10px Consolas';
+    timingCtx.fillText('地址', w * 0.15, h - 10);
+    timingCtx.fillText('数据', w * 0.85, h - 10);
+}
+
+function simulateRead() {
+    const addr = parseInt(document.getElementById('accessAddr').value, 16) || 0;
+    accessCount++;
+    
+    const log = document.getElementById('accessLog');
+    const time = new Date().toLocaleTimeString();
+    const zone = getZoneFromAddr(addr);
+    
+    log.innerHTML += `<div class="read">[${time}] READ @ 0x${addr.toString(16).toUpperCase()} → Zone ${zone} → 0x${(Math.random() * 0xFFFF | 0).toString(16).toUpperCase().padStart(4, '0')}</div>`;
+    log.scrollTop = log.scrollHeight;
+    
+    document.getElementById('accessCount').textContent = accessCount;
+    animateAccess();
+}
+
+function simulateWrite() {
+    const addr = parseInt(document.getElementById('accessAddr').value, 16) || 0;
+    const data = parseInt(document.getElementById('accessData').value, 16) || 0;
+    accessCount++;
+    
+    const log = document.getElementById('accessLog');
+    const time = new Date().toLocaleTimeString();
+    const zone = getZoneFromAddr(addr);
+    
+    log.innerHTML += `<div class="write">[${time}] WRITE @ 0x${addr.toString(16).toUpperCase()} ← 0x${data.toString(16).toUpperCase().padStart(4, '0')} (Zone ${zone})</div>`;
+    log.scrollTop = log.scrollHeight;
+    
+    document.getElementById('accessCount').textContent = accessCount;
+    animateAccess();
+}
+
+function simulateBurst() {
+    const addr = parseInt(document.getElementById('accessAddr').value, 16) || 0;
+    accessCount += 4;
+    
+    const log = document.getElementById('accessLog');
+    const time = new Date().toLocaleTimeString();
+    
+    log.innerHTML += `<div class="access">[${time}] BURST @ 0x${addr.toString(16).toUpperCase()} × 4 words</div>`;
+    log.scrollTop = log.scrollHeight;
+    
+    document.getElementById('accessCount').textContent = accessCount;
+    animateAccess();
+}
+
+function getZoneFromAddr(addr) {
+    if(addr >= 0x100000 && addr < 0x200000) return 6;
+    if(addr >= 0x200000 && addr < 0x300000) return 7;
+    if(addr >= 0x300000 && addr < 0x400000) return 8;
+    return 0;
+}
+
+function animateAccess() {
+    if(animationId) return;
+    
+    let phase = 0;
+    const animate = () => {
+        phase++;
+        drawTimingDiagram();
+        
+        if(phase < 20) {
+            animationId = requestAnimationFrame(animate);
+        } else {
+            animationId = null;
+        }
+    };
+    
+    animationId = requestAnimationFrame(animate);
+}
+
+function updateCode() {
+    const code = `// XINTF初始化配置
+void InitXintf(void)
+{
+    // 禁用写缓冲
+    XintfRegs.XINTCNF2.bit.WRBUFFER = 0;
+    XintfRegs.XINTCNF2.bit.CLKMODE = 0;
+    XintfRegs.XINTCNF2.bit.CLKOFF = 1;
+    
+    // Zone0时序配置
+    XintfRegs.XTIMCNT0.bit.XRDLEAD = ${zoneConfig[0].lead};
+    XintfRegs.XTIMCNT0.bit.XRD1 = 1;
+    XintfRegs.XTIMCNT0.bit.XRD2 = 1;
+    XintfRegs.XTIMCNT0.bit.XWRLEAD = ${zoneConfig[0].lead};
+    XintfRegs.XTIMCNT0.bit.XWR1 = 1;
+    XintfRegs.XTIMCNT0.bit.XWR2 = 1;
+    
+    // Zone6时序配置
+    XintfRegs.XTIMCNT6.bit.XRDLEAD = ${zoneConfig[6].lead};
+    XintfRegs.XTIMCNT6.bit.XRD1 = ${zoneConfig[6].active};
+    XintfRegs.XTIMCNT6.bit.XRD2 = 1;
+    XintfRegs.XTIMCNT6.bit.XWRLEAD = ${zoneConfig[6].lead};
+    XintfRegs.XTIMCNT6.bit.XWR1 = ${zoneConfig[6].active};
+    XintfRegs.XTIMCNT6.bit.XWR2 = 1;
+    XintfRegs.Z6ADDR.all = 0x100000;
+    XintfRegs.Z6CSCTL.all = 0x00000001;
+    
+    // Zone7时序配置
+    XintfRegs.XTIMCNT7.all = XintfRegs.XTIMCNT6.all;
+    XintfRegs.Z7ADDR.all = 0x200000;
+    XintfRegs.Z7CSCTL.all = 0x00000001;
+}
+
+// 读取XINTF
+uint16_t XintfRead${currentZone}(uint32_t addr)
+{
+    return *(volatile uint16_t *)addr;
+}
+
+// 写入XINTF
+void XintfWrite${currentZone}(uint32_t addr, uint16_t data)
+{
+    *(volatile uint16_t *)addr = data;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+window.addEventListener('resize', () => {
+    drawTimingDiagram();
+});
+
+updateZoneConfig();
+drawTimingDiagram();
+</script>
+</body>
+</html>
