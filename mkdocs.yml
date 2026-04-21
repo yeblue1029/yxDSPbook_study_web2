@@ -4,20 +4,20 @@ theme:
 
 nav:
   - 首页: index.md
-  - 第2章 芯片资源: chapter2/chapter2.md
-  - 第3章 寄存器与中断: chapter3/chapter3.md
-  - 第4章 时钟与看门狗: chapter4/chapter4.md
-  - 第5章 GPIO: chapter5/chapter5.md
-  - 第6章 CPU定时器: chapter6/chapter6.md
-  - 第7章: chapter7/chapter7.md
-  - 第8章: chapter8/chapter8.md
-  - 第9章: chapter9/chapter9.md
-  - 第10章: chapter10/chapter10.md
-  - 第11章: chapter11/chapter11.md
-  - 第12章: chapter12/chapter12.md
-  - 第13章: chapter13/chapter13.md
-  - 第14章: chapter14/chapter14.md
-  - 第15章: chapter15/chapter15.md
-  - 第16章: chapter16/chapter16.md
-  - 第17章: chapter17/chapter17.md
+  - 第2章 TMS320F28335芯片资源: chapter2/chapter2.md
+  - 第3章 F28335的时钟电路及系统控制: chapter3/chapter3.md
+  - 第4章 F28335的存储器及其地址分配: chapter4/chapter4.md
+  - 第5章 F28335中断系统及应用: chapter5/chapter5.md
+  - 第6章 通用数字量输入/输出(GPIO): chapter6/chapter6.md
+  - 第7章 增强型脉宽调制模块(ePWM): chapter7/chapter7.md
+  - 第8章 增强型脉冲捕获模块(eCAP): chapter8/chapter8.md
+  - 第9章 增强型正交编码模块(eQEP): chapter9/chapter9.md
+  - 第10章 ADC转换单元: chapter10/chapter10.md
+  - 第11章 直接存储器访问(DMA)模块: chapter11/chapter11.md
+  - 第12章 F28335的串行通信(SCI): chapter12/chapter12.md
+  - 第13章 SPI高速同步串行输入/输出端口: chapter13/chapter13.md
+  - 第14章 F28335的I2C串行通信: chapter14/chapter14.md
+  - 第15章 F28335 BOOT ROM引导模式和程序: chapter15/chapter15.md
+  - 第16章 基于F28335的μC/OS-II移植: chapter16/chapter16.md
+  - 第17章 基于F28335的无刷直流电机控制应用: chapter17/chapter17.md
   - 🛠️ 交互演示模块: interactive/index.html
