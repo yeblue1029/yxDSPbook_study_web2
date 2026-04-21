@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPI时钟极性与相位(CPOL & CPHA) — 模式动态波形匹配</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.5em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:15px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:18px;flex:1;min-width:320px}
+.panel-title{color:#00d4ff;font-size:1em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1e2a5a}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.mode-card{background:#080c1f;border:2px solid #1e2a5a;border-radius:8px;padding:12px;cursor:pointer;transition:all 0.3s;text-align:center}
+.mode-card:hover{border-color:#00d4ff}
+.mode-card.active{border-color:#00ff88;background:rgba(0,255,136,0.05);box-shadow:0 0 15px rgba(0,255,136,0.1)}
+.mode-card .mode-num{font-size:1.5em;font-weight:bold;font-family:'Consolas',monospace}
+.mode-card .mode-name{font-size:0.8em;color:#7a8ba8;margin-top:4px}
+.mode-card .mode-detail{font-size:0.7em;color:#555;margin-top:2px}
+.switch-row{display:flex;align-items:center;gap:12px;margin:10px 0}
+.switch-row .label{color:#7a8ba8;min-width:100px;font-size:0.85em;font-family:'Consolas',monospace}
+.switch{position:relative;width:52px;height:26px;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;top:0;left:0;right:0;bottom:0;background:#1e2a5a;border-radius:13px;transition:0.3s}
+.slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#555;border-radius:50%;transition:0.3s}
+.switch input:checked+.slider{background:#00d4ff}
+.switch input:checked+.slider:before{transform:translateX(26px);background:#fff}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:12px;margin-top:8px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111633;font-size:0.85em}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{font-weight:bold;font-family:'Consolas',monospace}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.data-input{margin:10px 0}
+.data-input label{display:block;color:#7a8ba8;margin-bottom:4px;font-size:0.82em}
+.data-input input{width:100%;padding:6px 10px;background:#1e2a5a;color:#00ff88;border:1px solid #2a3a7a;border-radius:6px;font-family:'Consolas',monospace;font-size:0.9em}
+</style>
+</head>
+<body>
+<h1>🔧 SPI时钟极性与相位 (CPOL & CPHA)</h1>
+<p class="subtitle">第13章 13.2 F28335的SPI模块 — 4种SPI模式动态波形匹配</p>
+
+<div class="container">
+<div class="panel" style="max-width:380px">
+<div class="panel-title">🎯 SPI模式选择</div>
+<div class="mode-grid">
+<div class="mode-card active" id="mode0" onclick="setMode(0)">
+<div class="mode-num" style="color:#00ff88">Mode 0</div>
+<div class="mode-name">CPOL=0, CPHA=0</div>
+<div class="mode-detail">空闲低电平·奇数边沿采样</div>
+</div>
+<div class="mode-card" id="mode1" onclick="setMode(1)">
+<div class="mode-num" style="color:#00d4ff">Mode 1</div>
+<div class="mode-name">CPOL=0, CPHA=1</div>
+<div class="mode-detail">空闲低电平·偶数边沿采样</div>
+</div>
+<div class="mode-card" id="mode2" onclick="setMode(2)">
+<div class="mode-num" style="color:#ffaa00">Mode 2</div>
+<div class="mode-name">CPOL=1, CPHA=0</div>
+<div class="mode-detail">空闲高电平·奇数边沿采样</div>
+</div>
+<div class="mode-card" id="mode3" onclick="setMode(3)">
+<div class="mode-num" style="color:#ff6b6b">Mode 3</div>
+<div class="mode-name">CPOL=1, CPHA=1</div>
+<div class="mode-detail">空闲高电平·偶数边沿采样</div>
+</div>
+</div>
+
+<div class="panel-title" style="margin-top:12px">⚙️ 手动配置</div>
+<div class="switch-row">
+<span class="label">CPOL (时钟极性)</span>
+<label class="switch"><input type="checkbox" id="cpol" onchange="updateFromSwitch()"><span class="slider"></span></label>
+<span style="color:#7a8ba8;font-size:0.8em" id="cpolText">0 (空闲低)</span>
+</div>
+<div class="switch-row">
+<span class="label">CPHA (时钟相位)</span>
+<label class="switch"><input type="checkbox" id="cpha" onchange="updateFromSwitch()"><span class="slider"></span></label>
+<span style="color:#7a8ba8;font-size:0.8em" id="cphaText">0 (奇数边沿)</span>
+</div>
+
+<div class="data-input">
+<label>发送数据 (十六进制)</label>
+<input type="text" id="txData" value="0xA5" onchange="draw()">
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">当前模式</span>
+<span class="result-value" id="r_mode" style="color:#00ff88">Mode 0</span>
+</div>
+<div class="result-row">
+<span class="result-label">SPICLK空闲电平</span>
+<span class="result-value" id="r_idle" style="color:#00d4ff">低 (LOW)</span>
+</div>
+<div class="result-row">
+<span class="result-label">数据采样边沿</span>
+<span class="result-value" id="r_sample" style="color:#ffaa00">奇数(第1个)</span>
+</div>
+<div class="result-row">
+<span class="result-label">数据移位边沿</span>
+<span class="result-value" id="r_shift" style="color:#aa66ff">偶数(第2个)</span>
+</div>
+<div class="result-row">
+<span class="result-label">常见设备</span>
+<span class="result-value" id="r_devices" style="color:#7a8ba8;font-size:0.8em">ADC, DAC, Flash</span>
+</div>
+</div>
+</div>
+
+<div class="panel" style="flex:2;min-width:500px">
+<div class="panel-title">📊 SPI时序波形</div>
+<canvas id="spiCanvas" height="420"></canvas>
+
+<div class="result-box" style="margin-top:10px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 6px 0;font-size:0.9em">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.75em;white-space:pre-wrap;line-height:1.5"></pre>
+</div>
+</div>
+</div>
+
+<script>
+const canvas=document.getElementById('spiCanvas');
+const ctx=canvas.getContext('2d');
+let currentMode=0;
+
+const modeInfo=[
+{name:'Mode 0',cpol:0,cpha:0,idle:'低 (LOW)',sample:'奇数(第1个)',shift:'偶数(第2个)',devices:'ADC, DAC, Flash, 大部分SPI设备',color:'#00ff88'},
+{name:'Mode 1',cpol:0,cpha:1,idle:'低 (LOW)',sample:'偶数(第2个)',shift:'奇数(第1个)',devices:'少数传感器',color:'#00d4ff'},
+{name:'Mode 2',cpol:1,cpha:0,idle:'高 (HIGH)',sample:'奇数(第1个)',shift:'偶数(第2个)',devices:'部分MCU',color:'#ffaa00'},
+{name:'Mode 3',cpol:1,cpha:1,idle:'高 (HIGH)',sample:'偶数(第2个)',shift:'奇数(第1个)',devices:'SD卡, 部分传感器',color:'#ff6b6b'}
+];
+
+function setMode(m){
+currentMode=m;
+document.querySelectorAll('.mode-card').forEach((el,i)=>el.className='mode-card'+(i===m?' active':''));
+document.getElementById('cpol').checked=m>=2;
+document.getElementById('cpha').checked=m%2===1;
+updateInfo();
+draw();
+}
+
+function updateFromSwitch(){
+const cpol=document.getElementById('cpol').checked?1:0;
+const cpha=document.getElementById('cpha').checked?1:0;
+const m=cpol*2+cpha;
+setMode(m);
+}
+
+function updateInfo(){
+const info=modeInfo[currentMode];
+document.getElementById('cpolText').textContent=document.getElementById('cpol').checked?'1 (空闲高)':'0 (空闲低)';
+document.getElementById('cphaText').textContent=document.getElementById('cpha').checked?'1 (偶数边沿)':'0 (奇数边沿)';
+document.getElementById('r_mode').textContent=info.name;
+document.getElementById('r_mode').style.color=info.color;
+document.getElementById('r_idle').textContent=info.idle;
+document.getElementById('r_sample').textContent=info.sample;
+document.getElementById('r_shift').textContent=info.shift;
+document.getElementById('r_devices').textContent=info.devices;
+
+const code=`// F28335 SPI模式配置
+SpiaRegs.SPICCR.bit.CLKPOLARITY = ${info.cpol};  // CPOL = ${info.cpol} (${info.cpol?'空闲高电平':'空闲低电平'})
+SpiaRegs.SPICTL.bit.CLK_PHASE = ${info.cpha};     // CPHA = ${info.cpha} (${info.cpha?'偶数边沿采样':'奇数边沿采样'})
+
+// 当前配置: SPI ${info.name}
+// SPICLK空闲电平: ${info.idle}
+// 数据采样: ${info.sample}边沿
+// 数据移位: ${info.shift}边沿
+// 常见设备: ${info.devices}
+
+SpiaRegs.SPICCR.bit.SPICHAR = 0x7;   // 8位数据长度
+SpiaRegs.SPIBRR = 0x7F;              // 波特率 = LSPCLK/128`;
+document.getElementById('codeOutput').textContent=code;
+}
+
+function draw(){
+const dpr=window.devicePixelRatio||1;
+const w=canvas.clientWidth;const h=420;
+canvas.width=w*dpr;canvas.height=h*dpr;
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
+
+const cpol=currentMode>=2?1:0;
+const cpha=currentMode%2===1?1:0;
+
+const txHex=document.getElementById('txData').value;
+const txVal=parseInt(txHex,16)||0xA5;
+const bits=[];
+for(let i=7;i>=0;i--)bits.push((txVal>>i)&1);
+
+const pad={l:60,r:20,t:30,b:40};
+const plotW=w-pad.l-pad.r;
+const sections=3;
+const secH=(h-pad.t-pad.b)/sections;
+const bitWidth=plotW/10;
+const startX=pad.l+bitWidth;
+
+drawCLK(0);
+drawMOSI(1);
+drawSS(2);
+
+function drawCLK(idx){
+const y0=pad.t+idx*secH;
+const plotH=secH-30;
+
+ctx.fillStyle='#7a8ba8';ctx.font='11px Microsoft YaHei';ctx.textAlign='left';
+ctx.fillText('SPICLK (CPOL='+cpol+')',pad.l,y0-3);
+
+ctx.strokeStyle='#1e2a5a';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(pad.l,y0+5);ctx.lineTo(pad.l+plotW,y0+5);ctx.stroke();
+ctx.beginPath();ctx.moveTo(pad.l,y0+5+plotH);ctx.lineTo(pad.l+plotW,y0+5+plotH);ctx.stroke();
+
+ctx.fillStyle='#555';ctx.font='8px Consolas';ctx.textAlign='right';
+ctx.fillText(cpol?'H':'L',pad.l-4,y0+12);
+ctx.fillText(cpol?'L':'H',pad.l-4,y0+5+plotH);
+
+const idleY=cpol?y0+5:y0+5+plotH;
+const activeY=cpol?y0+5+plotH:y0+5;
+
+ctx.strokeStyle='#00d4ff';ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(pad.l,idleY);ctx.lineTo(startX,idleY);
+
+for(let i=0;i<8;i++){
+const x1=startX+i*bitWidth;
+const x2=startX+(i+1)*bitWidth;
+if(cpha===0){
+ctx.lineTo(x1,activeY);ctx.lineTo(x2,activeY);
+ctx.lineTo(x2,idleY);
+}else{
+ctx.lineTo(x1,activeY);ctx.lineTo(x1+bitWidth/2,activeY);
+ctx.lineTo(x1+bitWidth/2,idleY);ctx.lineTo(x2,idleY);
+}
+}
+ctx.lineTo(pad.l+plotW,idleY);
+ctx.stroke();
+
+for(let i=0;i<8;i++){
+const edgeX=cpha===0?startX+i*bitWidth:startX+i*bitWidth+bitWidth/2;
+const isSample=(cpha===0&&i%2===0)||(cpha===1&&i%2===1);
+if(isSample){
+ctx.strokeStyle='#ff6b6b';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+ctx.beginPath();ctx.moveTo(edgeX,y0);ctx.lineTo(edgeX,y0+5+plotH);ctx.stroke();
+ctx.setLineDash([]);
+ctx.fillStyle='#ff6b6b';ctx.font='8px Consolas';ctx.textAlign='center';
+ctx.fillText('采样',edgeX,y0+5+plotH+12);
+}else{
+ctx.strokeStyle='#00ff88';ctx.lineWidth=1;ctx.setLineDash([2,4]);
+ctx.beginPath();ctx.moveTo(edgeX,y0);ctx.lineTo(edgeX,y0+5+plotH);ctx.stroke();
+ctx.setLineDash([]);
+}
+}
+}
+
+function drawMOSI(idx){
+const y0=pad.t+idx*secH;
+const plotH=secH-30;
+
+ctx.fillStyle='#7a8ba8';ctx.font='11px Microsoft YaHei';ctx.textAlign='left';
+ctx.fillText('SPISIMO/MOSI (0x'+txVal.toString(16).toUpperCase()+')',pad.l,y0-3);
+
+ctx.strokeStyle='#1e2a5a';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(pad.l,y0+5);ctx.lineTo(pad.l+plotW,y0+5);ctx.stroke();
+ctx.beginPath();ctx.moveTo(pad.l,y0+5+plotH);ctx.lineTo(pad.l+plotW,y0+5+plotH);ctx.stroke();
+
+ctx.fillStyle='#555';ctx.font='8px Consolas';ctx.textAlign='right';
+ctx.fillText('H',pad.l-4,y0+12);ctx.fillText('L',pad.l-4,y0+5+plotH);
+
+ctx.strokeStyle='#00ff88';ctx.lineWidth=2;
+ctx.beginPath();
+const setupX=cpha===0?startX:startX-bitWidth/2;
+ctx.moveTo(pad.l,y0+5+plotH-bits[0]*plotH);
+ctx.lineTo(setupX,y0+5+plotH-bits[0]*plotH);
+
+for(let i=0;i<8;i++){
+const x=startX+i*bitWidth;
+if(cpha===1){
+const shiftX=x-bitWidth/2;
+ctx.lineTo(shiftX,y0+5+plotH-bits[i]*plotH);
+}
+ctx.lineTo(x,y0+5+plotH-bits[i]*plotH);
+if(i<7&&bits[i]!==bits[i+1]){
+ctx.lineTo(x,y0+5+plotH-bits[i]*plotH);
+ctx.lineTo(x,y0+5+plotH-bits[i+1]*plotH);
+}
+}
+ctx.lineTo(startX+8*bitWidth,y0+5+plotH-bits[7]*plotH);
+ctx.lineTo(pad.l+plotW,y0+5+plotH-bits[7]*plotH);
+ctx.stroke();
+
+for(let i=0;i<8;i++){
+const x=startX+i*bitWidth;
+ctx.fillStyle='#7a8ba8';ctx.font='9px Consolas';ctx.textAlign='center';
+ctx.fillText('D'+(7-i)+'='+bits[i],x+bitWidth/2,y0+5+plotH+12);
+}
+}
+
+function drawSS(idx){
+const y0=pad.t+idx*secH;
+const plotH=secH-30;
+
+ctx.fillStyle='#7a8ba8';ctx.font='11px Microsoft YaHei';ctx.textAlign='left';
+ctx.fillText('SPISTE/SS (片选)',pad.l,y0-3);
+
+ctx.strokeStyle='#1e2a5a';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(pad.l,y0+5);ctx.lineTo(pad.l+plotW,y0+5);ctx.stroke();
+ctx.beginPath();ctx.moveTo(pad.l,y0+5+plotH);ctx.lineTo(pad.l+plotW,y0+5+plotH);ctx.stroke();
+
+ctx.fillStyle='#555';ctx.font='8px Consolas';ctx.textAlign='right';
+ctx.fillText('H',pad.l-4,y0+12);ctx.fillText('L',pad.l-4,y0+5+plotH);
+
+ctx.strokeStyle='#aa66ff';ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(pad.l,y0+5);
+ctx.lineTo(startX-bitWidth/2,y0+5);
+ctx.lineTo(startX-bitWidth/2,y0+5+plotH);
+ctx.lineTo(startX+8*bitWidth+bitWidth/2,y0+5+plotH);
+ctx.lineTo(startX+8*bitWidth+bitWidth/2,y0+5);
+ctx.lineTo(pad.l+plotW,y0+5);
+ctx.stroke();
+
+ctx.fillStyle='rgba(170,102,255,0.1)';
+ctx.fillRect(startX-bitWidth/2,y0+5,8*bitWidth+bitWidth,plotH);
+}
+}
+
+document.getElementById('cpol').addEventListener('change',updateFromSwitch);
+document.getElementById('cpha').addEventListener('change',updateFromSwitch);
+window.addEventListener('resize',draw);
+updateInfo();
+draw();
+</script>
+</body>
+</html>

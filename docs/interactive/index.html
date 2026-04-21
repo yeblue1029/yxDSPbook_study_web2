@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 F28335 DSP 交互式学习资源</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:2em}
+.subtitle{color:#7a8ba8;font-size:1.1em}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.search-bar{display:flex;gap:10px;max-width:600px;margin:0 auto 30px auto}
+.search-bar input{flex:1;padding:12px 16px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:8px;font-size:0.9em}
+.search-bar button{padding:12px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:8px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.search-bar button:hover{background:#00a8d4;transform:translateY(-1px)}
+.categories{margin-bottom:40px}
+.category-title{color:#00d4ff;font-size:1.3em;margin-bottom:15px;padding-bottom:8px;border-bottom:2px solid #1e2a5a}
+.components-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.component-card{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;transition:all 0.3s;cursor:pointer}
+.component-card:hover{transform:translateY(-4px);box-shadow:0 8px 25px rgba(0,212,255,0.15);border-color:#00d4ff}
+.component-card h3{color:#00d4ff;margin-bottom:8px;font-size:1.1em}
+.component-card p{color:#7a8ba8;font-size:0.85em;line-height:1.4;margin-bottom:12px}
+.component-card .tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
+.tag{padding:3px 8px;background:#080c1f;border:1px solid #1e2a5a;border-radius:4px;font-size:0.7em;color:#00ff88}
+.component-card .link{display:inline-block;padding:8px 12px;background:#080c1f;border:1px solid #1e2a5a;border-radius:6px;color:#00d4ff;text-decoration:none;font-size:0.8em;transition:all 0.2s}
+.component-card .link:hover{background:#00d4ff;color:#0a0e27}
+footer{background:linear-gradient(135deg,#111633,#0d1229);border-top:1px solid #1e2a5a;padding:20px 0;text-align:center;margin-top:60px}
+footer p{color:#7a8ba8;font-size:0.85em}
+@media (max-width:768px){
+.components-grid{grid-template-columns:1fr}
+.search-bar{flex-direction:column}
+.search-bar button{width:100%}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>🔧 F28335 DSP 交互式学习资源</h1>
+<p class="subtitle">实时可视化 · 交互体验 · 快速入门</p>
+</header>
+
+<div class="container">
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="搜索组件...">
+<button onclick="searchComponents()">🔍 搜索</button>
+</div>
+
+<div class="categories">
+<h2 class="category-title">⏰ 时钟与系统</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/pll_clock.html'">
+<h3>🔄 PLL锁相环时钟配置</h3>
+<p>实时配置PLL寄存器，计算系统时钟频率，支持多种倍频模式</p>
+<div class="tags">
+<span class="tag">PLL</span>
+<span class="tag">时钟</span>
+<span class="tag">系统</span>
+</div>
+<a href="components/pll_clock.html" class="link">打开组件 ↗</a>
+</div>
+
+<div class="component-card" onclick="window.location.href='components/watchdog.html'">
+<h3>🐶 喂狗与复位倒计时</h3>
+<p>模拟看门狗定时器工作原理，实时显示倒计时和复位触发条件</p>
+<div class="tags">
+<span class="tag">Watchdog</span>
+<span class="tag">复位</span>
+<span class="tag">系统</span>
+</div>
+<a href="components/watchdog.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">⚡ 中断系统</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/pie_interrupt.html'">
+<h3>🔌 PIE中断级联与放行</h3>
+<p>可视化PIE中断控制器的级联结构，演示中断屏蔽和放行过程</p>
+<div class="tags">
+<span class="tag">PIE</span>
+<span class="tag">中断</span>
+<span class="tag">控制器</span>
+</div>
+<a href="components/pie_interrupt.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">🔋 脉宽调制 (PWM)</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/pwm_aq.html'">
+<h3>🎯 ePWM动作限定模块</h3>
+<p>配置PWM比较器和动作限定，实时显示PWM波形和触发动作</p>
+<div class="tags">
+<span class="tag">PWM</span>
+<span class="tag">AQ</span>
+<span class="tag">波形</span>
+</div>
+<a href="components/pwm_aq.html" class="link">打开组件 ↗</a>
+</div>
+
+<div class="component-card" onclick="window.location.href='components/pwm_db.html'">
+<h3>⚡ ePWM死区发生器</h3>
+<p>配置死区时间，防止上下桥臂同时导通，实时显示死区波形</p>
+<div class="tags">
+<span class="tag">PWM</span>
+<span class="tag">死区</span>
+<span class="tag">保护</span>
+</div>
+<a href="components/pwm_db.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">📡 模拟数字转换 (ADC)</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/adc_sampling.html'">
+<h3>⚡ ADC采样保持与转换时序</h3>
+<p>计算采样窗口时间，模拟电荷充放电过程，分析采样误差</p>
+<div class="tags">
+<span class="tag">ADC</span>
+<span class="tag">采样</span>
+<span class="tag">时序</span>
+</div>
+<a href="components/adc_sampling.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">🛠️ 编码器与位置检测</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/qep_decoder.html'">
+<h3>🔄 eQEP正交解码机制</h3>
+<p>模拟电机旋转，实时显示AB相波形，演示方向检测和位置计数</p>
+<div class="tags">
+<span class="tag">QEP</span>
+<span class="tag">编码器</span>
+<span class="tag">位置</span>
+</div>
+<a href="components/qep_decoder.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">📡 串行通信</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/spi_cpol_cpha.html'">
+<h3>🔧 SPI时钟极性与相位</h3>
+<p>动态配置CPOL和CPHA，可视化4种SPI模式的时序波形</p>
+<div class="tags">
+<span class="tag">SPI</span>
+<span class="tag">时序</span>
+<span class="tag">通信</span>
+</div>
+<a href="components/spi_cpol_cpha.html" class="link">打开组件 ↗</a>
+</div>
+
+<div class="component-card" onclick="window.location.href='components/sci_baudrate.html'">
+<h3>📊 SCI波特率计算器</h3>
+<p>计算SCI/UART波特率，分析误差，生成寄存器配置代码</p>
+<div class="tags">
+<span class="tag">SCI</span>
+<span class="tag">UART</span>
+<span class="tag">波特率</span>
+</div>
+<a href="components/sci_baudrate.html" class="link">打开组件 ↗</a>
+</div>
+
+<div class="component-card" onclick="window.location.href='components/mcbsp_config.html'">
+<h3>📡 McBSP多通道缓冲串口</h3>
+<p>配置McBSP数据字长、采样率、时钟极性，模拟收发传输过程</p>
+<div class="tags">
+<span class="tag">McBSP</span>
+<span class="tag">串口</span>
+<span class="tag">DMA</span>
+</div>
+<a href="components/mcbsp_config.html" class="link">打开组件 ↗</a>
+</div>
+
+<div class="component-card" onclick="window.location.href='components/i2c_config.html'">
+<h3>🔗 I2C通信接口</h3>
+<p>配置I2C主从模式、时钟频率，模拟START/STOP/ACK时序波形</p>
+<div class="tags">
+<span class="tag">I2C</span>
+<span class="tag">串行</span>
+<span class="tag">通信</span>
+</div>
+<a href="components/i2c_config.html" class="link">打开组件 ↗</a>
+</div>
+
+<div class="component-card" onclick="window.location.href='components/can_config.html'">
+<h3>🔄 CAN总线通信</h3>
+<p>配置CAN2.0B比特率、消息对象，模拟发送接收和远程帧</p>
+<div class="tags">
+<span class="tag">CAN</span>
+<span class="tag">总线</span>
+<span class="tag">通信</span>
+</div>
+<a href="components/can_config.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">🔌 通用输入输出 (GPIO)</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/gpio_config.html'">
+<h3>🔌 GPIO引脚配置</h3>
+<p>配置88个GPIO引脚的复用功能、方向、上拉、量化滤波</p>
+<div class="tags">
+<span class="tag">GPIO</span>
+<span class="tag">引脚</span>
+<span class="tag">数字I/O</span>
+</div>
+<a href="components/gpio_config.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">⏱️ 定时器</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/cpu_timer.html'">
+<h3>⏱️ CPU定时器配置</h3>
+<p>配置CPU定时器0/1/2的预分频、周期值，实时显示计数过程</p>
+<div class="tags">
+<span class="tag">Timer</span>
+<span class="tag">定时</span>
+<span class="tag">中断</span>
+</div>
+<a href="components/cpu_timer.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">📦 数据传输 (DMA)</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/dma_config.html'">
+<h3>📦 DMA传输配置</h3>
+<p>配置6个DMA通道的触发源、突发大小、传输次数、可视化4级流水线</p>
+<div class="tags">
+<span class="tag">DMA</span>
+<span class="tag">传输</span>
+<span class="tag">存储器</span>
+</div>
+<a href="components/dma_config.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">🎯 脉冲捕获 (eCAP)</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/cap_pulse.html'">
+<h3>🎯 eCAP脉冲捕获</h3>
+<p>测量脉冲周期、脉宽和占空比，可配置边沿检测和触发模式</p>
+<div class="tags">
+<span class="tag">eCAP</span>
+<span class="tag">捕获</span>
+<span class="tag">脉冲</span>
+</div>
+<a href="components/cap_pulse.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">🔌 外部接口 (XINTF)</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/xintf_config.html'">
+<h3>🔌 XINTF外部接口</h3>
+<p>配置Zone0/6/7/8区域时序、读写延迟，可视化异步总线时序</p>
+<div class="tags">
+<span class="tag">XINTF</span>
+<span class="tag">外部总线</span>
+<span class="tag">SRAM</span>
+</div>
+<a href="components/xintf_config.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+
+<div class="categories">
+<h2 class="category-title">⚡ 电机控制</h2>
+<div class="components-grid">
+<div class="component-card" onclick="window.location.href='components/bldc_control.html'">
+<h3>⚡ BLDC电机控制</h3>
+<p>模拟无刷直流电机6步换相、Hall传感器检测、PWM调制过程</p>
+<div class="tags">
+<span class="tag">BLDC</span>
+<span class="tag">电机</span>
+<span class="tag">Hall</span>
+</div>
+<a href="components/bldc_control.html" class="link">打开组件 ↗</a>
+</div>
+</div>
+</div>
+</div>
+
+<footer>
+<p>© 2026 F28335 DSP 交互式学习资源 | 基于Web技术构建</p>
+</footer>
+
+<script>
+function searchComponents(){
+const query=document.getElementById('searchInput').value.toLowerCase();
+const cards=document.querySelectorAll('.component-card');
+let found=0;
+
+cards.forEach(card=>{
+const title=card.querySelector('h3').textContent.toLowerCase();
+const desc=card.querySelector('p').textContent.toLowerCase();
+const tags=Array.from(card.querySelectorAll('.tag')).map(t=>t.textContent.toLowerCase()).join(' ');
+const match=title.includes(query)||desc.includes(query)||tags.includes(query);
+card.style.display=match?'block':'none';
+if(match)found++;
+});
+
+if(found===0)alert('未找到匹配的组件，请尝试其他关键词');
+}
+
+window.addEventListener('keypress',(e)=>{
+if(e.key==='Enter'&&e.target.id==='searchInput'){
+searchComponents();
+}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLDC电机控制 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+input:focus{outline:none;border-color:#00d4ff}
+.motor-visual{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:20px;margin-top:15px;text-align:center}
+.canvas-wrapper{position:relative;width:300px;height:300px;margin:0 auto}
+canvas{width:100%;height:100%}
+.sensor-display{display:flex;justify-content:center;gap:20px;margin-top:15px}
+.sensor{background:#1e2a5a;border:1px solid #2a3a7a;border-radius:8px;padding:10px 20px;text-align:center}
+.sensor.hall-a{border-color:#ff6b6b}
+.sensor.hall-b{border-color:#00ff88}
+.sensor.hall-c{border-color:#00d4ff}
+.sensor-value{font-size:1.5em;font-weight:bold}
+.sensor-label{font-size:0.8em;color:#7a8ba8}
+.sensor.hall-a .sensor-value{color:#ff6b6b}
+.sensor.hall-b .sensor-value{color:#00ff88}
+.sensor.hall-c .sensor-value{color:#00d4ff}
+.pwm-display{display:flex;justify-content:center;gap:30px;margin-top:20px}
+.pwm-channel{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;min-width:100px}
+.pwm-channel .label{color:#7a8ba8;font-size:0.8em}
+.pwm-channel .value{color:#00ff88;font-size:1.2em;font-weight:bold;margin-top:5px}
+.pwm-channel .duty{color:#ffcc00;font-size:0.9em}
+.waveform-panel{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.canvas-wave{width:100%;height:120px;background:#000}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-stop{background:#ff6b6b}
+.btn-start{background:#00ff88}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-top:15px}
+.info-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;text-align:center}
+.info-item .label{color:#7a8ba8;font-size:0.8em}
+.info-item .value{color:#00ff88;font-size:1.3em;font-weight:bold;margin-top:8px}
+.info-item .unit{color:#7a8ba8;font-size:0.75em}
+.commutation-table{width:100%;border-collapse:collapse;margin-top:15px}
+.commutation-table th,.commutation-table td{border:1px solid #1e2a5a;padding:10px;text-align:center}
+.commutation-table th{background:#1e2a5a;color:#00d4ff}
+.commutation-table td{color:#e0e6ff}
+.commutation-table .active{background:#0d2818;color:#00ff88;font-weight:bold}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;line-height:1.5;overflow-x:auto}
+</style>
+</head>
+<body>
+<header>
+<h1>⚡ BLDC电机控制模块</h1>
+<p class="info-text">无刷直流电机 | Hall传感器 | 6步换相 | ePWM调制</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">电机参数配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>目标转速 (RPM)</label>
+<input type="number" id="targetRPM" value="3000" min="0" max="10000" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>PWM频率 (kHz)</label>
+<input type="number" id="pwmFreq" value="20" min="1" max="100" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>母线电压 (V)</label>
+<input type="number" id="busVoltage" value="24" min="1" max="100" step="0.1" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>极对数</label>
+<input type="number" id="polePairs" value="4" min="1" max="20" onchange="updateConfig()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">电机运行状态</h3>
+<div class="motor-visual">
+<div class="canvas-wrapper">
+<canvas id="motorCanvas"></canvas>
+</div>
+<div class="sensor-display">
+<div class="sensor hall-a">
+<div class="sensor-value" id="hallA">0</div>
+<div class="sensor-label">Hall A</div>
+</div>
+<div class="sensor hall-b">
+<div class="sensor-value" id="hallB">0</div>
+<div class="sensor-label">Hall B</div>
+</div>
+<div class="sensor hall-c">
+<div class="sensor-value" id="hallC">0</div>
+<div class="sensor-label">Hall C</div>
+</div>
+</div>
+<div class="pwm-display">
+<div class="pwm-channel">
+<div class="label">U相 PWM</div>
+<div class="value" id="pwmU">50%</div>
+</div>
+<div class="pwm-channel">
+<div class="label">V相 PWM</div>
+<div class="value" id="pwmV">50%</div>
+</div>
+<div class="pwm-channel">
+<div class="label">W相 PWM</div>
+<div class="value" id="pwmW">50%</div>
+</div>
+</div>
+</div>
+<div class="waveform-panel">
+<canvas id="waveformCanvas" class="canvas-wave"></canvas>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">换相表 (6步换向)</h3>
+<table class="commutation-table">
+<thead>
+<tr>
+<th>Hall值</th>
+<th>U+</th>
+<th>V+</th>
+<th>W+</th>
+<th>U-</th>
+<th>V-</th>
+<th>W-</th>
+<th>电角度</th>
+</tr>
+</thead>
+<tbody id="commutationTableBody">
+</tbody>
+</table>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">运行信息</h3>
+<div class="info-grid">
+<div class="info-item">
+<div class="label">当前转速</div>
+<div class="value" id="currentRPM">0</div>
+<div class="unit">RPM</div>
+</div>
+<div class="info-item">
+<div class="label">电角度</div>
+<div class="value" id="elecAngle">0</div>
+<div class="unit">°</div>
+</div>
+<div class="info-item">
+<div class="label">机械角度</div>
+<div class="value" id="mechAngle">0</div>
+<div class="unit">°</div>
+</div>
+<div class="info-item">
+<div class="label">电气频率</div>
+<div class="value" id="elecFreq">0</div>
+<div class="unit">Hz</div>
+</div>
+</div>
+<div class="info-grid">
+<div class="info-item">
+<div class="label">换相周期</div>
+<div class="value" id="commPeriod">0</div>
+<div class="unit">ms</div>
+</div>
+<div class="info-item">
+<div class="label">霍尔状态</div>
+<div class="value" id="hallState">000</div>
+<div class="unit">二进制</div>
+</div>
+<div class="info-item">
+<div class="label">转矩</div>
+<div class="value" id="torque">0</div>
+<div class="unit">N·m</div>
+</div>
+<div class="info-item">
+<div class="label">功率</div>
+<div class="value" id="power">0</div>
+<div class="unit">W</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">电机控制</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn btn-start" onclick="startMotor()">▶ 启动电机</button>
+<button class="btn btn-stop" onclick="stopMotor()">⏹ 停止</button>
+<button class="btn" onclick="reverseDirection()">🔄 换向</button>
+<button class="btn" onclick="setSpeed(1000)">慢速 1000</button>
+<button class="btn" onclick="setSpeed(3000)">中速 3000</button>
+<button class="btn" onclick="setSpeed(6000)">高速 6000</button>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">控制代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// BLDC电机控制初始化
+void InitBLDC(void)
+{
+    // 配置ePWM1,2,3用于BLDC控制
+    EPwm1Regs.TBPRD = 3750;           // 20kHz PWM
+    EPwm1Regs.TBPHS.half.TBPHS = 0;
+    EPwm1Regs.CMPA.half.CMPA = 1875;  // 50%占空比
+    EPwm1Regs.AQCTLA.bit.CAU = AQ_SET;
+    EPwm1Regs.AQCTLA.bit.CAD = AQ_CLEAR;
+    
+    // Hall传感器GPIO配置
+    GpioCtrlRegs.GPAPUD.bit.GPIO0 = 0;    // 上拉使能
+    GpioCtrlRegs.GPAQSEL1.bit.GPIO0 = 2;  // 6次采样滤波
+    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 0;   // GPIO功能
+    GpioCtrlRegs.GPADIR.bit.GPIO0 = 0;    // 输入
+    
+    // 更多GPIO配置...
+}
+
+// 6步换相表
+const uint16_t commutationTable[8] = {
+    0,      // 000 无效
+    0x0A,   // 001: U->V, W高阻
+    0x09,   // 010: W->U, V高阻
+    0x06,   // 011: V->W, U高阻
+    0x05,   // 100: U->W, V高阻
+    0x02,   // 101: W->V, U高阻
+    0x01,   // 110: V->U, W高阻
+    0       // 111 无效
+};
+
+// Hall传感器中断处理
+interrupt void hallISR(void)
+{
+    uint16_t hallValue;
+    hallValue = (GpioDataRegs.GPADAT.bit.GPIO0 << 2) |
+                (GpioDataRegs.GPADAT.bit.GPIO1 << 1) |
+                GpioDataRegs.GPADAT.bit.GPIO2;
+    
+    // 根据Hall值查表换相
+    uint16_t pwmPattern = commutationTable[hallValue];
+    
+    // 更新PWM输出
+    updatePWM(pwmPattern);
+    
+    // 计算转速
+    calculateSpeed();
+    
+    // 清除中断标志
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP3;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const canvas = document.getElementById('motorCanvas');
+const ctx = canvas.getContext('2d');
+const waveCanvas = document.getElementById('waveformCanvas');
+const waveCtx = waveCanvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = 300 * 2;
+    canvas.height = 300 * 2;
+    ctx.scale(2, 2);
+    
+    waveCanvas.width = waveCanvas.offsetWidth * 2;
+    waveCanvas.height = 240;
+    waveCtx.scale(2, 2);
+}
+
+const commutationTable = [
+    { hall: 0, u: '-', v: '-', w: '-', angle: 0 },
+    { hall: 1, u: 'U', v: 'V', w: 'Z', angle: 300 },
+    { hall: 2, u: 'Z', v: 'W', w: 'U', angle: 60 },
+    { hall: 3, u: 'V', v: 'W', w: 'Z', angle: 120 },
+    { hall: 4, u: 'U', v: 'Z', w: 'W', angle: 240 },
+    { hall: 5, u: 'Z', v: 'U', w: 'V', angle: 180 },
+    { hall: 6, u: 'W', v: 'U', w: 'Z', angle: 0 },
+];
+
+let motorState = {
+    running: false,
+    direction: 1,
+    targetRPM: 3000,
+    currentRPM: 0,
+    polePairs: 4,
+    busVoltage: 24,
+    pwmFreq: 20,
+    elecAngle: 0,
+    mechAngle: 0,
+    hallState: 1,
+    pwmU: 50,
+    pwmV: 50,
+    pwmW: 50,
+    torque: 0,
+    power: 0
+};
+
+let animationId = null;
+let lastHallTime = 0;
+let commutationCount = 0;
+let waveData = { u: [], v: [], w: [], time: 0 };
+
+function updateConfig() {
+    motorState.targetRPM = parseInt(document.getElementById('targetRPM').value) || 3000;
+    motorState.pwmFreq = parseInt(document.getElementById('pwmFreq').value) || 20;
+    motorState.busVoltage = parseFloat(document.getElementById('busVoltage').value) || 24;
+    motorState.polePairs = parseInt(document.getElementById('polePairs').value) || 4;
+    updateCode();
+}
+
+function initTable() {
+    const tbody = document.getElementById('commutationTableBody');
+    tbody.innerHTML = '';
+    for(let i = 1; i <= 6; i++) {
+        const row = commutationTable[i];
+        if(!row) continue;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${i}</td>
+            <td class="${row.u === 'U' ? 'active' : ''}">${row.u}</td>
+            <td class="${row.v === 'V' ? 'active' : ''}">${row.v}</td>
+            <td class="${row.w === 'W' ? 'active' : ''}">${row.w}</td>
+            <td class="${row.u === 'Z' ? 'active' : ''}">${row.u === 'Z' ? '-' : ''}</td>
+            <td class="${row.v === 'Z' ? 'active' : ''}">${row.v === 'Z' ? '-' : ''}</td>
+            <td class="${row.w === 'Z' ? 'active' : ''}">${row.w === 'Z' ? '-' : ''}</td>
+            <td>${row.angle}°</td>
+        `;
+        tbody.appendChild(tr);
+    }
+}
+
+function drawMotor() {
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    const cx = w / 2;
+    const cy = h / 2;
+    const rotorR = 60;
+    const statorR = 100;
+    
+    ctx.clearRect(0, 0, w, h);
+    
+    ctx.strokeStyle = '#1e2a5a';
+    ctx.lineWidth = 1;
+    for(let i = 0; i < 6; i++) {
+        const angle = (i * 60 - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + statorR * Math.cos(angle), cy + statorR * Math.sin(angle));
+        ctx.stroke();
+    }
+    
+    ctx.strokeStyle = '#2a3a7a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, statorR, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rotorR, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    const pp = motorState.polePairs;
+    for(let i = 0; i < pp * 2; i++) {
+        const angle = (i * 180 / pp - 90 + motorState.mechAngle) * Math.PI / 180;
+        const r = i % 2 === 0 ? rotorR - 15 : rotorR - 30;
+        ctx.fillStyle = i % 2 === 0 ? '#ff6b6b' : '#00d4ff';
+        ctx.beginPath();
+        ctx.arc(cx + r * Math.cos(angle), cy + r * Math.sin(angle), 8, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    const hallA = (motorState.hallState >> 0) & 1;
+    const hallB = (motorState.hallState >> 1) & 1;
+    const hallC = (motorState.hallState >> 2) & 1;
+    
+    const hallAngles = [120, 240, 0];
+    const hallValues = [hallC, hallB, hallA];
+    
+    for(let i = 0; i < 3; i++) {
+        const angle = (hallAngles[i] - 90) * Math.PI / 180;
+        const hx = cx + (statorR + 25) * Math.cos(angle);
+        const hy = cy + (statorR + 25) * Math.sin(angle);
+        
+        ctx.fillStyle = hallValues[i] ? '#ff6b6b' : '#333';
+        ctx.beginPath();
+        ctx.arc(hx, hy, 12, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px Microsoft YaHei';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(['A', 'B', 'C'][i], hx, hy);
+    }
+    
+    ctx.fillStyle = '#00ff88';
+    ctx.font = 'bold 14px Microsoft YaHei';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Hall: ${motorState.hallState}`, cx, h - 20);
+}
+
+function drawWaveform() {
+    const w = waveCanvas.offsetWidth;
+    const h = waveCanvas.offsetHeight;
+    
+    waveCtx.clearRect(0, 0, w, h);
+    
+    waveCtx.strokeStyle = '#1e2a5a';
+    waveCtx.lineWidth = 1;
+    for(let i = 0; i <= 4; i++) {
+        waveCtx.beginPath();
+        waveCtx.moveTo(0, h * i / 4);
+        waveCtx.lineTo(w, h * i / 4);
+        waveCtx.stroke();
+    }
+    
+    if(waveData.u.length < 2) return;
+    
+    const maxPoints = 200;
+    const startIdx = Math.max(0, waveData.u.length - maxPoints);
+    
+    waveCtx.lineWidth = 2;
+    
+    waveCtx.strokeStyle = '#ff6b6b';
+    waveCtx.beginPath();
+    for(let i = startIdx; i < waveData.u.length; i++) {
+        const x = ((i - startIdx) / maxPoints) * w;
+        const y = h - (waveData.u[i] / 100) * h;
+        if(i === startIdx) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+    
+    waveCtx.strokeStyle = '#00ff88';
+    waveCtx.beginPath();
+    for(let i = startIdx; i < waveData.v.length; i++) {
+        const x = ((i - startIdx) / maxPoints) * w;
+        const y = h - (waveData.v[i] / 100) * h;
+        if(i === startIdx) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+    
+    waveCtx.strokeStyle = '#00d4ff';
+    waveCtx.beginPath();
+    for(let i = startIdx; i < waveData.w.length; i++) {
+        const x = ((i - startIdx) / maxPoints) * w;
+        const y = h - (waveData.w[i] / 100) * h;
+        if(i === startIdx) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+}
+
+function updateDisplay() {
+    document.getElementById('currentRPM').textContent = motorState.currentRPM.toFixed(0);
+    document.getElementById('elecAngle').textContent = (motorState.elecAngle % 360).toFixed(1);
+    document.getElementById('mechAngle').textContent = (motorState.mechAngle % 360).toFixed(1);
+    
+    const elecFreq = motorState.currentRPM * motorState.polePairs / 60;
+    document.getElementById('elecFreq').textContent = elecFreq.toFixed(1);
+    
+    const commPeriod = elecFreq > 0 ? (1000 / (elecFreq * 6)).toFixed(2) : 0;
+    document.getElementById('commPeriod').textContent = commPeriod;
+    
+    const hallBinary = String((motorState.hallState >> 0) & 1) + 
+                       String((motorState.hallState >> 1) & 1) + 
+                       String((motorState.hallState >> 2) & 1);
+    document.getElementById('hallState').textContent = hallBinary;
+    
+    document.getElementById('hallA').textContent = (motorState.hallState >> 0) & 1;
+    document.getElementById('hallB').textContent = (motorState.hallState >> 1) & 1;
+    document.getElementById('hallC').textContent = (motorState.hallState >> 2) & 1;
+    
+    document.getElementById('pwmU').textContent = motorState.pwmU.toFixed(0) + '%';
+    document.getElementById('pwmV').textContent = motorState.pwmV.toFixed(0) + '%';
+    document.getElementById('pwmW').textContent = motorState.pwmW.toFixed(0) + '%';
+    
+    const torque = motorState.busVoltage * motorState.currentRPM / 10000;
+    document.getElementById('torque').textContent = torque.toFixed(2);
+    
+    const power = torque * motorState.currentRPM * 0.105;
+    document.getElementById('power').textContent = power.toFixed(1);
+    
+    drawMotor();
+    drawWaveform();
+}
+
+function commutationStep() {
+    const dir = motorState.direction;
+    if(dir === 1) {
+        motorState.hallState = motorState.hallState >= 6 ? 1 : motorState.hallState + 1;
+    } else {
+        motorState.hallState = motorState.hallState <= 1 ? 6 : motorState.hallState - 1;
+    }
+    
+    const state = commutationTable[motorState.hallState];
+    if(state) {
+        motorState.pwmU = state.u === 'U' ? 60 : (state.u === 'Z' ? 0 : 0);
+        motorState.pwmV = state.v === 'V' ? 60 : (state.v === 'Z' ? 0 : 0);
+        motorState.pwmW = state.w === 'W' ? 60 : (state.w === 'Z' ? 0 : 0);
+    }
+    
+    commutationCount++;
+    motorState.elecAngle += 60;
+    motorState.mechAngle = motorState.elecAngle / motorState.polePairs;
+    
+    waveData.u.push(motorState.pwmU);
+    waveData.v.push(motorState.pwmV);
+    waveData.w.push(motorState.pwmW);
+    if(waveData.u.length > 500) {
+        waveData.u.shift();
+        waveData.v.shift();
+        waveData.w.shift();
+    }
+}
+
+function runMotor() {
+    if(!motorState.running) return;
+    
+    const elecFreq = motorState.targetRPM * motorState.polePairs / 60;
+    const commFreq = elecFreq * 6;
+    const commInterval = 1000 / commFreq;
+    
+    const now = Date.now();
+    if(now - lastHallTime >= commInterval) {
+        commutationStep();
+        lastHallTime = now;
+    }
+    
+    const rpmDiff = motorState.targetRPM - motorState.currentRPM;
+    motorState.currentRPM += rpmDiff * 0.02;
+    
+    updateDisplay();
+    animationId = requestAnimationFrame(runMotor);
+}
+
+function startMotor() {
+    if(motorState.running) return;
+    motorState.running = true;
+    motorState.currentRPM = 100;
+    lastHallTime = Date.now();
+    runMotor();
+}
+
+function stopMotor() {
+    motorState.running = false;
+    if(animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    motorState.currentRPM = 0;
+    motorState.pwmU = 0;
+    motorState.pwmV = 0;
+    motorState.pwmW = 0;
+    updateDisplay();
+}
+
+function reverseDirection() {
+    motorState.direction *= -1;
+}
+
+function setSpeed(rpm) {
+    motorState.targetRPM = rpm;
+    document.getElementById('targetRPM').value = rpm;
+}
+
+function updateCode() {
+    const pwmPeriod = Math.round(150000 / motorState.pwmFreq);
+    const code = `// BLDC电机控制完整代码
+#include "DSP28x_Project.h"
+
+// BLDC 6步换相表
+// Hall ABC -> U V W (Z=高阻)
+// U+: PWM输出, U-: GND
+const uint16_t commutationTable[8] = {
+    0x000, // 000: 停止
+    0x0A0, // 001: U->V, W高阻
+    0x090, // 010: W->U, V高阻
+    0x060, // 011: V->W, U高阻
+    0x050, // 100: U->W, V高阻
+    0x020, // 101: W->V, U高阻
+    0x010, // 110: V->U, W高阻
+    0x000  // 111: 停止
+};
+
+void InitBLDC(void)
+{
+    // ePWM1 配置 (U相)
+    EPwm1Regs.TBPRD = ${pwmPeriod};           // PWM频率: ${motorState.pwmFreq}kHz
+    EPwm1Regs.TBPHS.half.TBPHS = 0;
+    EPwm1Regs.CMPA.half.CMPA = ${Math.round(pwmPeriod * 0.6)};  // 60%占空比
+    EPwm1Regs.AQCTLA.bit.CAU = AQ_SET;
+    EPwm1Regs.AQCTLA.bit.CAD = AQ_CLEAR;
+    EPwm1Regs.AQCTLB.bit.CBU = AQ_CLEAR;
+    EPwm1Regs.AQCTLB.bit.CBD = AQ_SET;
+    
+    // ePWM2 配置 (V相)
+    EPwm2Regs.TBPRD = ${pwmPeriod};
+    // ... 类似配置
+    
+    // ePWM3 配置 (W相)
+    EPwm3Regs.TBPRD = ${pwmPeriod};
+    // ... 类似配置
+    
+    // Hall传感器 GPIO配置
+    EALLOW;
+    GpioCtrlRegs.GPAPUD.bit.GPIO0 = 0;    // Hall A 上拉
+    GpioCtrlRegs.GPAQSEL1.bit.GPIO0 = 6;  // 6次采样滤波
+    GpioCtrlRegs.GPADIR.bit.GPIO0 = 0;    // 输入
+    // GPIO1 = Hall B, GPIO2 = Hall C
+    EDIS;
+}
+
+// Hall传感器中断
+interrupt void hallISR(void)
+{
+    uint16_t hall = (GpioDataRegs.GPADAT.bit.GPIO0 << 2) |
+                    (GpioDataRegs.GPADAT.bit.GPIO1 << 1) |
+                    GpioDataRegs.GPADAT.bit.GPIO2;
+    
+    uint16_t comm = commutationTable[hall];
+    
+    // 根据换相表更新PWM
+    if(comm & 0x100) EPwm1Regs.CMPA.half.CMPA = EPwm1Regs.TBPRD * 0.6;
+    else EPwm1Regs.CMPA.half.CMPA = 0;
+    
+    // 清除PIE中断
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP3;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+initTable();
+updateConfig();
+
+window.addEventListener('resize', () => {
+    resizeCanvas();
+    updateDisplay();
+});
+</script>
+</body>
+</html>

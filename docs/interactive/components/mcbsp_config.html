@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>McBSP多通道缓冲串口 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+select,input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+select:focus,input:focus{outline:none;border-color:#00d4ff}
+.comm-visual{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:20px;margin-top:15px}
+.data-flow{display:flex;justify-content:space-between;align-items:center;margin:20px 0;position:relative}
+.data-node{background:#1e2a5a;border:2px solid #00d4ff;border-radius:50%;width:80px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.data-node.cpu{border-color:#ff6b6b}
+.data-node.mcbsp{border-color:#00ff88}
+.data-node.ext{border-color:#ffcc00}
+.data-node .icon{font-size:1.5em}
+.data-node .label{font-size:0.7em;margin-top:5px}
+.tx-rx-display{display:flex;justify-content:space-around;margin-top:20px}
+.tx-rx-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;width:45%}
+.tx-rx-box .title{color:#00d4ff;font-size:0.9em;margin-bottom:10px}
+.data-log{max-height:150px;overflow-y:auto;background:#000;border:1px solid #1e2a5a;border-radius:4px;padding:10px;font-family:'Consolas',monospace;font-size:0.8em}
+.data-log .tx{color:#00ff88}
+.data-log .rx{color:#00d4ff}
+.data-log .error{color:#ff6b6b}
+.register-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.1em;font-weight:bold;margin-top:8px;font-family:'Consolas',monospace}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4}
+.btn-send{background:#00ff88}
+.btn:hover{transform:translateY(-1px)}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;line-height:1.5}
+.wave-canvas{width:100%;height:100px;background:#000;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+<h1>📡 McBSP多通道缓冲串口</h1>
+<p class="info-text">McBSP-A / McBSP-B | 串行外设接口 | DMA传输支持</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">McBSP选择与配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>选择McBSP模块</label>
+<select id="mcbspSelect" onchange="selectMcbsp()">
+<option value="A">McBSP-A</option>
+<option value="B">McBSP-B</option>
+</select>
+</div>
+<div class="control-group">
+<label>数据字长 (WL)</label>
+<select id="wordLen" onchange="updateConfig()">
+<option value="8">8位</option>
+<option value="12">12位</option>
+<option value="16">16位</option>
+<option value="20">20位</option>
+<option value="24">24位</option>
+<option value="32">32位</option>
+</select>
+</div>
+<div class="control-group">
+<label>帧长度 (FRL)</label>
+<input type="number" id="frameLen" value="1" min="1" max="128" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>采样率 (kHz)</label>
+<input type="number" id="sampleRate" value="100" min="1" max="5000" onchange="updateConfig()">
+</div>
+</div>
+<div class="controls">
+<div class="control-group">
+<label>时钟极性 (CLKSTP)</label>
+<select id="clkStp" onchange="updateConfig()">
+<option value="0">无延迟</option>
+<option value="1">下降沿无延迟</option>
+<option value="2">上升沿无延迟</option>
+<option value="3">下降沿有延迟</option>
+<option value="4">上升沿有延迟</option>
+</select>
+</div>
+<div class="control-group">
+<label>帧同步极性 (FSXP)</label>
+<select id="fsxp" onchange="updateConfig()">
+<option value="0">高有效</option>
+<option value="1">低有效</option>
+</select>
+</div>
+<div class="control-group">
+<label>时钟极性 (CLKXP)</label>
+<select id="clkxp" onchange="updateConfig()">
+<option value="0">上升沿</option>
+<option value="1">下降沿</option>
+</select>
+</div>
+<div class="control-group">
+<label>工作模式</label>
+<select id="workMode" onchange="updateConfig()">
+<option value="0">SPI从机</option>
+<option value="1">SPI主机</option>
+<option value="2">普通串口</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">数据传输可视化</h3>
+<div class="comm-visual">
+<div class="data-flow">
+<div class="data-node cpu">
+<span class="icon">💻</span>
+<span class="label">CPU/DMA</span>
+</div>
+<div class="data-node mcbsp">
+<span class="icon">📡</span>
+<span class="label" id="mcbspLabel">McBSP-A</span>
+</div>
+<div class="data-node ext">
+<span class="icon">🔌</span>
+<span class="label">外部设备</span>
+</div>
+</div>
+<canvas id="waveCanvas" class="wave-canvas"></canvas>
+<div class="tx-rx-display">
+<div class="tx-rx-box">
+<div class="title">📤 发送数据 (TX)</div>
+<div class="data-log" id="txLog">等待发送...</div>
+</div>
+<div class="tx-rx-box">
+<div class="title">📥 接收数据 (RX)</div>
+<div class="data-log" id="rxLog">等待接收...</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器状态</h3>
+<div class="register-grid">
+<div class="register-item">
+<div class="name">SPCR (串口控制)</div>
+<div class="value" id="spcrReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">RCR (接收控制)</div>
+<div class="value" id="rcrReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">XCR (发送控制)</div>
+<div class="value" id="xcrReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">SRGR (采样率生成)</div>
+<div class="value" id="srgrReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">PCR (引脚控制)</div>
+<div class="value" id="pcrReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">DRR (数据接收)</div>
+<div class="value" id="drrReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">DXR (数据发送)</div>
+<div class="value" id="dxrReg">0x0000</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">传输控制</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn btn-send" onclick="sendData()">📤 发送数据</button>
+<button class="btn" onclick="simulateReceive()">📥 模拟接收</button>
+<button class="btn" onclick="resetMcbsp()">🔄 重置</button>
+<button class="btn" onclick="enableLoopback()">🔗 回环测试</button>
+</div>
+<div class="controls" style="margin-top:15px">
+<div class="control-group">
+<label>发送数据 (十六进制)</label>
+<input type="text" id="txData" value="0x55AA" placeholder="输入要发送的数据">
+</div>
+<div class="control-group">
+<label>自动发送间隔 (ms)</label>
+<input type="number" id="autoInterval" value="0" min="0" max="1000" onchange="updateAutoSend()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// McBSP初始化配置
+void InitMcbsp(void)
+{
+    // 停止McBSP
+    McbspaRegs.SPCR2.all = 0x0000;
+    McbspaRegs.SPCR1.all = 0x0000;
+    
+    // 配置接收控制寄存器 (RCR)
+    McbspaRegs.RCR2.all = 0x000000;
+    McbspaRegs.RCR1.bit.RWDLEN1 = 2;  // 16位数据
+    
+    // 配置发送控制寄存器 (XCR)
+    McbspaRegs.XCR2.all = 0x000000;
+    McbspaRegs.XCR1.bit.XWDLEN1 = 2;  // 16位数据
+    
+    // 配置采样率生成器 (SRGR)
+    McbspaRegs.SRGR2.all = 0x000000;
+    McbspaRegs.SRGR2.bit.CLKSM = 1;   // LSPCLK作为时钟源
+    McbspaRegs.SRGR2.bit.FPER = 159;  // 帧周期
+    McbspaRegs.SRGR1.bit.CLKGDV = 7;  // 分频系数
+    
+    // 配置引脚控制寄存器 (PCR)
+    McbspaRegs.PCR.all = 0x000000;
+    McbspaRegs.PCR.bit.FSXM = 1;       // 主机提供帧同步
+    McbspaRegs.PCR.bit.FSXP = 0;       // 帧同步高有效
+    McbspaRegs.PCR.bit.CLKXM = 1;     // 主机提供时钟
+    McbspaRegs.PCR.bit.CLKXP = 0;      // 上升沿采样
+    
+    // 使能McBSP
+    McbspaRegs.SPCR2.all = 0x0001;
+    McbspaRegs.SPCR1.all = 0x0001;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const waveCanvas = document.getElementById('waveCanvas');
+const waveCtx = waveCanvas.getContext('2d');
+
+let mcbspState = {
+    module: 'A',
+    enabled: false,
+    wordLen: 16,
+    frameLen: 1,
+    sampleRate: 100,
+    clkStp: 0,
+    fsxp: 0,
+    clkxp: 0,
+    workMode: 2,
+    spcr: 0,
+    rcr: 0,
+    xcr: 0,
+    srgr: 0,
+    pcr: 0,
+    drr: 0,
+    dxr: 0,
+    txBuffer: [],
+    rxBuffer: [],
+    loopback: false
+};
+
+let autoSendTimer = null;
+let waveData = [];
+let wavePos = 0;
+
+function selectMcbsp() {
+    mcbspState.module = document.getElementById('mcbspSelect').value;
+    document.getElementById('mcbspLabel').textContent = `McBSP-${mcbspState.module}`;
+    updateDisplay();
+    updateCode();
+}
+
+function updateConfig() {
+    mcbspState.wordLen = parseInt(document.getElementById('wordLen').value);
+    mcbspState.frameLen = parseInt(document.getElementById('frameLen').value) || 1;
+    mcbspState.sampleRate = parseInt(document.getElementById('sampleRate').value) || 100;
+    mcbspState.clkStp = parseInt(document.getElementById('clkStp').value);
+    mcbspState.fsxp = parseInt(document.getElementById('fsxp').value);
+    mcbspState.clkxp = parseInt(document.getElementById('clkxp').value);
+    mcbspState.workMode = parseInt(document.getElementById('workMode').value);
+    
+    updateRegisters();
+    updateDisplay();
+    updateCode();
+}
+
+function updateRegisters() {
+    const wlBits = [0, 1, 2, 3, 0, 0, 4, 0, 5][mcbspState.wordLen >> 3] || 2;
+    
+    mcbspState.rcr = (wlBits << 5) | (mcbspState.frameLen - 1);
+    mcbspState.xcr = mcbspState.rcr;
+    
+    const clkGDV = Math.max(1, Math.floor(150 / (mcbspState.sampleRate * mcbspState.wordLen)) - 1);
+    mcbspState.srgr = (0 << 28) | ((mcbspState.frameLen * mcbspState.wordLen - 1) << 16) | clkGDV;
+    
+    mcbspState.pcr = (mcbspState.workMode === 1 ? 0x0A : 0x02) |
+                     (mcbspState.clkxp << 3) |
+                     (mcbspState.fsxp << 4) |
+                     (mcbspState.clkStp << 6);
+    
+    mcbspState.spcr = 0x0001 | (mcbspState.loopback ? 0x0040 : 0);
+}
+
+function updateDisplay() {
+    document.getElementById('spcrReg').textContent = '0x' + mcbspState.spcr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('rcrReg').textContent = '0x' + mcbspState.rcr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('xcrReg').textContent = '0x' + mcbspState.xcr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('srgrReg').textContent = '0x' + mcbspState.srgr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('pcrReg').textContent = '0x' + mcbspState.pcr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('drrReg').textContent = '0x' + (mcbspState.drr & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    document.getElementById('dxrReg').textContent = '0x' + (mcbspState.dxr & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+function sendData() {
+    const dataStr = document.getElementById('txData').value;
+    let data = parseInt(dataStr, 16) || 0;
+    
+    mcbspState.dxr = data;
+    mcbspState.txBuffer.push(data);
+    
+    const logEl = document.getElementById('txLog');
+    const time = new Date().toLocaleTimeString();
+    logEl.innerHTML += `<div class="tx">[${time}] TX: 0x${data.toString(16).toUpperCase().padStart(4, '0')}</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
+    
+    addWavePoint(1);
+    updateDisplay();
+    
+    if(mcbspState.loopback) {
+        setTimeout(() => simulateReceive(data), 100);
+    }
+}
+
+function simulateReceive(origData) {
+    const data = origData || (Math.random() * 0xFFFF) | 0;
+    mcbspState.drr = data;
+    mcbspState.rxBuffer.push(data);
+    
+    const logEl = document.getElementById('rxLog');
+    const time = new Date().toLocaleTimeString();
+    const matchClass = origData ? (data === origData ? '' : ' error') : '';
+    logEl.innerHTML += `<div class="rx${matchClass}">[${time}] RX: 0x${data.toString(16).toUpperCase().padStart(4, '0')}</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
+    
+    addWavePoint(0);
+    updateDisplay();
+}
+
+function addWavePoint(tx) {
+    waveData.push(tx ? 1 : 0.3);
+    if(waveData.length > 200) waveData.shift();
+    drawWave();
+}
+
+function drawWave() {
+    const w = waveCanvas.offsetWidth;
+    const h = waveCanvas.offsetHeight;
+    
+    waveCtx.clearRect(0, 0, w, h);
+    
+    waveCtx.strokeStyle = '#1e2a5a';
+    waveCtx.lineWidth = 1;
+    waveCtx.beginPath();
+    waveCtx.moveTo(0, h / 2);
+    waveCtx.lineTo(w, h / 2);
+    waveCtx.stroke();
+    
+    if(waveData.length < 2) return;
+    
+    waveCtx.strokeStyle = '#00d4ff';
+    waveCtx.lineWidth = 2;
+    waveCtx.beginPath();
+    
+    const step = w / waveData.length;
+    for(let i = 0; i < waveData.length; i++) {
+        const x = i * step;
+        const y = h - waveData[i] * h * 0.8;
+        if(i === 0) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+}
+
+function resetMcbsp() {
+    mcbspState.spcr = 0;
+    mcbspState.drr = 0;
+    mcbspState.dxr = 0;
+    mcbspState.txBuffer = [];
+    mcbspState.rxBuffer = [];
+    mcbspState.loopback = false;
+    
+    document.getElementById('txLog').innerHTML = 'McBSP已重置...';
+    document.getElementById('rxLog').innerHTML = '等待接收...';
+    
+    waveData = [];
+    drawWave();
+    updateRegisters();
+    updateDisplay();
+    updateCode();
+}
+
+function enableLoopback() {
+    mcbspState.loopback = !mcbspState.loopback;
+    updateRegisters();
+    updateDisplay();
+    updateCode();
+    
+    const logEl = document.getElementById('txLog');
+    const time = new Date().toLocaleTimeString();
+    logEl.innerHTML += `<div class="${mcbspState.loopback ? 'tx' : 'error'}">[${time}] ${mcbspState.loopback ? '回环模式已启用' : '回环模式已关闭'}</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+function updateAutoSend() {
+    const interval = parseInt(document.getElementById('autoInterval').value) || 0;
+    
+    if(autoSendTimer) {
+        clearInterval(autoSendTimer);
+        autoSendTimer = null;
+    }
+    
+    if(interval > 0) {
+        autoSendTimer = setInterval(() => {
+            sendData();
+        }, interval);
+    }
+}
+
+function updateCode() {
+    const wlBits = [0, 1, 2, 3, 0, 0, 4, 0, 5][mcbspState.wordLen >> 3] || 2;
+    const clkGDV = Math.max(1, Math.floor(150 / (mcbspState.sampleRate * mcbspState.wordLen)) - 1);
+    
+    const code = `// McBSP-${mcbspState.module} 初始化配置
+void InitMcbsp${mcbspState.module}(void)
+{
+    // 禁用McBSP
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SPCR2.all = 0x0000;
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SPCR1.all = 0x0000;
+    
+    // 等待复位完成
+    asm(" nop");
+    
+    // 配置接收控制 (RCR)
+    // RWDLEN1: ${mcbspState.wordLen}位数据
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.RCR2.all = 0x000000;
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.RCR1.bit.RWDLEN1 = ${wlBits};
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.RCR1.bit.RFRLEN1 = ${mcbspState.frameLen - 1};
+    
+    // 配置发送控制 (XCR)  
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.XCR2.all = 0x000000;
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.XCR1.bit.XWDLEN1 = ${wlBits};
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.XCR1.bit.XFRLEN1 = ${mcbspState.frameLen - 1};
+    
+    // 配置采样率生成器 (SRGR)
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SRGR2.bit.CLKSM = 1;
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SRGR2.bit.FPER = ${mcbspState.frameLen * mcbspState.wordLen - 1};
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SRGR1.bit.CLKGDV = ${clkGDV};
+    
+    // 配置引脚控制 (PCR)
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.PCR.all = 0x0000;
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.PCR.bit.FSXM = ${mcbspState.workMode === 1 ? 1 : 0};
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.PCR.bit.FSXP = ${mcbspState.fsxp};
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.PCR.bit.CLKXM = ${mcbspState.workMode !== 0 ? 1 : 0};
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.PCR.bit.CLKXP = ${mcbspState.clkxp};
+    
+    // 使能McBSP
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SPCR2.all = 0x0001;
+}
+
+// 发送数据
+void McbspSend${mcbspState.module}(uint${mcbspState.wordLen <= 8 ? 8 : mcbspState.wordLen <= 16 ? 16 : 32}_t data)
+{
+    while(Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SPCR2.bit.XRDY == 0);
+    Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.DXR${mcbspState.wordLen > 16 ? '.all' : '.half.DXR1'}.all = data;
+}
+
+// 接收数据
+uint${mcbspState.wordLen <= 8 ? 8 : mcbspState.wordLen <= 16 ? 16 : 32}_t McbspReceive${mcbspState.module}(void)
+{
+    while(Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.SPCR1.bit.RRDY == 0);
+    return Mcbsp${mcbspState.module === 'A' ? 'a' : 'b'}Regs.DRR${mcbspState.wordLen > 16 ? '.all' : '.half.DRR1'}.all;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+window.addEventListener('resize', () => {
+    waveCanvas.width = waveCanvas.offsetWidth * 2;
+    waveCtx.scale(2, 2);
+    drawWave();
+});
+
+updateConfig();
+</script>
+</body>
+</html>

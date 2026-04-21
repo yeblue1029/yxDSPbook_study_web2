@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCI波特率计算器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.5em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:15px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:18px;flex:1;min-width:320px}
+.panel-title{color:#00d4ff;font-size:1em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1e2a5a}
+.control-group{margin-bottom:14px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:4px;font-size:0.82em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right;font-family:'Consolas',monospace}
+input[type=range]{width:100%;height:5px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#00d4ff;cursor:pointer}
+select{width:100%;padding:6px 10px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;font-size:0.85em;cursor:pointer}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:12px;margin-top:8px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111633;font-size:0.85em}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{font-weight:bold;font-family:'Consolas',monospace}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0}
+.preset-btn{padding:8px;background:#080c1f;border:1px solid #1e2a5a;border-radius:6px;color:#7a8ba8;cursor:pointer;font-size:0.8em;text-align:center;transition:all 0.2s}
+.preset-btn:hover{border-color:#00d4ff;color:#00d4ff}
+.error-bar{margin:10px 0;padding:10px;border-radius:8px;font-size:0.85em;text-align:center}
+.error-bar.ok{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88}
+.error-bar.warn{background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.3);color:#ffaa00}
+.error-bar.danger{background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:#ff6b6b}
+</style>
+</head>
+<body>
+<h1>🔧 SCI/UART波特率计算器</h1>
+<p class="subtitle">第12章 12.1-12.4 F28335串行通信 — 波特率配置与误差分析</p>
+
+<div class="container">
+<div class="panel" style="max-width:380px">
+<div class="panel-title">⚙️ 时钟与波特率配置</div>
+
+<div class="control-group">
+<label>LSPCLK (低速外设时钟) <span class="value" id="lspclkVal">37.5 MHz</span></label>
+<select id="lspclk">
+<option value="150">150 MHz (SYSCLK/1)</option>
+<option value="75">75 MHz (SYSCLK/2)</option>
+<option value="37.5" selected>37.5 MHz (SYSCLK/4, 典型)</option>
+<option value="18.75">18.75 MHz (SYSCLK/8)</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>目标波特率 <span class="value" id="targetBaudVal">9600</span></label>
+<select id="targetBaud">
+<option value="1200">1200</option>
+<option value="2400">2400</option>
+<option value="4800">4800</option>
+<option value="9600" selected>9600</option>
+<option value="19200">19200</option>
+<option value="38400">38400</option>
+<option value="57600">57600</option>
+<option value="115200">115200</option>
+<option value="230400">230400</option>
+<option value="460800">460800</option>
+<option value="921600">921600</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>BRR (波特率寄存器) <span class="value" id="brrVal">243</span></label>
+<input type="range" id="brr" min="0" max="65535" value="243" step="1">
+</div>
+
+<div class="control-group">
+<label>SCI数据格式</label>
+<select id="dataFormat">
+<option value="0" selected>8数据位 + 1停止位 (无校验)</option>
+<option value="1">8数据位 + 1停止位 (偶校验)</option>
+<option value="2">8数据位 + 1停止位 (奇校验)</option>
+<option value="3">8数据位 + 2停止位 (无校验)</option>
+</select>
+</div>
+
+<div class="panel-title" style="margin-top:10px;font-size:0.9em">⚡ 常用波特率预设</div>
+<div class="preset-grid">
+<div class="preset-btn" onclick="applyPreset(9600)">9600</div>
+<div class="preset-btn" onclick="applyPreset(19200)">19200</div>
+<div class="preset-btn" onclick="applyPreset(38400)">38400</div>
+<div class="preset-btn" onclick="applyPreset(57600)">57600</div>
+<div class="preset-btn" onclick="applyPreset(115200)">115200</div>
+<div class="preset-btn" onclick="applyPreset(921600)">921600</div>
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">实际波特率</span>
+<span class="result-value" id="r_actual" style="color:#00d4ff">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">波特率误差</span>
+<span class="result-value" id="r_error">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">每帧位数</span>
+<span class="result-value" id="r_framebits" style="color:#00ff88">10</span>
+</div>
+<div class="result-row">
+<span class="result-label">每帧时间</span>
+<span class="result-value" id="r_frametime" style="color:#00ff88">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">每秒最大字节数</span>
+<span class="result-value" id="r_maxbytes" style="color:#00ff88">—</span>
+</div>
+</div>
+
+<div class="error-bar ok" id="errorBar">✅ 波特率误差 < 0.5%</div>
+</div>
+
+<div class="panel" style="flex:2;min-width:500px">
+<div class="panel-title">📊 UART数据帧波形</div>
+<canvas id="uartCanvas" height="300"></canvas>
+
+<div class="panel-title" style="margin-top:12px">📋 波特率查找表</div>
+<canvas id="tableCanvas" height="250"></canvas>
+
+<div class="result-box" style="margin-top:10px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 6px 0;font-size:0.9em">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.75em;white-space:pre-wrap;line-height:1.5"></pre>
+</div>
+</div>
+</div>
+
+<script>
+const uartCanvas=document.getElementById('uartCanvas');
+const uartCtx=uartCanvas.getContext('2d');
+const tableCanvas=document.getElementById('tableCanvas');
+const tableCtx=tableCanvas.getContext('2d');
+
+function calc(){
+const lspclk=parseFloat(document.getElementById('lspclk').value);
+const targetBaud=parseInt(document.getElementById('targetBaud').value);
+const brr=parseInt(document.getElementById('brr').value);
+const fmt=parseInt(document.getElementById('dataFormat').value);
+
+document.getElementById('lspclkVal').textContent=lspclk+' MHz';
+document.getElementById('targetBaudVal').textContent=targetBaud;
+document.getElementById('brrVal').textContent=brr;
+
+let actualBaud;
+if(brr===0){
+actualBaud=lspclk*1e6/16;
+}else{
+actualBaud=lspclk*1e6/(8*(brr+1)*2);
+}
+
+const errorPct=(actualBaud-targetBaud)/targetBaud*100;
+const absError=Math.abs(errorPct);
+
+let frameBits=10;
+if(fmt===3)frameBits=11;
+
+const frameTime=frameBits/actualBaud;
+const maxBytes=actualBaud/frameBits;
+
+document.getElementById('r_actual').textContent=actualBaud.toFixed(0)+' bps';
+document.getElementById('r_error').textContent=(errorPct>=0?'+':'')+errorPct.toFixed(2)+'%';
+document.getElementById('r_error').style.color=absError<0.5?'#00ff88':absError<2?'#ffaa00':'#ff6b6b';
+document.getElementById('r_framebits').textContent=frameBits;
+document.getElementById('r_frametime').textContent=(frameTime*1e6).toFixed(2)+' μs';
+document.getElementById('r_maxbytes').textContent=maxBytes.toFixed(0)+' B/s';
+
+const errBar=document.getElementById('errorBar');
+if(absError<0.5){
+errBar.className='error-bar ok';errBar.textContent='✅ 波特率误差 < 0.5%，通信可靠';
+}else if(absError<2){
+errBar.className='error-bar warn';errBar.textContent='⚠️ 波特率误差 '+absError.toFixed(2)+'%，可能偶尔丢帧';
+}else{
+errBar.className='error-bar danger';errBar.textContent='🚨 波特率误差 '+absError.toFixed(2)+'%，通信不可靠!';
+}
+
+const optimalBRR=Math.round(lspclk*1e6/(8*2*targetBaud)-1);
+const optimalBaud=lspclk*1e6/(8*(optimalBRR+1)*2);
+const optimalError=(optimalBaud-targetBaud)/targetBaud*100;
+
+const parityName=['无','偶','奇','无'][fmt];
+const stopName=['1','1','1','2'][fmt];
+const code=`// SCI波特率配置 (LSPCLK = ${lspclk}MHz)
+// 目标波特率: ${targetBaud} bps
+// 计算公式: BRR = LSPCLK/(8×Baud×2) - 1
+//           BRR = ${lspclk}e6/(8×${targetBaud}×2) - 1 = ${optimalBRR}
+
+SciaRegs.SCIHBAUD = ${(optimalBRR>>8)&0xFF};     // 波特率高位
+SciaRegs.SCILBAUD = ${optimalBRR&0xFF};           // 波特率低位
+// 实际波特率: ${optimalBaud.toFixed(0)} bps (误差: ${optimalError>=0?'+':''}${optimalError.toFixed(2)}%)
+
+SciaRegs.SCICCR.bit.STOPBITS = ${fmt===3?1:0};    // 停止位: ${stopName}
+SciaRegs.SCICCR.bit.PARITYENA = ${fmt>0&&fmt<3?1:0}; // 校验使能
+SciaRegs.SCICCR.bit.EVENPARITY = ${fmt===1?1:0};  // 偶校验
+SciaRegs.SCICCR.bit.SCICHAR = 7;                  // 8位数据`;
+document.getElementById('codeOutput').textContent=code;
+
+drawUART(targetBaud,fmt);
+drawTable(lspclk);
+}
+
+function applyPreset(baud){
+document.getElementById('targetBaud').value=baud;
+const lspclk=parseFloat(document.getElementById('lspclk').value);
+const optimalBRR=Math.round(lspclk*1e6/(8*2*baud)-1);
+document.getElementById('brr').value=Math.max(0,optimalBRR);
+calc();
+}
+
+function drawUART(baud,fmt){
+const dpr=window.devicePixelRatio||1;
+const w=uartCanvas.clientWidth;const h=300;
+uartCanvas.width=w*dpr;uartCanvas.height=h*dpr;
+uartCtx.scale(dpr,dpr);
+uartCtx.clearRect(0,0,w,h);
+
+const pad={l:50,r:20,t:30,b:40};
+const plotW=w-pad.l-pad.r;
+const plotH=h-pad.t-pad.b;
+
+uartCtx.fillStyle='#7a8ba8';uartCtx.font='11px Microsoft YaHei';uartCtx.textAlign='left';
+uartCtx.fillText('UART数据帧 (发送0x55 = 01010101b)',pad.l,pad.t-8);
+
+uartCtx.strokeStyle='#1e2a5a';uartCtx.lineWidth=0.5;
+uartCtx.beginPath();uartCtx.moveTo(pad.l,pad.t);uartCtx.lineTo(pad.l+plotW,pad.t);uartCtx.stroke();
+uartCtx.beginPath();uartCtx.moveTo(pad.l,pad.t+plotH);uartCtx.lineTo(pad.l+plotW,pad.t+plotH);uartCtx.stroke();
+
+uartCtx.fillStyle='#555';uartCtx.font='8px Consolas';uartCtx.textAlign='right';
+uartCtx.fillText('H',pad.l-4,pad.t+8);uartCtx.fillText('L',pad.l-4,pad.t+plotH);
+
+const data=0x55;
+const bits=[0];
+for(let i=0;i<8;i++)bits.push((data>>i)&1);
+if(fmt===1)bits.push(0);
+else if(fmt===2)bits.push(1);
+bits.push(1);
+if(fmt===3)bits.push(1);
+
+const bitW=plotW/bits.length;
+const yH=pad.t;
+const yL=pad.t+plotH;
+
+uartCtx.strokeStyle='#00ff88';uartCtx.lineWidth=2;
+uartCtx.beginPath();
+for(let i=0;i<bits.length;i++){
+const x=pad.l+i*bitW;
+const y=bits[i]?yH:yL;
+if(i===0)uartCtx.moveTo(x,y);
+else{
+const prevY=bits[i-1]?yH:yL;
+if(y!==prevY){uartCtx.lineTo(x,prevY);uartCtx.lineTo(x,y)}
+}
+uartCtx.lineTo(x+bitW,y);
+}
+uartCtx.stroke();
+
+const labels=['START','D0','D1','D2','D3','D4','D5','D6','D7'];
+if(fmt===1)labels.push('P(偶)');
+else if(fmt===2)labels.push('P(奇)');
+labels.push('STOP');
+if(fmt===3)labels.push('STOP2');
+
+for(let i=0;i<labels.length;i++){
+const x=pad.l+i*bitW+bitW/2;
+uartCtx.fillStyle=i===0||i===labels.length-1||(fmt===3&&i===labels.length-2)?'#ff6b6b':
+(fmt===1&&i===8)||(fmt===2&&i===8)?'#ffaa00':'#7a8ba8';
+uartCtx.font='8px Consolas';uartCtx.textAlign='center';
+uartCtx.fillText(labels[i],x,pad.t+plotH+12);
+uartCtx.fillStyle='#555';
+uartCtx.fillText(bits[i]?'1':'0',x,pad.t+plotH+24);
+}
+
+uartCtx.strokeStyle='#ff6b6b';uartCtx.lineWidth=1;uartCtx.setLineDash([3,3]);
+const startX=pad.l;
+uartCtx.beginPath();uartCtx.moveTo(startX,pad.t-5);uartCtx.lineTo(startX,pad.t+plotH+5);uartCtx.stroke();
+uartCtx.setLineDash([]);
+}
+
+function drawTable(lspclk){
+const dpr=window.devicePixelRatio||1;
+const w=tableCanvas.clientWidth;const h=250;
+tableCanvas.width=w*dpr;tableCanvas.height=h*dpr;
+tableCtx.scale(dpr,dpr);
+tableCtx.clearRect(0,0,w,h);
+
+const bauds=[1200,2400,4800,9600,19200,38400,57600,115200,230400,460800,921600];
+const pad={l:15,r:15,t:10,b:10};
+const cols=4;
+const colW=(w-2*pad.l)/cols;
+const rowH=(h-2*pad.t)/Math.ceil(bauds.length/cols);
+
+const headers=['波特率','BRR','实际值','误差'];
+for(let c=0;c<headers.length;c++){
+tableCtx.fillStyle='#00d4ff';tableCtx.font='bold 9px Consolas';tableCtx.textAlign='center';
+tableCtx.fillText(headers[c],pad.l+c*colW+colW/2,pad.t+8);
+}
+
+for(let i=0;i<bauds.length;i++){
+const row=Math.floor(i/cols*1);
+const col=i%cols;
+const x=pad.l+col*colW;
+const y=pad.t+20+i*rowH;
+
+const brr=Math.max(0,Math.round(lspclk*1e6/(8*2*bauds[i])-1));
+const actual=lspclk*1e6/(8*(brr+1)*2);
+const err=(actual-bauds[i])/bauds[i]*100;
+const absErr=Math.abs(err);
+
+tableCtx.font='9px Consolas';tableCtx.textAlign='center';
+tableCtx.fillStyle='#e0e6ff';tableCtx.fillText(bauds[i]+'',x+colW*0.125,y+8);
+tableCtx.fillStyle='#00d4ff';tableCtx.fillText(brr+'',x+colW*0.375,y+8);
+tableCtx.fillStyle='#e0e6ff';tableCtx.fillText(actual.toFixed(0)+'',x+colW*0.625,y+8);
+tableCtx.fillStyle=absErr<0.5?'#00ff88':absErr<2?'#ffaa00':'#ff6b6b';
+tableCtx.fillText((err>=0?'+':'')+err.toFixed(1)+'%',x+colW*0.875,y+8);
+}
+}
+
+document.querySelectorAll('input,select').forEach(el=>{
+el.addEventListener('input',calc);
+el.addEventListener('change',calc);
+});
+window.addEventListener('resize',calc);
+calc();
+</script>
+</body>
+</html>

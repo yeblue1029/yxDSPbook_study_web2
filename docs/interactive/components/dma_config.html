@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMA传输配置 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+select,input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+select:focus,input:focus{outline:none;border-color:#00d4ff}
+.channel-list{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}
+.channel-btn{padding:12px 20px;background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;color:#e0e6ff;cursor:pointer;transition:all 0.2s;font-weight:bold}
+.channel-btn:hover{border-color:#00d4ff}
+.channel-btn.active{border-color:#00ff88;background:#0d2818;color:#00ff88}
+.transfer-visual{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:20px;margin-top:15px}
+.transfer-flow{display:flex;justify-content:space-between;align-items:center;padding:20px 0;position:relative}
+.transfer-node{background:#1e2a5a;border:2px solid #00d4ff;border-radius:50%;width:80px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.transfer-node.source{border-color:#ff6b6b}
+.transfer-node.dest{border-color:#00ff88}
+.transfer-node .icon{font-size:1.5em}
+.transfer-node .label{font-size:0.7em;margin-top:5px}
+.transfer-arrow{position:absolute;left:100px;right:100px;top:50%;transform:translateY(-50%);height:4px;background:linear-gradient(90deg,#ff6b6b,#00ff88);border-radius:2px}
+.transfer-arrow::after{content:'▶';position:absolute;right:-20px;top:50%;transform:translateY(-50%);color:#00ff88}
+.pipeline-stages{display:flex;justify-content:space-around;margin-top:20px;flex-wrap:wrap}
+.pipeline-stage{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;text-align:center;min-width:120px}
+.pipeline-stage .stage-name{color:#00d4ff;font-size:0.9em}
+.pipeline-stage .stage-desc{color:#7a8ba8;font-size:0.75em;margin-top:5px}
+.register-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.1em;font-weight:bold;margin-top:8px;font-family:'Consolas',monospace}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4}
+.btn-stop{background:#ff6b6b}
+.btn-transfer{background:#00ff88}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px;max-height:400px;overflow-y:auto}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;line-height:1.5}
+.info-text{color:#7a8ba8;font-size:0.85em}
+.progress-bar{height:6px;background:#1e2a5a;border-radius:3px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;background:#00ff88;transition:width 0.3s}
+.transfer-status{display:flex;justify-content:space-between;margin-top:15px;font-size:0.85em}
+.transfer-status span{color:#7a8ba8}
+.transfer-status strong{color:#00ff88}
+.trigger-source{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.trigger-tag{padding:4px 10px;background:#1e2a5a;border-radius:4px;font-size:0.8em;color:#ffcc00}
+</style>
+</head>
+<body>
+<header>
+<h1>📦 DMA传输配置模块</h1>
+<p class="info-text">直接存储器访问 | 6通道 | 4级流水线 | 乒乓机制</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">DMA通道选择</h3>
+<div class="channel-list">
+<button class="channel-btn active" onclick="selectChannel(0)">CH1</button>
+<button class="channel-btn" onclick="selectChannel(1)">CH2</button>
+<button class="channel-btn" onclick="selectChannel(2)">CH3</button>
+<button class="channel-btn" onclick="selectChannel(3)">CH4</button>
+<button class="channel-btn" onclick="selectChannel(4)">CH5</button>
+<button class="channel-btn" onclick="selectChannel(5)">CH6</button>
+</div>
+<div class="controls">
+<div class="control-group">
+<label>触发源</label>
+<select id="triggerSource" onchange="updateConfig()">
+<option value="0">ADC排序器1中断</option>
+<option value="1">ADC排序器2中断</option>
+<option value="2">外部中断1</option>
+<option value="3">外部中断2</option>
+<option value="4">外部中断3</option>
+<option value="5">外部中断4</option>
+<option value="6">外部中断5</option>
+<option value="7">外部中断6</option>
+<option value="8">外部中断7</option>
+<option value="9">CPU定时器0</option>
+<option value="10">CPU定时器1</option>
+<option value="11">CPU定时器2</option>
+<option value="12">McBSP-A发送</option>
+<option value="13">McBSP-A接收</option>
+<option value="14">McBSP-B发送</option>
+<option value="15">McBSP-B接收</option>
+<option value="16">ePWM1 ADC启动</option>
+<option value="17">软件触发</option>
+</select>
+</div>
+<div class="control-group">
+<label>数据源</label>
+<select id="dataSource" onchange="updateConfig()">
+<option value="0">XINTF区域0</option>
+<option value="1">XINTF区域6</option>
+<option value="2">XINTF区域7</option>
+<option value="3">XINTF区域8</option>
+<option value="4">ADC结果寄存器</option>
+<option value="5">McBSP-A数据</option>
+<option value="6">McBSP-B数据</option>
+<option value="7">ePWM1-6寄存器</option>
+</select>
+</div>
+<div class="control-group">
+<label>目标地址</label>
+<input type="text" id="destAddr" value="0x00008000" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>源地址</label>
+<input type="text" id="srcAddr" value="0x00007000" onchange="updateConfig()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">传输参数配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>突发大小 (BURST_SIZE)</label>
+<input type="number" id="burstSize" value="16" min="1" max="32" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>传输次数 (TRANSFER_SIZE)</label>
+<input type="number" id="transferSize" value="8" min="1" max="65535" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>数据字长</label>
+<select id="wordSize" onchange="updateConfig()">
+<option value="16">16位</option>
+<option value="32">32位</option>
+</select>
+</div>
+<div class="control-group">
+<label>优先级模式</label>
+<select id="priorityMode" onchange="updateConfig()">
+<option value="0">轮次模式 (Round-Robin)</option>
+<option value="1">CH1高优先级</option>
+</select>
+</div>
+</div>
+<div class="controls" style="margin-top:15px">
+<div class="control-group">
+<label>ONESHOT模式</label>
+<select id="oneshotMode" onchange="updateConfig()">
+<option value="0">关闭 (单次触发)</option>
+<option value="1">开启 (持续传输)</option>
+</select>
+</div>
+<div class="control-group">
+<label>源地址步进 (SRC_STEP)</label>
+<input type="number" id="srcStep" value="1" min="-128" max="127" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>目标地址步进 (DST_STEP)</label>
+<input type="number" id="dstStep" value="1" min="-128" max="127" onchange="updateConfig()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">DMA传输可视化</h3>
+<div class="transfer-visual">
+<div class="transfer-flow">
+<div class="transfer-node source">
+<span class="icon">📤</span>
+<span class="label" id="srcNodeLabel">源地址</span>
+</div>
+<div class="transfer-arrow"></div>
+<div class="transfer-node dest">
+<span class="icon">📥</span>
+<span class="label" id="dstNodeLabel">目标地址</span>
+</div>
+</div>
+<div class="pipeline-stages">
+<div class="pipeline-stage">
+<div class="stage-name">1. 产生地址</div>
+<div class="stage-desc">SRC_ADDR → 总线</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-name">2. 读取数据</div>
+<div class="stage-desc">数据 → 数据总线</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-name">3. 目的地址</div>
+<div class="stage-desc">DST_ADDR → 总线</div>
+</div>
+<div class="pipeline-stage">
+<div class="stage-name">4. 写入数据</div>
+<div class="stage-desc">数据 → 目标</div>
+</div>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" id="transferProgress" style="width:0%"></div>
+</div>
+<div class="transfer-status">
+<span>已完成: <strong id="bytesTransferred">0</strong> 字节</span>
+<span>总数据: <strong id="totalBytes">0</strong> 字节</span>
+<span>当前突发: <strong id="currentBurst">0</strong>/<strong id="totalBursts">0</strong></span>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">DMA通道状态</h3>
+<div class="register-grid">
+<div class="register-item">
+<div class="name">SRC_ADDR (源地址)</div>
+<div class="value" id="srcAddrReg">0x00007000</div>
+</div>
+<div class="register-item">
+<div class="name">DST_ADDR (目标地址)</div>
+<div class="value" id="dstAddrReg">0x00008000</div>
+</div>
+<div class="register-item">
+<div class="name">BURST_SIZE</div>
+<div class="value" id="burstReg">16</div>
+</div>
+<div class="register-item">
+<div class="name">TRANSFER_SIZE</div>
+<div class="value" id="transferReg">8</div>
+</div>
+<div class="register-item">
+<div class="name">MODE 控制</div>
+<div class="value" id="modeReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">CONTROL 状态</div>
+<div class="value" id="controlReg">0x0000</div>
+</div>
+</div>
+<div class="trigger-source">
+<strong style="color:#7a8ba8">可用触发源: </strong>
+<span class="trigger-tag">ADC</span>
+<span class="trigger-tag">外部中断 XINT1-7,13</span>
+<span class="trigger-tag">CPU定时器 0/1/2</span>
+<span class="trigger-tag">McBSP-A/B</span>
+<span class="trigger-tag">ePWM1-6</span>
+<span class="trigger-tag">软件触发</span>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">DMA控制</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn btn-transfer" onclick="startTransfer()">▶ 开始传输</button>
+<button class="btn btn-stop" onclick="stopTransfer()">⏹ 停止</button>
+<button class="btn" onclick="resetDMA()">🔄 重置</button>
+<button class="btn" onclick="softwareTrigger()">⚡ 软件触发</button>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// DMA初始化配置
+void InitDMA(void)
+{
+    // 停止DMA
+    DMACtrlRegs.DEBUGCTRL.bit.SOFTRESET = 1;
+    
+    // 配置CH1通道
+    // 源地址
+    DmaRegs.CH1.SRC_ADDR.all = 0x00007000;
+    // 目标地址
+    DmaRegs.CH1.DST_ADDR.all = 0x00008000;
+    // 突发大小: 16字
+    DmaRegs.CH1.BURST_SIZE.all = 16;
+    // 传输大小: 8次
+    DmaRegs.CH1.TRANSFER_SIZE.all = 8;
+    
+    // 配置MODE寄存器
+    DmaRegs.CH1.MODE.bit.PERINTSEL = 1;    // 触发源: ADC排序器1
+    DmaRegs.CH1.MODE.bit.PERINTE = 1;       // 使能外设中断触发
+    DmaRegs.CH1.MODE.bit.ONESHOT = 0;       // 关闭ONESHOT
+    DmaRegs.CH1.MODE.bit.CHINTMODE = 0;     // 传输结束中断
+    
+    // 清除任何挂起的标志
+    DmaRegs.CH1.CONTROL.bit.PERINTCLR = 1;
+    
+    // 使能CH1通道
+    DmaRegs.CH1.CONTROL.bit.RUN = 1;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const triggerNames = [
+    'ADC排序器1', 'ADC排序器2', 'XINT1', 'XINT2', 'XINT3',
+    'XINT4', 'XINT5', 'XINT6', 'XINT7', 'TINT0', 'TINT1', 'TINT2',
+    'McBSP-A TX', 'McBSP-A RX', 'McBSP-B TX', 'McBSP-B RX',
+    'ePWM1_ADCSOC', '软件'
+];
+
+const sourceNames = [
+    'XINTF区域0', 'XINTF区域6', 'XINTF区域7', 'XINTF区域8',
+    'ADC结果', 'McBSP-A', 'McBSP-B', 'ePWM1-6'
+];
+
+let dmaState = {
+    channel: 0,
+    srcAddr: 0x7000,
+    dstAddr: 0x8000,
+    burstSize: 16,
+    transferSize: 8,
+    wordSize: 16,
+    triggerSource: 0,
+    dataSource: 0,
+    priorityMode: 0,
+    oneshotMode: 0,
+    srcStep: 1,
+    dstStep: 1,
+    running: false,
+    currentBurst: 0,
+    currentWord: 0,
+    totalTransferred: 0
+};
+
+let transferInterval = null;
+
+function selectChannel(ch) {
+    dmaState.channel = ch;
+    document.querySelectorAll('.channel-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === ch);
+    });
+    updateDisplay();
+}
+
+function updateConfig() {
+    dmaState.triggerSource = parseInt(document.getElementById('triggerSource').value);
+    dmaState.dataSource = parseInt(document.getElementById('dataSource').value);
+    dmaState.srcAddr = parseInt(document.getElementById('srcAddr').value) || 0x7000;
+    dmaState.dstAddr = parseInt(document.getElementById('destAddr').value) || 0x8000;
+    dmaState.burstSize = parseInt(document.getElementById('burstSize').value) || 16;
+    dmaState.transferSize = parseInt(document.getElementById('transferSize').value) || 8;
+    dmaState.wordSize = parseInt(document.getElementById('wordSize').value);
+    dmaState.priorityMode = parseInt(document.getElementById('priorityMode').value);
+    dmaState.oneshotMode = parseInt(document.getElementById('oneshotMode').value);
+    dmaState.srcStep = parseInt(document.getElementById('srcStep').value) || 1;
+    dmaState.dstStep = parseInt(document.getElementById('dstStep').value) || 1;
+    
+    updateDisplay();
+    updateCode();
+}
+
+function updateDisplay() {
+    document.getElementById('srcNodeLabel').textContent = sourceNames[dmaState.dataSource];
+    document.getElementById('dstNodeLabel').textContent = 'RAM 0x' + dmaState.dstAddr.toString(16).toUpperCase();
+    
+    document.getElementById('srcAddrReg').textContent = '0x' + dmaState.srcAddr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('dstAddrReg').textContent = '0x' + dmaState.dstAddr.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('burstReg').textContent = dmaState.burstSize;
+    document.getElementById('transferReg').textContent = dmaState.transferSize;
+    
+    const modeVal = (dmaState.oneshotMode << 8) | (dmaState.triggerSource & 0x1F);
+    document.getElementById('modeReg').textContent = '0x' + modeVal.toString(16).toUpperCase().padStart(4, '0');
+    
+    const controlVal = dmaState.running ? 0x8000 : 0;
+    document.getElementById('controlReg').textContent = '0x' + controlVal.toString(16).toUpperCase().padStart(4, '0');
+    
+    const totalBytes = dmaState.burstSize * dmaState.transferSize * (dmaState.wordSize / 16);
+    document.getElementById('totalBytes').textContent = totalBytes;
+    document.getElementById('bytesTransferred').textContent = dmaState.totalTransferred;
+    
+    const progress = totalBytes > 0 ? (dmaState.totalTransferred / totalBytes) * 100 : 0;
+    document.getElementById('transferProgress').style.width = progress + '%';
+    
+    document.getElementById('currentBurst').textContent = dmaState.currentBurst;
+    document.getElementById('totalBursts').textContent = dmaState.transferSize;
+}
+
+function startTransfer() {
+    if(dmaState.running) return;
+    
+    dmaState.running = true;
+    dmaState.currentBurst = 0;
+    dmaState.currentWord = 0;
+    dmaState.totalTransferred = 0;
+    
+    updateDisplay();
+    
+    transferInterval = setInterval(() => {
+        if(dmaState.currentWord < dmaState.burstSize) {
+            dmaState.currentWord++;
+            dmaState.totalTransferred++;
+            
+            if(dmaState.currentWord >= dmaState.burstSize) {
+                dmaState.currentWord = 0;
+                dmaState.currentBurst++;
+            }
+            
+            updateDisplay();
+        }
+        
+        if(dmaState.currentBurst >= dmaState.transferSize) {
+            stopTransfer();
+        }
+    }, 50);
+}
+
+function stopTransfer() {
+    dmaState.running = false;
+    if(transferInterval) {
+        clearInterval(transferInterval);
+        transferInterval = null;
+    }
+    updateDisplay();
+}
+
+function resetDMA() {
+    stopTransfer();
+    dmaState.currentBurst = 0;
+    dmaState.currentWord = 0;
+    dmaState.totalTransferred = 0;
+    updateDisplay();
+}
+
+function softwareTrigger() {
+    const result = document.getElementById('transferProgress');
+    result.style.background = '#ffcc00';
+    setTimeout(() => {
+        result.style.background = '#00ff88';
+    }, 200);
+    
+    if(!dmaState.running) {
+        startTransfer();
+    }
+}
+
+function updateCode() {
+    const ch = dmaState.channel;
+    const code = `// DMA通道${ch + 1}初始化配置
+void InitDMACh${ch + 1}(void)
+{
+    // 停止DMA通道
+    DmaRegs.CH${ch + 1}.CONTROL.bit.RUN = 0;
+    
+    // 配置源地址
+    DmaRegs.CH${ch + 1}.SRC_ADDR.all = 0x${dmaState.srcAddr.toString(16).toUpperCase()};
+    
+    // 配置目标地址
+    DmaRegs.CH${ch + 1}.DST_ADDR.all = 0x${dmaState.dstAddr.toString(16).toUpperCase()};
+    
+    // 配置突发大小 (1-32个字)
+    DmaRegs.CH${ch + 1}.BURST_SIZE.all = ${dmaState.burstSize};
+    
+    // 配置传输次数
+    DmaRegs.CH${ch + 1}.TRANSFER_SIZE.all = ${dmaState.transferSize};
+    
+    // 配置源地址步进
+    DmaRegs.CH${ch + 1}.SRC_TRANSFER_STEP.all = ${dmaState.srcStep};
+    
+    // 配置目标地址步进
+    DmaRegs.CH${ch + 1}.DST_TRANSFER_STEP.all = ${dmaState.dstStep};
+    
+    // 配置MODE寄存器
+    DmaRegs.CH${ch + 1}.MODE.bit.PERINTSEL = ${dmaState.triggerSource + 1};
+    DmaRegs.CH${ch + 1}.MODE.bit.PERINTE = 1;
+    DmaRegs.CH${ch + 1}.MODE.bit.ONESHOT = ${dmaState.oneshotMode};
+    DmaRegs.CH${ch + 1}.MODE.bit.CHINTMODE = 0;
+    
+    // 清除挂起的中断标志
+    DmaRegs.CH${ch + 1}.CONTROL.bit.PERINTCLR = 1;
+    
+    // 启动DMA通道
+    DmaRegs.CH${ch + 1}.CONTROL.bit.RUN = 1;
+}
+
+// 中断服务程序
+interrupt void dmaCh${ch + 1}ISR(void)
+{
+    // 处理DMA传输完成
+    DmaRegs.CH${ch + 1}.CONTROL.bit.PERINTCLR = 1;
+    
+    // 应答PIE中断
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP${Math.ceil((ch + 1) / 8)};
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+updateDisplay();
+updateCode();
+</script>
+</body>
+</html>

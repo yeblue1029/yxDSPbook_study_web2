@@ -1,0 +1,23 @@
+site_name: TMS320F28335 学习笔记 V2 (含交互版)
+theme:
+  name: material
+
+nav:
+  - 首页: index.md
+  - 第2章 芯片资源: chapter2/chapter2.md
+  - 第3章 寄存器与中断: chapter3/chapter3.md
+  - 第4章 时钟与看门狗: chapter4/chapter4.md
+  - 第5章 GPIO: chapter5/chapter5.md
+  - 第6章 CPU定时器: chapter6/chapter6.md
+  - 第7章: chapter7/chapter7.md
+  - 第8章: chapter8/chapter8.md
+  - 第9章: chapter9/chapter9.md
+  - 第10章: chapter10/chapter10.md
+  - 第11章: chapter11/chapter11.md
+  - 第12章: chapter12/chapter12.md
+  - 第13章: chapter13/chapter13.md
+  - 第14章: chapter14/chapter14.md
+  - 第15章: chapter15/chapter15.md
+  - 第16章: chapter16/chapter16.md
+  - 第17章: chapter17/chapter17.md
+  - 🛠️ 交互演示模块: interactive/index.html

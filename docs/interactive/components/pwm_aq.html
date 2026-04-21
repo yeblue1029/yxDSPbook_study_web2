@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ePWM动作限定模块(AQ) — 寄存器配置与PWM波形实时生成器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.5em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:15px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1500px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:18px;flex:1;min-width:320px}
+.panel-title{color:#00d4ff;font-size:1em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1e2a5a}
+.control-group{margin-bottom:14px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:4px;font-size:0.82em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right;font-family:'Consolas',monospace}
+input[type=range]{width:100%;height:5px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#00d4ff;cursor:pointer}
+select{width:100%;padding:6px 10px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;font-size:0.85em;cursor:pointer}
+select:focus{outline:none;border-color:#00d4ff}
+.aq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.aq-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:6px;padding:8px}
+.aq-item .title{color:#ffaa00;font-size:0.75em;margin-bottom:4px;font-family:'Consolas',monospace}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:12px;margin-top:8px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111633;font-size:0.85em}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{color:#00ff88;font-weight:bold;font-family:'Consolas',monospace}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.wave-label{display:flex;justify-content:space-between;font-size:0.8em;color:#7a8ba8;margin:6px 0 2px}
+</style>
+</head>
+<body>
+<h1>🔧 ePWM动作限定模块 (Action Qualifier)</h1>
+<p class="subtitle">第7章 7.5 动作模块AC — 寄存器配置与PWM波形实时生成器</p>
+
+<div class="container">
+<div class="panel" style="max-width:380px">
+<div class="panel-title">⚙️ 时基与比较寄存器</div>
+
+<div class="control-group">
+<label>TBPRD (周期寄存器) <span class="value" id="prlVal">1000</span></label>
+<input type="range" id="tbprd" min="100" max="4000" value="1000" step="10">
+</div>
+
+<div class="control-group">
+<label>CMPA (比较寄存器A) <span class="value" id="cmpaVal">500</span></label>
+<input type="range" id="cmpa" min="0" max="4000" value="500" step="1">
+</div>
+
+<div class="control-group">
+<label>CMPB (比较寄存器B) <span class="value" id="cmpbVal">250</span></label>
+<input type="range" id="cmpb" min="0" max="4000" value="250" step="1">
+</div>
+
+<div class="control-group">
+<label>计数模式</label>
+<select id="cntMode">
+<option value="0" selected>增减计数 (Up-Down)</option>
+<option value="1">增计数 (Up)</option>
+<option value="2">减计数 (Down)</option>
+</select>
+</div>
+
+<div class="panel-title" style="margin-top:12px">🎯 动作限定配置 (AQCTLA)</div>
+<div class="aq-grid">
+<div class="aq-item">
+<div class="title">CTR = ZRO (零点)</div>
+<select id="aq_zro" class="aq-select">
+<option value="0">无动作</option>
+<option value="1">置高 (Set High)</option>
+<option value="2">拉低 (Clear Low)</option>
+<option value="3">翻转 (Toggle)</option>
+</select>
+</div>
+<div class="aq-item">
+<div class="title">CTR = PRD (周期)</div>
+<select id="aq_prd" class="aq-select">
+<option value="0">无动作</option>
+<option value="1">置高 (Set High)</option>
+<option value="2">拉低 (Clear Low)</option>
+<option value="3">翻转 (Toggle)</option>
+</select>
+</div>
+<div class="aq-item">
+<div class="title">CTR = CMPA ↑</div>
+<select id="aq_cau" class="aq-select">
+<option value="0">无动作</option>
+<option value="1" selected>置高 (Set High)</option>
+<option value="2">拉低 (Clear Low)</option>
+<option value="3">翻转 (Toggle)</option>
+</select>
+</div>
+<div class="aq-item">
+<div class="title">CTR = CMPA ↓</div>
+<select id="aq_cad" class="aq-select">
+<option value="0">无动作</option>
+<option value="1">置高 (Set High)</option>
+<option value="2" selected>拉低 (Clear Low)</option>
+<option value="3">翻转 (Toggle)</option>
+</select>
+</div>
+<div class="aq-item">
+<div class="title">CTR = CMPB ↑</div>
+<select id="aq_cbu" class="aq-select">
+<option value="0">无动作</option>
+<option value="1">置高 (Set High)</option>
+<option value="2">拉低 (Clear Low)</option>
+<option value="3">翻转 (Toggle)</option>
+</select>
+</div>
+<div class="aq-item">
+<div class="title">CTR = CMPB ↓</div>
+<select id="aq_cbd" class="aq-select">
+<option value="0">无动作</option>
+<option value="1">置高 (Set High)</option>
+<option value="2">拉低 (Clear Low)</option>
+<option value="3">翻转 (Toggle)</option>
+</select>
+</div>
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">占空比 (EPWMxA)</span>
+<span class="result-value" id="r_duty">50.0%</span>
+</div>
+<div class="result-row">
+<span class="result-label">频率 (SYSCLK=150MHz)</span>
+<span class="result-value" id="r_freq">75.0 kHz</span>
+</div>
+<div class="result-row">
+<span class="result-label">周期</span>
+<span class="result-value" id="r_period">13.33 μs</span>
+</div>
+</div>
+</div>
+
+<div class="panel" style="flex:2;min-width:500px">
+<div class="panel-title">📊 实时波形</div>
+<canvas id="waveCanvas" height="450"></canvas>
+
+<div class="result-box" style="margin-top:10px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 6px 0;font-size:0.9em">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.75em;white-space:pre-wrap;line-height:1.5"></pre>
+</div>
+</div>
+</div>
+
+<script>
+const canvas=document.getElementById('waveCanvas');
+const ctx=canvas.getContext('2d');
+const actions=['无动作','置高','拉低','翻转'];
+
+function getAction(selectId){return parseInt(document.getElementById(selectId).value)}
+
+function applyAction(currentVal,action){
+switch(action){
+case 0:return currentVal;
+case 1:return 1;
+case 2:return 0;
+case 3:return currentVal===1?0:1;
+}
+return currentVal;
+}
+
+function calc(){
+const tbprd=parseInt(document.getElementById('tbprd').value);
+const cmpa=parseInt(document.getElementById('cmpa').value);
+const cmpb=parseInt(document.getElementById('cmpb').value);
+const mode=parseInt(document.getElementById('cntMode').value);
+
+document.getElementById('prlVal').textContent=tbprd;
+document.getElementById('cmpaVal').textContent=Math.min(cmpa,tbprd);
+document.getElementById('cmpbVal').textContent=Math.min(cmpb,tbprd);
+
+const aqZro=getAction('aq_zro');
+const aqPrd=getAction('aq_prd');
+const aqCau=getAction('aq_cau');
+const aqCad=getAction('aq_cad');
+const aqCbu=getAction('aq_cbu');
+const aqCbd=getAction('aq_cbd');
+
+const cA=Math.min(cmpa,tbprd);
+const cB=Math.min(cmpb,tbprd);
+
+let counter=[];
+let pwmA=[];
+let pwmB=[];
+let outputA=0;
+let outputB=0;
+const steps=1000;
+
+if(mode===0){
+for(let i=0;i<steps;i++){
+const phase=i/steps;
+const t=phase*2;
+let cnt;
+if(t<1)cnt=t*tbprd;
+else cnt=(2-t)*tbprd;
+counter.push(cnt);
+
+if(cnt<=0.5&&i>0){
+outputA=applyAction(outputA,aqZro);
+outputB=applyAction(outputB,aqZro);
+}
+if(Math.abs(cnt-tbprd)<1&&i>0){
+outputA=applyAction(outputA,aqPrd);
+outputB=applyAction(outputB,aqPrd);
+}
+if(mode===0){
+if(i>0){
+const prevCnt=counter[i-1];
+if(prevCnt<cA&&cnt>=cA){outputA=applyAction(outputA,aqCau)}
+if(prevCnt>cA&&cnt<=cA){outputA=applyAction(outputA,aqCad)}
+if(prevCnt<cB&&cnt>=cB){outputB=applyAction(outputB,aqCbu)}
+if(prevCnt>cB&&cnt<=cB){outputB=applyAction(outputB,aqCbd)}
+}
+}
+pwmA.push(outputA);
+pwmB.push(outputB);
+}
+}else if(mode===1){
+for(let i=0;i<steps;i++){
+const cnt=(i/steps)*tbprd;
+counter.push(cnt);
+if(cnt<=0.5&&i>0){
+outputA=applyAction(outputA,aqZro);
+outputB=applyAction(outputB,aqZro);
+}
+if(Math.abs(cnt-tbprd)<tbprd/steps&&i>0){
+outputA=applyAction(outputA,aqPrd);
+outputB=applyAction(outputB,aqPrd);
+}
+if(i>0){
+const prevCnt=counter[i-1];
+if(prevCnt<cA&&cnt>=cA){outputA=applyAction(outputA,aqCau);outputB=applyAction(outputB,aqCbu)}
+}
+pwmA.push(outputA);
+pwmB.push(outputB);
+}
+}else{
+for(let i=0;i<steps;i++){
+const cnt=tbprd-(i/steps)*tbprd;
+counter.push(cnt);
+if(Math.abs(cnt)<tbprd/steps&&i>0){
+outputA=applyAction(outputA,aqZro);
+outputB=applyAction(outputB,aqZro);
+}
+if(i>0){
+const prevCnt=counter[i-1];
+if(prevCnt>cA&&cnt<=cA){outputA=applyAction(outputA,aqCad);outputB=applyAction(outputB,aqCbd)}
+}
+pwmA.push(outputA);
+pwmB.push(outputB);
+}
+}
+
+let highCount=0;
+for(let i=0;i<pwmA.length;i++){if(pwmA[i])highCount++}
+const duty=(highCount/pwmA.length*100).toFixed(1);
+
+const freq=150e6/(mode===0?2*tbprd:tbprd)/1000;
+const period=1/freq;
+
+document.getElementById('r_duty').textContent=duty+'%';
+document.getElementById('r_freq').textContent=freq.toFixed(1)+' kHz';
+document.getElementById('r_period').textContent=(period*1000).toFixed(2)+' μs';
+
+const code=`// ePWM Action Qualifier 配置
+EPwm1Regs.TBPRD = ${tbprd};          // 周期寄存器
+EPwm1Regs.CMPA.half.CMPA = ${cA};    // 比较寄存器A
+EPwm1Regs.CMPB = ${cB};              // 比较寄存器B
+EPwm1Regs.TBCTL.bit.CTRMODE = ${mode===0?2:mode===1?0:1};  // ${mode===0?'增减计数':mode===1?'增计数':'减计数'}
+
+// AQCTLA (EPWMxA输出动作)
+EPwm1Regs.AQCTLA.bit.ZRO = ${aqZro};   // CTR=ZRO: ${actions[aqZro]}
+EPwm1Regs.AQCTLA.bit.PRD = ${aqPrd};   // CTR=PRD: ${actions[aqPrd]}
+EPwm1Regs.AQCTLA.bit.CAU = ${aqCau};   // CTR=CMPA↑: ${actions[aqCau]}
+EPwm1Regs.AQCTLA.bit.CAD = ${aqCad};   // CTR=CMPA↓: ${actions[aqCad]}
+
+// AQCTLB (EPWMxB输出动作)
+EPwm1Regs.AQCTLB.bit.ZRO = ${aqZro};   // CTR=ZRO: ${actions[aqZro]}
+EPwm1Regs.AQCTLB.bit.PRD = ${aqPrd};   // CTR=PRD: ${actions[aqPrd]}
+EPwm1Regs.AQCTLB.bit.CBU = ${aqCbu};   // CTR=CMPB↑: ${actions[aqCbu]}
+EPwm1Regs.AQCTLB.bit.CBD = ${aqCbd};   // CTR=CMPB↓: ${actions[aqCbd]}`;
+document.getElementById('codeOutput').textContent=code;
+
+drawWave(counter,pwmA,pwmB,tbprd,cA,cB);
+}
+
+function drawWave(counter,pwmA,pwmB,tbprd,cA,cB){
+const dpr=window.devicePixelRatio||1;
+const w=canvas.clientWidth;
+const h=450;
+canvas.width=w*dpr;canvas.height=h*dpr;
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
+
+const pad={l:50,r:20,t:25,b:20};
+const plotW=w-pad.l-pad.r;
+const sections=3;
+const secH=(h-pad.t-pad.b)/sections;
+
+drawSection(0,'计数器 (TBCTR)',counter,tbprd,'#00d4ff',cA,cB);
+drawPWMSection(1,'EPWMxA 输出',pwmA,'#00ff88');
+drawPWMSection(2,'EPWMxB 输出',pwmB,'#ffaa00');
+
+function drawSection(idx,label,data,maxY,color,cmpAVal,cmpBVal){
+const y0=pad.t+idx*secH;
+const plotH=secH-30;
+
+ctx.fillStyle='#7a8ba8';ctx.font='11px Microsoft YaHei';
+ctx.textAlign='left';ctx.fillText(label,pad.l,y0-5);
+
+ctx.strokeStyle='#1e2a5a';ctx.lineWidth=0.5;
+for(let i=0;i<=4;i++){
+const yy=y0+10+plotH*i/4;
+ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(pad.l+plotW,yy);ctx.stroke();
+}
+
+ctx.strokeStyle=color;ctx.lineWidth=1.5;
+ctx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/data.length)*plotW;
+const y=y0+10+plotH-(data[i]/maxY)*plotH;
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.stroke();
+
+if(cmpAVal!==undefined){
+ctx.strokeStyle='rgba(255,107,107,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+const yA=y0+10+plotH-(cmpAVal/maxY)*plotH;
+ctx.beginPath();ctx.moveTo(pad.l,yA);ctx.lineTo(pad.l+plotW,yA);ctx.stroke();
+ctx.fillStyle='#ff6b6b';ctx.font='9px Consolas';ctx.textAlign='right';
+ctx.fillText('CMPA='+cmpAVal,pad.l-3,yA+3);
+
+const yB=y0+10+plotH-(cmpBVal/maxY)*plotH;
+ctx.beginPath();ctx.moveTo(pad.l,yB);ctx.lineTo(pad.l+plotW,yB);ctx.stroke();
+ctx.fillStyle='#ffaa00';
+ctx.fillText('CMPB='+cmpBVal,pad.l-3,yB+3);
+ctx.setLineDash([]);
+}
+
+ctx.fillStyle='#555';ctx.font='9px Consolas';ctx.textAlign='right';
+ctx.fillText(maxY,pad.l-3,y0+13);
+ctx.fillText('0',pad.l-3,y0+10+plotH);
+}
+
+function drawPWMSection(idx,label,data,color){
+const y0=pad.t+idx*secH;
+const plotH=secH-30;
+
+ctx.fillStyle='#7a8ba8';ctx.font='11px Microsoft YaHei';
+ctx.textAlign='left';ctx.fillText(label,pad.l,y0-5);
+
+ctx.strokeStyle=color;ctx.lineWidth=2;
+ctx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/data.length)*plotW;
+const y=y0+10+plotH-data[i]*(plotH-5)-2;
+if(i===0)ctx.moveTo(x,y);
+else{
+const prevY=y0+10+plotH-data[i-1]*(plotH-5)-2;
+if(data[i]!==data[i-1]){
+ctx.lineTo(x,prevY);ctx.lineTo(x,y);
+}
+ctx.lineTo(x,y);
+}
+}
+ctx.stroke();
+
+ctx.fillStyle='rgba(0,0,0,0)';ctx.globalAlpha=0.1;
+ctx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/data.length)*plotW;
+const y=y0+10+plotH-data[i]*(plotH-5)-2;
+if(i===0)ctx.moveTo(x,y);
+else{
+const prevY=y0+10+plotH-data[i-1]*(plotH-5)-2;
+if(data[i]!==data[i-1]){ctx.lineTo(x,prevY);ctx.lineTo(x,y)}
+ctx.lineTo(x,y);
+}
+}
+ctx.lineTo(pad.l+plotW,y0+10+plotH);
+ctx.lineTo(pad.l,y0+10+plotH);
+ctx.closePath();
+ctx.fillStyle=color;ctx.fill();
+ctx.globalAlpha=1;
+}
+}
+
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',calc));
+document.querySelectorAll('select').forEach(el=>el.addEventListener('change',calc));
+window.addEventListener('resize',calc);
+calc();
+</script>
+</body>
+</html>

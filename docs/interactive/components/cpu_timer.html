@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU定时器配置 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+select,input{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+select:focus,input:focus{outline:none;border-color:#00d4ff}
+.timer-visual{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:20px;margin-top:15px}
+.canvas-wrapper{position:relative;width:100%;height:150px}
+canvas{width:100%;height:100%}
+.timer-display{text-align:center;margin-top:15px}
+.timer-value{font-size:2.5em;color:#00ff88;font-weight:bold;font-family:'Consolas',monospace}
+.timer-label{color:#7a8ba8;font-size:0.9em;margin-top:5px}
+.progress-bar{height:8px;background:#1e2a5a;border-radius:4px;margin-top:15px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#00ff88);transition:width 0.1s}
+.register-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.2em;font-weight:bold;margin-top:8px;font-family:'Consolas',monospace}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.btn-stop{background:#ff6b6b}
+.btn-stop:hover{background:#ff5252}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.85em;line-height:1.5}
+.info-text{color:#7a8ba8;font-size:0.85em}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-top:15px}
+.result-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;text-align:center}
+.result-item .label{color:#7a8ba8;font-size:0.85em}
+.result-item .value{color:#00ff88;font-size:1.3em;font-weight:bold;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+<h1>⏱️ CPU定时器配置</h1>
+<p class="info-text">F28335 CPU定时器0/1/2 | 32位计数 | 实时仿真</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">定时器选择与配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>选择定时器</label>
+<select id="timerSelect" onchange="selectTimer()">
+<option value="0">CPU定时器0</option>
+<option value="1">CPU定时器1</option>
+<option value="2">CPU定时器2</option>
+</select>
+</div>
+<div class="control-group">
+<label>系统时钟 (MHz)</label>
+<input type="number" id="sysClk" value="150" min="1" max="200" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>预分频 (TDDR)</label>
+<input type="number" id="prescaler" value="0" min="0" max="255" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>周期寄存器值 (PRD)</label>
+<input type="number" id="periodVal" value="99999999" min="1" max="4294967295" onchange="updateConfig()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">定时器运行时显示</h3>
+<div class="timer-visual">
+<div class="canvas-wrapper">
+<canvas id="timerCanvas"></canvas>
+</div>
+<div class="timer-display">
+<div class="timer-value" id="timerValue">0</div>
+<div class="timer-label">TIMER <span id="timerNum">0</span> 当前计数值</div>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+</div>
+<div class="register-grid">
+<div class="register-item">
+<div class="name">TIMxCNT (当前计数值)</div>
+<div class="value" id="cntReg">0x00000000</div>
+</div>
+<div class="register-item">
+<div class="name">TIMxPRD (周期值)</div>
+<div class="value" id="prdReg">0x05F5E0FF</div>
+</div>
+<div class="register-item">
+<div class="name">TIMxTCR (控制寄存器)</div>
+<div class="value" id="tcrReg">0x00000000</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">定时器控制</h3>
+<div class="btn-group">
+<button class="btn" onclick="startTimer()">▶ 开始</button>
+<button class="btn btn-stop" onclick="stopTimer()">⏹ 停止</button>
+<button class="btn" onclick="resetTimer()">🔄 重置</button>
+<button class="btn" onclick="stepTimer()">⏭ 单步</button>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">配置计算结果</h3>
+<div class="result-grid">
+<div class="result-item">
+<div class="label">实际分频后频率</div>
+<div class="value" id="actualFreq">-</div>
+</div>
+<div class="result-item">
+<div class="label">定时周期</div>
+<div class="value" id="actualPeriod">-</div>
+</div>
+<div class="result-item">
+<div class="label">每秒计数次数</div>
+<div class="value" id="countsPerSec">-</div>
+</div>
+<div class="result-item">
+<div class="label">溢出时间</div>
+<div class="value" id="overflowTime">-</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// CPU定时器初始化配置
+void InitCpuTimer(void)
+{
+    // 停止定时器
+    CpuTimer0Regs.TCR.bit.TSS = 1;
+    
+    // 设置预分频
+    CpuTimer0Regs.TDR.all = 0;
+    
+    // 设置周期值
+    CpuTimer0Regs.TIM.all = 0xFFFFFFFF;
+    CpuTimer0Regs.PRD.all = 99999999;
+    
+    // 启动定时器
+    CpuTimer0Regs.TCR.bit.TSS = 0;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const canvas = document.getElementById('timerCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = canvas.offsetHeight * 2;
+    ctx.scale(2, 2);
+    drawTimerWave();
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+let timerState = {
+    0: { running: false, count: 0, period: 99999999, prescaler: 0, tcr: 0x20 },
+    1: { running: false, count: 0, period: 99999999, prescaler: 0, tcr: 0x20 },
+    2: { running: false, count: 0, period: 99999999, prescaler: 0, tcr: 0x20 }
+};
+
+let animationId = null;
+let currentTimer = 0;
+
+function selectTimer() {
+    currentTimer = parseInt(document.getElementById('timerSelect').value);
+    document.getElementById('timerNum').textContent = currentTimer;
+    document.getElementById('periodVal').value = timerState[currentTimer].period;
+    document.getElementById('prescaler').value = timerState[currentTimer].prescaler;
+    updateDisplay();
+}
+
+function updateConfig() {
+    const prescaler = parseInt(document.getElementById('prescaler').value) || 0;
+    const period = parseInt(document.getElementById('periodVal').value) || 1;
+    
+    timerState[currentTimer].prescaler = prescaler;
+    timerState[currentTimer].period = period;
+    
+    calculateResults();
+    updateDisplay();
+    updateCode();
+}
+
+function calculateResults() {
+    const sysClk = parseFloat(document.getElementById('sysClk').value) || 150;
+    const prescaler = timerState[currentTimer].prescaler;
+    const period = timerState[currentTimer].period;
+    
+    const actualDiv = (prescaler + 1);
+    const actualFreq = sysClk / actualDiv;
+    const actualPeriod = period / actualFreq;
+    const countsPerSec = actualFreq;
+    
+    let overflowTime = '';
+    if(actualPeriod < 0.001) {
+        overflowTime = (period / countsPerSec * 1000).toFixed(3) + ' ms';
+    } else if(actualPeriod < 1) {
+        overflowTime = (period / countsPerSec * 1000).toFixed(2) + ' ms';
+    } else {
+        overflowTime = (period / countsPerSec).toFixed(2) + ' s';
+    }
+    
+    let periodStr = '';
+    if(actualPeriod < 0.001) {
+        periodStr = (actualPeriod * 1000000).toFixed(2) + ' us';
+    } else if(actualPeriod < 1) {
+        periodStr = (actualPeriod * 1000).toFixed(2) + ' ms';
+    } else {
+        periodStr = actualPeriod.toFixed(2) + ' s';
+    }
+    
+    document.getElementById('actualFreq').textContent = (actualFreq).toFixed(2) + ' MHz';
+    document.getElementById('actualPeriod').textContent = periodStr;
+    document.getElementById('countsPerSec').textContent = countsPerSec.toExponential(2);
+    document.getElementById('overflowTime').textContent = overflowTime;
+}
+
+function updateDisplay() {
+    const count = timerState[currentTimer].count;
+    const period = timerState[currentTimer].period;
+    const prescaler = timerState[currentTimer].prescaler;
+    
+    document.getElementById('timerValue').textContent = count.toLocaleString();
+    document.getElementById('cntReg').textContent = '0x' + count.toString(16).toUpperCase().padStart(8, '0');
+    document.getElementById('prdReg').textContent = '0x' + period.toString(16).toUpperCase().padStart(8, '0');
+    
+    const tss = timerState[currentTimer].running ? 1 : 0;
+    const tdr = prescaler;
+    document.getElementById('tcrReg').textContent = '0x' + ((tss << 4) | 0x20).toString(16).toUpperCase().padStart(8, '0');
+    
+    const progress = (count / period) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+    
+    calculateResults();
+    drawTimerWave();
+}
+
+function drawTimerWave() {
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    ctx.strokeStyle = '#1e2a5a';
+    ctx.lineWidth = 1;
+    for(let i = 0; i <= 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, height * i / 4);
+        ctx.lineTo(width, height * i / 4);
+        ctx.stroke();
+    }
+    
+    const period = timerState[currentTimer].period;
+    const prescaler = timerState[currentTimer].prescaler + 1;
+    const sysClk = parseFloat(document.getElementById('sysClk').value) || 150;
+    
+    const tickTime = prescaler / sysClk;
+    const pixelTime = tickTime * (width / (period * 1.5));
+    
+    const centerY = height / 2;
+    
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    
+    const count = timerState[currentTimer].count;
+    const maxDisplay = Math.min(period, width / pixelTime);
+    
+    for(let x = 0; x < width; x++) {
+        const t = (x / width) * maxDisplay;
+        let y;
+        
+        const cyclePos = t % 4;
+        if(cyclePos < 1) {
+            y = centerY - 30;
+        } else if(cyclePos < 2) {
+            y = centerY - 30 + (cyclePos - 1) * 60;
+        } else if(cyclePos < 3) {
+            y = centerY + 30;
+        } else {
+            y = centerY + 30 - (cyclePos - 3) * 60;
+        }
+        
+        ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    const countX = Math.min((count / maxDisplay) * width, width - 10);
+    
+    ctx.fillStyle = '#ff6b6b';
+    ctx.beginPath();
+    ctx.arc(countX, centerY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px Microsoft YaHei';
+    ctx.fillText('CNT=' + count.toLocaleString(), countX + 10, centerY - 10);
+    
+    ctx.fillStyle = '#7a8ba8';
+    ctx.fillText('↓ 周期 ' + timerState[currentTimer].period.toLocaleString(), 10, 15);
+}
+
+function startTimer() {
+    timerState[currentTimer].running = true;
+    updateDisplay();
+    runTimer();
+}
+
+function stopTimer() {
+    timerState[currentTimer].running = false;
+    if(animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    updateDisplay();
+}
+
+function resetTimer() {
+    timerState[currentTimer].running = false;
+    timerState[currentTimer].count = 0;
+    if(animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    updateDisplay();
+}
+
+function stepTimer() {
+    const prescaler = timerState[currentTimer].prescaler + 1;
+    timerState[currentTimer].count += prescaler;
+    
+    if(timerState[currentTimer].count >= timerState[currentTimer].period) {
+        timerState[currentTimer].count = 0;
+    }
+    
+    updateDisplay();
+}
+
+function runTimer() {
+    if(!timerState[currentTimer].running) return;
+    
+    const prescaler = timerState[currentTimer].prescaler + 1;
+    timerState[currentTimer].count += prescaler;
+    
+    if(timerState[currentTimer].count >= timerState[currentTimer].period) {
+        timerState[currentTimer].count = 0;
+    }
+    
+    updateDisplay();
+    
+    animationId = requestAnimationFrame(runTimer);
+}
+
+function updateCode() {
+    const timerNum = currentTimer;
+    const prescaler = timerState[currentTimer].prescaler;
+    const period = timerState[currentTimer].period;
+    
+    const code = `// CPU定时器${timerNum}初始化配置
+void InitCpuTimer${timerNum}(void)
+{
+    // 停止定时器
+    CpuTimer${timerNum}Regs.TCR.bit.TSS = 1;
+    
+    // 设置预分频 (TDDR)
+    CpuTimer${timerNum}Regs.TDR.all = ${prescaler};
+    
+    // 重置计数器
+    CpuTimer${timerNum}Regs.TIM.all = 0xFFFFFFFF;
+    
+    // 设置周期值 (PRD)
+    CpuTimer${timerNum}Regs.PRD.all = ${period};
+    
+    // 启动定时器
+    CpuTimer${timerNum}Regs.TCR.bit.TSS = 0;
+}
+
+// 定时器中断服务程序示例
+interrupt void timer${timerNum}ISR(void)
+{
+    // 添加用户代码
+    
+    // 清除中断标志
+    CpuTimer${timerNum}Regs.TCR.bit.TIF = 1;
+    
+    // 应答PIE中断
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+resizeCanvas();
+selectTimer();
+updateCode();
+
+window.addEventListener('resize', () => {
+    resizeCanvas();
+    updateDisplay();
+});
+</script>
+</body>
+</html>

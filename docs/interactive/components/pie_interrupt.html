@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIE中断级联与放行演示器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.6em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:20px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;flex:1;min-width:340px}
+.panel-title{color:#00d4ff;font-size:1.1em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.gate-section{margin-bottom:20px;padding:15px;background:#080c1f;border-radius:8px;border:1px solid #1e2a5a}
+.gate-title{color:#ffaa00;font-size:0.95em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.gate-title .num{background:#ffaa00;color:#0a0e27;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:bold}
+.switch-row{display:flex;align-items:center;gap:12px;margin:8px 0}
+.switch-row .label{color:#7a8ba8;min-width:140px;font-size:0.85em;font-family:'Consolas',monospace}
+.switch{position:relative;width:52px;height:26px;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;top:0;left:0;right:0;bottom:0;background:#1e2a5a;border-radius:13px;transition:0.3s}
+.slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#555;border-radius:50%;transition:0.3s}
+.switch input:checked+.slider{background:#00d4ff}
+.switch input:checked+.slider:before{transform:translateX(26px);background:#fff}
+.flag-indicator{display:inline-block;width:12px;height:12px;border-radius:50%;margin-left:8px;transition:all 0.3s}
+.flag-indicator.set{background:#ff6b6b;box-shadow:0 0 8px rgba(255,107,107,0.6)}
+.flag-indicator.clear{background:#333}
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:0.95em;cursor:pointer;font-family:'Microsoft YaHei',sans-serif;transition:all 0.2s;margin:5px}
+.btn-trigger{background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:#fff;font-size:1em;padding:12px 30px}
+.btn-trigger:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,107,107,0.4)}
+.btn-ack{background:#1e2a5a;color:#00d4ff;border:1px solid #00d4ff}
+.btn-ack:hover{background:#00d4ff;color:#0a0e27}
+.btn-reset{background:#1e2a5a;color:#ff6b6b;border:1px solid #ff6b6b}
+.btn-reset:hover{background:#ff6b6b;color:#fff}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:10px}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #111633}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{font-weight:bold;font-family:'Consolas',monospace}
+.result-value.pass{color:#00ff88}
+.result-value.blocked{color:#ff6b6b}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.legend{display:flex;gap:15px;margin-top:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:0.75em;color:#7a8ba8}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+<h1>🔧 PIE中断级联与放行演示器</h1>
+<p class="subtitle">第5章 5.2-5.5 F28335三级中断机制 — 可视化中断信号的放行与屏蔽</p>
+
+<div class="container">
+<div class="panel">
+<div class="panel-title">⚙️ 控制区 — 三级门控开关</div>
+
+<div class="gate-section">
+<div class="gate-title"><span class="num">1</span> 外设级 (Peripheral Level)</div>
+<div class="switch-row">
+<span class="label">ePWM_INT_ENA</span>
+<label class="switch"><input type="checkbox" id="sw_peri_ena" checked><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_peri"></span>
+<span style="color:#7a8ba8;font-size:0.75em">使能开关</span>
+</div>
+<div class="switch-row">
+<span class="label">INT_FLAG (标志位)</span>
+<label class="switch"><input type="checkbox" id="sw_peri_flag"><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_peri_flag"></span>
+<span style="color:#7a8ba8;font-size:0.75em">中断标志</span>
+</div>
+</div>
+
+<div class="gate-section">
+<div class="gate-title"><span class="num">2</span> PIE级 (Peripheral Interrupt Expansion)</div>
+<div class="switch-row">
+<span class="label">PIEIERx.y (使能)</span>
+<label class="switch"><input type="checkbox" id="sw_pie_ena" checked><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_pie"></span>
+<span style="color:#7a8ba8;font-size:0.75em">PIE组使能</span>
+</div>
+<div class="switch-row">
+<span class="label">PIEIFRx.y (标志)</span>
+<label class="switch"><input type="checkbox" id="sw_pie_flag"><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_pie_flag"></span>
+<span style="color:#7a8ba8;font-size:0.75em">PIE中断标志</span>
+</div>
+<div class="switch-row">
+<span class="label">PIEACK (应答)</span>
+<label class="switch"><input type="checkbox" id="sw_pie_ack" checked><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_pie_ack"></span>
+<span style="color:#7a8ba8;font-size:0.75em">PIE应答位(1=已应答)</span>
+</div>
+</div>
+
+<div class="gate-section">
+<div class="gate-title"><span class="num">3</span> CPU级 (CPU Level)</div>
+<div class="switch-row">
+<span class="label">IER (中断使能寄存器)</span>
+<label class="switch"><input type="checkbox" id="sw_cpu_ier" checked><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_cpu_ier"></span>
+<span style="color:#7a8ba8;font-size:0.75em">CPU中断使能</span>
+</div>
+<div class="switch-row">
+<span class="label">INTM (全局中断屏蔽)</span>
+<label class="switch"><input type="checkbox" id="sw_cpu_intm"><span class="slider"></span></label>
+<span class="flag-indicator clear" id="flag_cpu_intm"></span>
+<span style="color:#7a8ba8;font-size:0.75em">0=使能 1=屏蔽</span>
+</div>
+</div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+<button class="btn btn-trigger" onclick="triggerInterrupt()">⚡ 触发中断</button>
+<button class="btn btn-ack" onclick="ackInterrupt()">✅ 清除ACK (PIEACK)</button>
+<button class="btn btn-reset" onclick="resetAll()">🔄 全部复位</button>
+</div>
+
+<div class="result-box" style="margin-top:15px">
+<div class="result-row">
+<span class="result-label">中断信号状态</span>
+<span class="result-value" id="r_status">等待触发</span>
+</div>
+<div class="result-row">
+<span class="result-label">当前阻塞位置</span>
+<span class="result-value" id="r_block">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">是否到达CPU</span>
+<span class="result-value" id="r_cpu">—</span>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-title">📊 中断信号路径动画</div>
+<canvas id="pathCanvas" height="420"></canvas>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div>中断信号(活跃)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div>信号通过</div>
+<div class="legend-item"><div class="legend-dot" style="background:#ffaa00"></div>信号阻塞</div>
+<div class="legend-item"><div class="legend-dot" style="background:#333"></div>无信号</div>
+</div>
+
+<div class="result-box" style="margin-top:15px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 8px 0">💡 常见问题诊断</div>
+<div id="diagnosis" style="color:#7a8ba8;font-size:0.85em;line-height:1.8">
+点击"触发中断"按钮，观察信号在哪一级被阻塞。
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let signalActive=false;
+let signalProgress=0;
+let signalBlocked=false;
+let signalReachedCPU=false;
+let animFrame=null;
+let particles=[];
+
+const canvas=document.getElementById('pathCanvas');
+const ctx=canvas.getContext('2d');
+
+function getState(){
+return{
+periEna:document.getElementById('sw_peri_ena').checked,
+periFlag:document.getElementById('sw_peri_flag').checked,
+pieEna:document.getElementById('sw_pie_ena').checked,
+pieFlag:document.getElementById('sw_pie_flag').checked,
+pieAck:document.getElementById('sw_pie_ack').checked,
+cpuIer:document.getElementById('sw_cpu_ier').checked,
+cpuIntm:document.getElementById('sw_cpu_intm').checked
+};
+}
+
+function updateFlags(){
+const s=getState();
+document.getElementById('flag_peri').className='flag-indicator '+(s.periEna?'set':'clear');
+document.getElementById('flag_peri_flag').className='flag-indicator '+(s.periFlag?'set':'clear');
+document.getElementById('flag_pie').className='flag-indicator '+(s.pieEna?'set':'clear');
+document.getElementById('flag_pie_flag').className='flag-indicator '+(s.pieFlag?'set':'clear');
+document.getElementById('flag_pie_ack').className='flag-indicator '+(s.pieAck?'set':'clear');
+document.getElementById('flag_cpu_ier').className='flag-indicator '+(s.cpuIer?'set':'clear');
+document.getElementById('flag_cpu_intm').className='flag-indicator '+(s.cpuIntm?'set':'clear');
+updateStatus();
+}
+
+function checkPassage(){
+const s=getState();
+if(!s.periFlag)return{pass:false,level:'无中断标志',gate:0};
+if(!s.periEna)return{pass:false,level:'外设级: INT_ENA未使能',gate:1};
+if(!s.pieEna)return{pass:false,level:'PIE级: PIEIER未使能',gate:2};
+if(!s.pieAck)return{pass:false,level:'PIE级: PIEACK未清除',gate:2.5};
+if(!s.cpuIer)return{pass:false,level:'CPU级: IER未使能',gate:3};
+if(s.cpuIntm)return{pass:false,level:'CPU级: INTM=1(全局屏蔽)',gate:3.5};
+return{pass:true,level:'✅ 中断到达CPU!',gate:4};
+}
+
+function updateStatus(){
+const result=checkPassage();
+const statusEl=document.getElementById('r_status');
+const blockEl=document.getElementById('r_block');
+const cpuEl=document.getElementById('r_cpu');
+
+if(!signalActive&&!signalReachedCPU){
+statusEl.textContent='等待触发';
+statusEl.className='result-value';
+blockEl.textContent='—';
+blockEl.className='result-value';
+cpuEl.textContent='—';
+cpuEl.className='result-value';
+}else if(signalReachedCPU){
+statusEl.textContent='🎉 中断已响应!';
+statusEl.className='result-value pass';
+blockEl.textContent='无阻塞';
+blockEl.className='result-value pass';
+cpuEl.textContent='✅ 是';
+cpuEl.className='result-value pass';
+}else if(signalBlocked){
+statusEl.textContent='🚫 信号被阻塞';
+statusEl.className='result-value blocked';
+blockEl.textContent=result.level;
+blockEl.className='result-value blocked';
+cpuEl.textContent='❌ 否';
+cpuEl.className='result-value blocked';
+}
+
+updateDiagnosis();
+}
+
+function updateDiagnosis(){
+const s=getState();
+const d=document.getElementById('diagnosis');
+let tips=[];
+if(!s.periEna)tips.push('⚠️ 外设级中断使能(INT_ENA)未开启 — 中断信号无法离开外设');
+if(!s.pieEna)tips.push('⚠️ PIE级使能(PIEIERx.y)未开启 — 信号卡在PIE入口');
+if(!s.pieAck)tips.push('⚠️ PIEACK未清除 — 需要向PIEACK写1来清除，否则同组中断无法再次触发');
+if(!s.cpuIer)tips.push('⚠️ CPU级IER未使能 — 需要IER|=0xXXXX来使能对应中断');
+if(s.cpuIntm)tips.push('⚠️ INTM=1全局中断屏蔽 — 需要EINT()或asm(" CLRC INTM")来开全局中断');
+if(tips.length===0)tips.push('✅ 所有门控已打开，中断信号可顺利通过三级到达CPU');
+d.innerHTML=tips.join('<br>');
+}
+
+function triggerInterrupt(){
+document.getElementById('sw_peri_flag').checked=true;
+signalActive=true;
+signalProgress=0;
+signalBlocked=false;
+signalReachedCPU=false;
+particles=[];
+updateFlags();
+animate();
+}
+
+function ackInterrupt(){
+document.getElementById('sw_pie_ack').checked=true;
+document.getElementById('sw_peri_flag').checked=false;
+document.getElementById('sw_pie_flag').checked=false;
+signalActive=false;
+signalReachedCPU=false;
+signalBlocked=false;
+signalProgress=0;
+particles=[];
+updateFlags();
+}
+
+function resetAll(){
+document.getElementById('sw_peri_ena').checked=true;
+document.getElementById('sw_peri_flag').checked=false;
+document.getElementById('sw_pie_ena').checked=true;
+document.getElementById('sw_pie_flag').checked=false;
+document.getElementById('sw_pie_ack').checked=true;
+document.getElementById('sw_cpu_ier').checked=true;
+document.getElementById('sw_cpu_intm').checked=false;
+signalActive=false;
+signalReachedCPU=false;
+signalBlocked=false;
+signalProgress=0;
+particles=[];
+updateFlags();
+}
+
+function animate(){
+if(!signalActive)return;
+const result=checkPassage();
+const targetGate=result.pass?4:result.gate;
+const maxProgress=targetGate;
+
+signalProgress+=0.02;
+if(signalProgress>=maxProgress){
+signalProgress=maxProgress;
+if(result.pass){
+signalReachedCPU=true;
+signalActive=false;
+}else{
+signalBlocked=true;
+signalActive=false;
+}
+updateStatus();
+}
+
+if(signalProgress>0&&Math.random()>0.5){
+particles.push({
+x:0,y:0,
+progress:signalProgress,
+vy:(Math.random()-0.5)*2,
+life:1
+});
+}
+
+drawPath(signalProgress,targetGate,result);
+if(signalActive)animFrame=requestAnimationFrame(animate);
+else drawPath(signalProgress,targetGate,result);
+}
+
+function drawPath(progress,maxGate,result){
+const dpr=window.devicePixelRatio||1;
+const w=canvas.clientWidth;
+const h=420;
+canvas.width=w*dpr;
+canvas.height=h*dpr;
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
+
+const pad=30;
+const gatePositions=[
+{x:pad+30,y:h/2},
+{x:w*0.28,y:h/2},
+{x:w*0.5,y:h/2},
+{x:w*0.72,y:h/2},
+{x:w-pad-30,y:h/2}
+];
+
+const gateLabels=['外设级','PIE级','PIEACK','CPU级','CPU响应'];
+const gateSubLabels=['INT_FLAG','PIEIER','清除ACK','IER+INTM','ISR'];
+const gateColors=['#ff6b6b','#ffaa00','#00d4ff','#aa66ff','#00ff88'];
+
+for(let i=0;i<5;i++){
+const gp=gatePositions[i];
+const isActive=progress>i;
+const isBlocked=signalBlocked&&i===Math.floor(maxGate);
+
+ctx.beginPath();
+ctx.arc(gp.x,gp.y,28,0,Math.PI*2);
+if(isBlocked){
+ctx.fillStyle='rgba(255,170,0,0.2)';
+ctx.strokeStyle='#ffaa00';
+ctx.lineWidth=3;
+}else if(isActive){
+ctx.fillStyle='rgba(0,255,136,0.15)';
+ctx.strokeStyle='#00ff88';
+ctx.lineWidth=2;
+}else{
+ctx.fillStyle='rgba(30,42,90,0.5)';
+ctx.strokeStyle='#1e2a5a';
+ctx.lineWidth=2;
+}
+ctx.fill();
+ctx.stroke();
+
+ctx.fillStyle=isActive?(isBlocked?'#ffaa00':'#00ff88'):'#7a8ba8';
+ctx.font='bold 11px Microsoft YaHei';
+ctx.textAlign='center';
+ctx.fillText(gateLabels[i],gp.x,gp.y-6);
+ctx.font='9px Consolas';
+ctx.fillStyle=isBlocked?'#ffaa00':(isActive?'#00ff88':'#555');
+ctx.fillText(gateSubLabels[i],gp.x,gp.y+10);
+
+if(i<4){
+const next=gatePositions[i+1];
+ctx.beginPath();
+ctx.moveTo(gp.x+30,gp.y);
+ctx.lineTo(next.x-30,gp.y);
+if(progress>i&&progress<=i+1){
+const t=progress-i;
+const cx=gp.x+30+(next.x-30-gp.x-30)*t;
+ctx.strokeStyle='#00ff88';
+ctx.lineWidth=3;
+ctx.stroke();
+
+ctx.beginPath();
+ctx.arc(cx,gp.y,5,0,Math.PI*2);
+ctx.fillStyle='#00ff88';
+ctx.shadowColor='#00ff88';
+ctx.shadowBlur=10;
+ctx.fill();
+ctx.shadowBlur=0;
+}else if(progress>i){
+ctx.strokeStyle='#00ff88';
+ctx.lineWidth=2;
+ctx.stroke();
+}else{
+ctx.strokeStyle='#1e2a5a';
+ctx.lineWidth=1;
+ctx.setLineDash([4,4]);
+ctx.stroke();
+ctx.setLineDash([]);
+}
+}
+}
+
+for(let i=particles.length-1;i>=0;i--){
+const p=particles[i];
+p.life-=0.02;
+p.y+=p.vy*0.5;
+if(p.life<=0){particles.splice(i,1);continue}
+const gateIdx=Math.floor(p.progress);
+const t=p.progress-gateIdx;
+if(gateIdx>=4)continue;
+const gp=gatePositions[gateIdx];
+const next=gatePositions[Math.min(gateIdx+1,4)];
+const px=gp.x+30+(next.x-30-gp.x-30)*t;
+ctx.beginPath();
+ctx.arc(px,gp.y+p.y,2,0,Math.PI*2);
+ctx.fillStyle=`rgba(0,255,136,${p.life*0.5})`;
+ctx.fill();
+}
+
+if(signalReachedCPU){
+const last=gatePositions[4];
+ctx.beginPath();
+ctx.arc(last.x,last.y,35,0,Math.PI*2);
+ctx.strokeStyle='#00ff88';
+ctx.lineWidth=2;
+ctx.shadowColor='#00ff88';
+ctx.shadowBlur=20;
+ctx.stroke();
+ctx.shadowBlur=0;
+ctx.font='bold 13px Microsoft YaHei';
+ctx.fillStyle='#00ff88';
+ctx.textAlign='center';
+ctx.fillText('✅ 到达!',last.x,last.y+50);
+}
+
+if(signalBlocked){
+const blockIdx=Math.floor(maxGate);
+if(blockIdx<5){
+const bp=gatePositions[Math.min(blockIdx,4)];
+ctx.font='bold 11px Microsoft YaHei';
+ctx.fillStyle='#ffaa00';
+ctx.textAlign='center';
+ctx.fillText('🚫 阻塞',bp.x,bp.y+50);
+}
+}
+}
+
+document.querySelectorAll('.switch input').forEach(el=>{
+el.addEventListener('change',()=>{
+updateFlags();
+if(signalActive||signalBlocked||signalReachedCPU){
+const result=checkPassation();
+signalBlocked=!result.pass;
+signalReachedCPU=result.pass;
+signalProgress=result.pass?4:result.gate;
+signalActive=false;
+updateStatus();
+drawPath(signalProgress,result.gate,result);
+}
+});
+});
+
+function checkPassation(){return checkPassage()}
+
+updateFlags();
+drawPath(0,4,{pass:false,gate:0});
+</script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I2C通信接口 - F28335交互式学习</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh}
+header{background:linear-gradient(135deg,#111633,#0d1229);border-bottom:1px solid #1e2a5a;padding:20px 0;text-align:center}
+h1{color:#00d4ff;margin-bottom:8px;font-size:1.8em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{color:#00d4ff;font-size:1.2em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.control-group{margin-bottom:10px}
+label{display:block;color:#7a8ba8;font-size:0.85em;margin-bottom:5px}
+input,select{padding:10px 12px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;width:100%;font-size:0.9em}
+input:focus,select:focus{outline:none;border-color:#00d4ff}
+.bus-visual{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:20px;margin-top:15px}
+.i2c-bus{display:flex;justify-content:space-between;align-items:center;margin:30px 0;position:relative}
+.i2c-node{background:#1e2a5a;border:2px solid #00d4ff;border-radius:50%;width:80px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.i2c-node.master{border-color:#ff6b6b}
+.i2c-node.slave{border-color:#00ff88}
+.i2c-node .icon{font-size:1.5em}
+.i2c-node .label{font-size:0.7em;margin-top:5px}
+.bus-lines{display:flex;flex-direction:column;align-items:center;position:absolute;left:50%;transform:translateX(-50%)}
+.bus-lines .sda{width:200px;height:3px;background:#ffcc00;margin:5px 0}
+.bus-lines .scl{width:200px;height:3px;background:#00d4ff;margin:5px 0}
+.waveform-canvas{width:100%;height:120px;background:#000;border-radius:4px;margin-top:20px}
+.data-log{max-height:150px;overflow-y:auto;background:#000;border:1px solid #1e2a5a;border-radius:4px;padding:10px;font-family:'Consolas',monospace;font-size:0.8em}
+.data-log .start{color:#ff6b6b}
+.data-log .stop{color:#00ff88}
+.data-log .ack{color:#ffcc00}
+.data-log .data{color:#00d4ff}
+.register-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:15px}
+.register-item{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px}
+.register-item .name{color:#00d4ff;font-size:0.85em}
+.register-item .value{color:#00ff88;font-size:1.1em;font-weight:bold;margin-top:8px;font-family:'Consolas',monospace}
+.btn{padding:10px 20px;background:#00d4ff;color:#0a0e27;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s}
+.btn:hover{background:#00a8d4;transform:translateY(-1px)}
+.btn-send{background:#00ff88}
+.code-output{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:15px}
+.code-output pre{color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;line-height:1.5}
+.address-display{display:flex;justify-content:center;gap:30px;margin-top:15px}
+.addr-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;text-align:center;min-width:120px}
+.addr-box .label{color:#7a8ba8;font-size:0.8em}
+.addr-box .value{color:#ffcc00;font-size:1.5em;font-weight:bold;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+<h1>🔗 I2C通信接口</h1>
+<p class="info-text">I2C主/从模式 | 串行外设接口 | EEPROM/传感器连接</p>
+</header>
+
+<div class="container">
+<div class="panel">
+<h3 class="panel-title">I2C配置</h3>
+<div class="controls">
+<div class="control-group">
+<label>工作模式</label>
+<select id="i2cMode" onchange="updateConfig()">
+<option value="master">主机模式</option>
+<option value="slave">从机模式</option>
+</select>
+</div>
+<div class="control-group">
+<label>从机地址 (7位)</label>
+<input type="number" id="slaveAddr" value="0x50" min="0" max="127" onchange="updateConfig()">
+</div>
+<div class="control-group">
+<label>时钟频率 (kHz)</label>
+<select id="i2cClk" onchange="updateConfig()">
+<option value="100">标准模式 100kHz</option>
+<option value="400">快速模式 400kHz</option>
+</select>
+</div>
+<div class="control-group">
+<label>自己的地址 (从机模式)</label>
+<input type="number" id="ownAddr" value="0x50" min="0" max="127" onchange="updateConfig()">
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">I2C总线状态</h3>
+<div class="bus-visual">
+<div class="i2c-bus">
+<div class="i2c-node master">
+<span class="icon">💻</span>
+<span class="label">F28335<br>主机</span>
+</div>
+<div class="bus-lines">
+<div class="sda" id="sdaLine"></div>
+<div class="scl" id="sclLine"></div>
+</div>
+<div class="i2c-node slave">
+<span class="icon">📦</span>
+<span class="label">外围设备<br>从机</span>
+</div>
+</div>
+<div class="address-display">
+<div class="addr-box">
+<div class="label">从机地址</div>
+<div class="value" id="dispSlaveAddr">0x50</div>
+</div>
+<div class="addr-box">
+<div class="label">传输数据</div>
+<div class="value" id="dispDataCount">0</div>
+</div>
+<div class="addr-box">
+<div class="label">总线状态</div>
+<div class="value" id="busStatus">空闲</div>
+</div>
+</div>
+<canvas id="waveCanvas" class="waveform-canvas"></canvas>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">寄存器状态</h3>
+<div class="register-grid">
+<div class="register-item">
+<div class="name">I2COAR (自己的地址)</div>
+<div class="value" id="oarReg">0x0050</div>
+</div>
+<div class="register-item">
+<div class="name">I2CIER (中断使能)</div>
+<div class="value" id="ierReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">I2CSTR (状态寄存器)</div>
+<div class="value" id="strReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">I2CCLKL (低分频)</div>
+<div class="value" id="clklReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">I2CCLKH (高分频)</div>
+<div class="value" id="clkhReg">0x0000</div>
+</div>
+<div class="register-item">
+<div class="name">I2CDRR / I2CDXR</div>
+<div class="value" id="dataReg">0x00</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">数据传输测试</h3>
+<div class="controls">
+<div class="control-group">
+<label>从机地址 (十六进制)</label>
+<input type="text" id="txSlaveAddr" value="0x50" placeholder="0x50">
+</div>
+<div class="control-group">
+<label>寄存器地址 (十六进制)</label>
+<input type="text" id="regAddr" value="0x00" placeholder="0x00">
+</div>
+<div class="control-group">
+<label>写入数据 (十六进制)</label>
+<input type="text" id="writeData" value="0xAA" placeholder="0xAA">
+</div>
+</div>
+<div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap">
+<button class="btn btn-send" onclick="i2cSend()">📤 发送数据</button>
+<button class="btn" onclick="i2cReceive()">📥 读取数据</button>
+<button class="btn" onclick="i2cSendBurst()">🔥 突发写入</button>
+<button class="btn" onclick="i2cStart()">▶ 发送START</button>
+<button class="btn" onclick="i2cStop()">⏹ 发送STOP</button>
+</div>
+<div class="data-log" id="dataLog" style="margin-top:15px">等待I2C传输...</div>
+</div>
+
+<div class="panel">
+<h3 class="panel-title">I2C寄存器配置代码</h3>
+<div class="code-output">
+<pre id="codeOutput">// I2C初始化配置
+void InitI2C(void)
+{
+    // 禁用I2C模块
+    I2caRegs.I2CMDR.all = 0x0000;
+    
+    // 配置时钟频率
+    // I2C模块时钟 = LSPCLK / (ICCL + ICD)
+    // 100kHz: ICCL = ICD = 60 (约)
+    // 400kHz: ICCL = ICD = 15 (约)
+    I2caRegs.I2CSCLL.all = 60;
+    I2caRegs.I2CSCLH.all = 60;
+    
+    // 从机地址
+    I2caRegs.I2COAR.all = 0x0050;
+    
+    // 从机模式自己的地址
+    I2caRegs.I2COAR.all = 0x0050;
+    
+    // 使能I2C模块
+    I2caRegs.I2CMDR.all = 0x0020;
+}
+
+// I2C发送START信号
+void I2CStart(void)
+{
+    I2caRegs.I2CMDR.all = 0x0020;  // STP = 0, STT = 1, IRS = 1
+    while(I2caRegs.I2CSTR.bit.SCD == 0);
+}
+
+// I2C发送STOP信号
+void I2CStop(void)
+{
+    I2caRegs.I2CMDR.bit.STP = 1;
+    while(I2caRegs.I2CSTR.bit.SCD == 0);
+}
+
+// I2C发送数据
+void I2CSend(uint8_t data)
+{
+    I2caRegs.I2CDXR.all = data;
+    while(I2caRegs.I2CSTR.bit.ARDY == 0);
+}
+
+// I2C接收数据
+uint8_t I2CReceive(void)
+{
+    while(I2caRegs.I2CSTR.bit.RRDY == 0);
+    return I2caRegs.I2CDRR.all;
+}</pre>
+</div>
+</div>
+</div>
+
+<script>
+const waveCanvas = document.getElementById('waveCanvas');
+const waveCtx = waveCanvas.getContext('2d');
+
+let i2cState = {
+    mode: 'master',
+    slaveAddr: 0x50,
+    ownAddr: 0x50,
+    clkFreq: 100,
+    scl: 1,
+    sda: 1,
+    transmitting: false,
+    dataCount: 0,
+    waveData: [],
+    bitPos: 0
+};
+
+function updateConfig() {
+    i2cState.mode = document.getElementById('i2cMode').value;
+    i2cState.slaveAddr = parseInt(document.getElementById('slaveAddr').value) || 0x50;
+    i2cState.ownAddr = parseInt(document.getElementById('ownAddr').value) || 0x50;
+    i2cState.clkFreq = parseInt(document.getElementById('i2cClk').value);
+    
+    document.getElementById('dispSlaveAddr').textContent = '0x' + i2cState.slaveAddr.toString(16).toUpperCase();
+    
+    updateRegisters();
+    updateCode();
+}
+
+function updateRegisters() {
+    const dlv = Math.round(150000 / i2cState.clkFreq / 2);
+    document.getElementById('oarReg').textContent = '0x' + i2cState.ownAddr.toString(16).toUpperCase().padStart(4, '0');
+    document.getElementById('clklReg').textContent = '0x' + dlv.toString(16).toUpperCase().padStart(4, '0');
+    document.getElementById('clkhReg').textContent = '0x' + dlv.toString(16).toUpperCase().padStart(4, '0');
+    document.getElementById('ierReg').textContent = i2cState.mode === 'master' ? '0x6C00' : '0x3E00';
+    document.getElementById('strReg').textContent = i2cState.transmitting ? '0x0820' : '0x0020';
+}
+
+function updateSdaLine() {
+    document.getElementById('sdaLine').style.background = i2cState.sda ? '#ffcc00' : '#333';
+}
+
+function updateSclLine() {
+    document.getElementById('sclLine').style.background = i2cState.scl ? '#00d4ff' : '#333';
+}
+
+function addWavePoint(scl, sda) {
+    i2cState.waveData.push({ scl, sda });
+    if(i2cState.waveData.length > 300) i2cState.waveData.shift();
+    drawWaveform();
+}
+
+function drawWaveform() {
+    const w = waveCanvas.offsetWidth;
+    const h = waveCanvas.offsetHeight;
+    
+    waveCanvas.width = w * 2;
+    waveCanvas.height = h * 2;
+    waveCtx.scale(2, 2);
+    
+    waveCtx.clearRect(0, 0, w, h);
+    
+    waveCtx.strokeStyle = '#1e2a5a';
+    waveCtx.lineWidth = 1;
+    waveCtx.beginPath();
+    waveCtx.moveTo(0, h * 0.25);
+    waveCtx.lineTo(w, h * 0.25);
+    waveCtx.moveTo(0, h * 0.75);
+    waveCtx.lineTo(w, h * 0.75);
+    waveCtx.stroke();
+    
+    if(i2cState.waveData.length < 2) return;
+    
+    waveCtx.lineWidth = 1.5;
+    
+    waveCtx.strokeStyle = '#00d4ff';
+    waveCtx.beginPath();
+    for(let i = 0; i < i2cState.waveData.length; i++) {
+        const x = (i / i2cState.waveData.length) * w;
+        const y = i2cState.waveData[i].scl ? h * 0.25 : h * 0.75;
+        if(i === 0) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+    
+    waveCtx.strokeStyle = '#ffcc00';
+    waveCtx.beginPath();
+    for(let i = 0; i < i2cState.waveData.length; i++) {
+        const x = (i / i2cState.waveData.length) * w;
+        const y = i2cState.waveData[i].sda ? h * 0.25 : h * 0.75;
+        if(i === 0) waveCtx.moveTo(x, y);
+        else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+}
+
+function logMessage(msg, type) {
+    const log = document.getElementById('dataLog');
+    const time = new Date().toLocaleTimeString();
+    log.innerHTML += `<div class="${type}">[${time}] ${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+}
+
+function i2cStart() {
+    logMessage('START - 主机请求开始传输', 'start');
+    
+    i2cState.sda = 0;
+    updateSdaLine();
+    addWavePoint(1, 0);
+    
+    setTimeout(() => {
+        i2cState.scl = 0;
+        updateSclLine();
+        addWavePoint(0, 0);
+    }, 50);
+}
+
+function i2cStop() {
+    i2cState.scl = 1;
+    updateSclLine();
+    addWavePoint(1, 1);
+    
+    setTimeout(() => {
+        i2cState.sda = 1;
+        updateSdaLine();
+        addWavePoint(1, 1);
+        logMessage('STOP - 传输结束', 'stop');
+        i2cState.transmitting = false;
+        document.getElementById('busStatus').textContent = '空闲';
+    }, 50);
+}
+
+function i2cSendByte(data) {
+    return new Promise((resolve) => {
+        let bit = 7;
+        const sendBit = () => {
+            if(bit >= 0) {
+                i2cState.sda = (data >> bit) & 1 ? 1 : 0;
+                updateSdaLine();
+                addWavePoint(0, i2cState.sda);
+                
+                setTimeout(() => {
+                    i2cState.scl = 1;
+                    updateSclLine();
+                    addWavePoint(1, i2cState.sda);
+                    
+                    setTimeout(() => {
+                        i2cState.scl = 0;
+                        updateSclLine();
+                        addWavePoint(0, i2cState.sda);
+                        bit--;
+                        sendBit();
+                    }, 50);
+                }, 50);
+            } else {
+                i2cState.sda = 1;
+                updateSdaLine();
+                addWavePoint(0, 1);
+                
+                setTimeout(() => {
+                    i2cState.scl = 1;
+                    updateSclLine();
+                    addWavePoint(1, 1);
+                    
+                    setTimeout(() => {
+                        const ack = Math.random() > 0.2 ? 0 : 1;
+                        i2cState.sda = ack;
+                        updateSdaLine();
+                        addWavePoint(1, ack);
+                        
+                        setTimeout(() => {
+                            i2cState.scl = 0;
+                            updateSclLine();
+                            addWavePoint(0, ack);
+                            logMessage(`DATA 0x${data.toString(16).toUpperCase().padStart(2,'0')} - ${ack ? 'NACK' : 'ACK'}`, 'data');
+                            resolve(ack === 0);
+                        }, 50);
+                    }, 50);
+                }, 50);
+            }
+        };
+        sendBit();
+    });
+}
+
+async function i2cSend() {
+    if(i2cState.transmitting) {
+        logMessage('总线忙，等待...', 'ack');
+        return;
+    }
+    
+    i2cState.transmitting = true;
+    document.getElementById('busStatus').textContent = '发送中';
+    
+    const slaveAddr = parseInt(document.getElementById('txSlaveAddr').value, 16) || 0x50;
+    const regAddr = parseInt(document.getElementById('regAddr').value, 16) || 0;
+    const data = parseInt(document.getElementById('writeData').value, 16) || 0;
+    
+    i2cStart();
+    
+    await new Promise(r => setTimeout(r, 200));
+    
+    const addrByte = (slaveAddr << 1) | 0;
+    const ack1 = await i2cSendByte(addrByte);
+    if(!ack1) {
+        const ack2 = await i2cSendByte(regAddr);
+        if(!ack2) {
+            await i2cSendByte(data);
+        }
+    }
+    
+    i2cState.dataCount++;
+    document.getElementById('dispDataCount').textContent = i2cState.dataCount;
+    
+    await new Promise(r => setTimeout(r, 200));
+    i2cStop();
+}
+
+async function i2cReceive() {
+    if(i2cState.transmitting) return;
+    
+    i2cState.transmitting = true;
+    document.getElementById('busStatus').textContent = '接收中';
+    
+    const slaveAddr = parseInt(document.getElementById('txSlaveAddr').value, 16) || 0x50;
+    
+    i2cStart();
+    await new Promise(r => setTimeout(r, 200));
+    
+    const addrByte = (slaveAddr << 1) | 1;
+    const ack1 = await i2cSendByte(addrByte);
+    
+    if(!ack1) {
+        let data = 0;
+        for(let i = 7; i >= 0; i--) {
+            i2cState.scl = 1;
+            updateSclLine();
+            addWavePoint(1, 1);
+            await new Promise(r => setTimeout(r, 50));
+            
+            data |= (i2cState.sda ? 1 : 0) << i;
+            
+            i2cState.scl = 0;
+            updateSclLine();
+            addWavePoint(0, 1);
+            await new Promise(r => setTimeout(r, 50));
+        }
+        
+        i2cState.sda = 1;
+        updateSdaLine();
+        addWavePoint(0, 1);
+        await new Promise(r => setTimeout(r, 50));
+        
+        i2cState.scl = 1;
+        updateSclLine();
+        addWavePoint(1, 1);
+        
+        logMessage(`RECV 0x${data.toString(16).toUpperCase().padStart(2,'0')}`, 'data');
+        document.getElementById('dataReg').textContent = '0x' + data.toString(16).toUpperCase().padStart(2, '0');
+    }
+    
+    await new Promise(r => setTimeout(r, 200));
+    i2cStop();
+}
+
+async function i2cSendBurst() {
+    if(i2cState.transmitting) return;
+    
+    i2cState.transmitting = true;
+    document.getElementById('busStatus').textContent = '突发发送中';
+    
+    const slaveAddr = parseInt(document.getElementById('txSlaveAddr').value, 16) || 0x50;
+    const regAddr = parseInt(document.getElementById('regAddr').value, 16) || 0;
+    const data = parseInt(document.getElementById('writeData').value, 16) || 0;
+    
+    i2cStart();
+    await new Promise(r => setTimeout(r, 200));
+    
+    const addrByte = (slaveAddr << 1) | 0;
+    if(await i2cSendByte(addrByte)) return;
+    if(await i2cSendByte(regAddr)) return;
+    
+    for(let i = 0; i < 4; i++) {
+        if(await i2cSendByte(data + i)) break;
+        i2cState.dataCount++;
+    }
+    
+    document.getElementById('dispDataCount').textContent = i2cState.dataCount;
+    await new Promise(r => setTimeout(r, 200));
+    i2cStop();
+}
+
+function updateCode() {
+    const dlv = Math.round(150000 / i2cState.clkFreq / 2);
+    const code = `// I2C初始化配置
+void InitI2C(void)
+{
+    // 禁用I2C模块进行配置
+    I2caRegs.I2CMDR.all = 0x0000;
+    
+    // 配置I2C时钟
+    // I2C时钟 = LSPCLK / (ICCL + ICD)
+    // LSPCLK = 150MHz / 4 = 37.5MHz
+    // 目标频率: ${i2cState.clkFreq}kHz
+    I2caRegs.I2CSCLL.all = ${dlv};    // SCL低电平时间
+    I2caRegs.I2CSCLH.all = ${dlv};   // SCL高电平时间
+    
+    // 配置从机地址
+    I2caRegs.I2COAR.all = 0x${i2cState.ownAddr.toString(16).padStart(4,'0').toUpperCase()};
+    
+    // 配置中断使能
+    I2caRegs.I2CIER.all = 0x${i2cState.mode === 'master' ? '6C' : '3E'}00;
+    
+    // 使能I2C模块 (IRS = 1)
+    I2caRegs.I2CMDR.all = 0x0020;
+}
+
+// I2C写操作
+void I2CWrite(uint8_t addr, uint8_t reg, uint8_t data)
+{
+    // 发送START
+    I2caRegs.I2CMDR.bit.STT = 1;
+    while(!I2caRegs.I2CSTR.bit.SCD);
+    
+    // 发送从机地址 + 写
+    I2caRegs.I2CDXR.all = (addr << 1) | 0;
+    while(!I2caRegs.I2CSTR.bit.ARDY);
+    
+    // 发送寄存器地址
+    I2caRegs.I2CDXR.all = reg;
+    while(!I2caRegs.I2CSTR.bit.ARDY);
+    
+    // 发送数据
+    I2caRegs.I2CDXR.all = data;
+    while(!I2caRegs.I2CSTR.bit.ARDY);
+    
+    // 发送STOP
+    I2caRegs.I2CMDR.bit.STP = 1;
+}
+
+// I2C读操作
+uint8_t I2CRead(uint8_t addr, uint8_t reg)
+{
+    uint8_t data;
+    
+    // 发送START
+    I2caRegs.I2CMDR.bit.STT = 1;
+    while(!I2caRegs.I2CSTR.bit.SCD);
+    
+    // 发送从机地址 + 写
+    I2caRegs.I2CDXR.all = (addr << 1) | 0;
+    while(!I2caRegs.I2CSTR.bit.ARDY);
+    
+    // 发送寄存器地址
+    I2caRegs.I2CDXR.all = reg;
+    while(!I2caRegs.I2CSTR.bit.ARDY);
+    
+    // 重新发送START
+    I2caRegs.I2CMDR.bit.STT = 1;
+    while(!I2caRegs.I2CSTR.bit.SCD);
+    
+    // 发送从机地址 + 读
+    I2caRegs.I2CDXR.all = (addr << 1) | 1;
+    while(!I2caRegs.I2CSTR.bit.ARDY);
+    
+    // 接收数据 (NACK)
+    I2caRegs.I2CMDR.bit.NACKMOD = 1;
+    data = I2caRegs.I2CDRR.all;
+    
+    // 发送STOP
+    I2caRegs.I2CMDR.bit.STP = 1;
+    
+    return data;
+}`;
+    
+    document.getElementById('codeOutput').textContent = code;
+}
+
+window.addEventListener('resize', drawWaveform);
+updateConfig();
+drawWaveform();
+</script>
+</body>
+</html>

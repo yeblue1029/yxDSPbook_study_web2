@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>看门狗喂狗与复位倒计时模拟器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px;transition:background 0.5s}
+body.reset-mode{background:#2a0a0a}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.6em;transition:color 0.5s}
+body.reset-mode h1{color:#ff6b6b}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:20px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:20px;flex:1;min-width:340px}
+body.reset-mode .panel{border-color:#ff6b6b}
+.panel-title{color:#00d4ff;font-size:1.1em;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #1e2a5a}
+.control-group{margin-bottom:18px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:6px;font-size:0.85em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right}
+input[type=range]{width:100%;height:6px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#00d4ff;cursor:pointer;box-shadow:0 0 8px rgba(0,212,255,0.5)}
+.btn{padding:12px 28px;border:none;border-radius:8px;font-size:1em;cursor:pointer;font-family:'Microsoft YaHei',sans-serif;transition:all 0.2s;margin:5px}
+.btn-feed{background:linear-gradient(135deg,#00d4ff,#0088cc);color:#fff;font-size:1.1em;padding:14px 36px}
+.btn-feed:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(0,212,255,0.4)}
+.btn-feed:active{transform:scale(0.95)}
+.btn-start{background:linear-gradient(135deg,#00ff88,#00aa55);color:#fff}
+.btn-start:hover{box-shadow:0 0 15px rgba(0,255,136,0.4)}
+.btn-stop{background:#1e2a5a;color:#ff6b6b;border:1px solid #ff6b6b}
+.btn-stop:hover{background:#ff6b6b;color:#fff}
+.progress-container{position:relative;margin:20px 0}
+.progress-bar-bg{width:100%;height:40px;background:#080c1f;border-radius:20px;overflow:hidden;border:2px solid #1e2a5a}
+.progress-bar-fill{height:100%;border-radius:20px;transition:width 0.1s linear,background 0.3s;background:linear-gradient(90deg,#00ff88,#00d4ff)}
+.progress-bar-fill.warning{background:linear-gradient(90deg,#ffaa00,#ff6b6b)}
+.progress-bar-fill.critical{background:linear-gradient(90deg,#ff6b6b,#ff0000);animation:pulse 0.3s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+.progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:bold;font-family:'Consolas',monospace;font-size:1em;color:#fff;text-shadow:0 0 5px rgba(0,0,0,0.8)}
+.counter-display{font-size:2.5em;text-align:center;font-family:'Consolas',monospace;color:#00d4ff;margin:10px 0;text-shadow:0 0 10px rgba(0,212,255,0.3)}
+body.reset-mode .counter-display{color:#ff6b6b;text-shadow:0 0 20px rgba(255,107,107,0.5)}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:15px;margin-top:10px}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #111633}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{color:#00ff88;font-weight:bold;font-family:'Consolas',monospace}
+.reset-alert{text-align:center;padding:20px;margin:15px 0;border-radius:12px;background:linear-gradient(135deg,#ff0000,#cc0000);color:#fff;font-size:1.5em;font-weight:bold;display:none;animation:flashAlert 0.5s infinite}
+@keyframes flashAlert{0%,100%{opacity:1}50%{opacity:0.7}}
+.wdkey-sequence{display:flex;gap:8px;align-items:center;margin:10px 0}
+.wdkey-step{padding:8px 16px;border-radius:6px;font-family:'Consolas',monospace;font-size:0.9em;border:2px solid #1e2a5a;background:#080c1f;color:#7a8ba8;transition:all 0.3s}
+.wdkey-step.active{border-color:#00d4ff;color:#00d4ff;background:rgba(0,212,255,0.1)}
+.wdkey-step.done{border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,0.1)}
+.log-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:10px;margin-top:10px;max-height:150px;overflow-y:auto;font-family:'Consolas',monospace;font-size:0.75em;color:#7a8ba8;line-height:1.6}
+.log-box .log-feed{color:#00d4ff}
+.log-box .log-reset{color:#ff6b6b}
+.log-box .log-warn{color:#ffaa00}
+</style>
+</head>
+<body>
+<h1>🔧 看门狗喂狗与复位倒计时模拟器</h1>
+<p class="subtitle">第3章 3.3 看门狗电路 — 理解WDPS预分频与喂狗时间窗口</p>
+
+<div class="container">
+<div class="panel">
+<div class="panel-title">⚙️ 控制区</div>
+
+<div class="control-group">
+<label>看门狗预分频器 (WDPS) <span class="value" id="wdpsVal">÷512</span></label>
+<select id="wdps">
+<option value="0">000 — ÷1</option>
+<option value="1">001 — ÷2</option>
+<option value="2">010 — ÷4</option>
+<option value="3">011 — ÷8</option>
+<option value="4">100 — ÷16</option>
+<option value="5">101 — ÷32</option>
+<option value="6">110 — ÷64</option>
+<option value="7" selected>111 — ÷512</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>看门狗使能 (WDDIS)</label>
+<select id="wddis">
+<option value="0" selected>0 — 看门狗使能</option>
+<option value="1">1 — 看门狗禁止</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>模拟速度倍率 <span class="value" id="speedVal">×100</span></label>
+<input type="range" id="speedSlider" min="10" max="500" value="100" step="10">
+</div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:15px 0">
+<button class="btn btn-start" onclick="startWatchdog()">▶ 启动</button>
+<button class="btn btn-stop" onclick="stopWatchdog()">⏹ 停止</button>
+</div>
+
+<div class="wdkey-sequence">
+<span style="color:#7a8ba8;font-size:0.85em">喂狗序列:</span>
+<div class="wdkey-step" id="step55">写 0x55</div>
+<div style="color:#7a8ba8">→</div>
+<div class="wdkey-step" id="stepAA">写 0xAA</div>
+<div style="color:#7a8ba8">→</div>
+<div class="wdkey-step" id="stepRst">计数器清零</div>
+</div>
+
+<button class="btn btn-feed" onclick="feedDog()">🐕 喂狗 (ServiceDog)</button>
+
+<div class="reset-alert" id="resetAlert">🚨 SYSTEM RESET! 看门狗超时复位 🚨</div>
+
+<div class="result-box" style="margin-top:15px">
+<div class="result-row">
+<span class="result-label">WDCNTR (看门狗计数器)</span>
+<span class="result-value" id="r_wdcntr">0</span>
+</div>
+<div class="result-row">
+<span class="result-label">超时阈值</span>
+<span class="result-value" id="r_threshold">255</span>
+</div>
+<div class="result-row">
+<span class="result-label">超时时间 (实际)</span>
+<span class="result-value" id="r_timeout">—</span>
+</div>
+<div class="result-row">
+<span class="result-label">已用时间</span>
+<span class="result-value" id="r_elapsed">0.00 ms</span>
+</div>
+<div class="result-row">
+<span class="result-label">喂狗次数</span>
+<span class="result-value" id="r_feedcount">0</span>
+</div>
+<div class="result-row">
+<span class="result-label">复位次数</span>
+<span class="result-value" id="r_resetcount" style="color:#ff6b6b">0</span>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-title">📊 倒计时进度</div>
+
+<div class="counter-display" id="counterDisplay">0 / 255</div>
+
+<div class="progress-container">
+<div class="progress-bar-bg">
+<div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+</div>
+<div class="progress-text" id="progressText">0%</div>
+</div>
+
+<canvas id="wdCanvas" height="300"></canvas>
+
+<div class="result-box" style="margin-top:15px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 8px 0">📋 喂狗代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.8em;white-space:pre-wrap;line-height:1.6"></pre>
+</div>
+
+<div class="log-box" id="logBox"></div>
+</div>
+</div>
+
+<script>
+let running=false;
+let wdcntr=0;
+let feedCount=0;
+let resetCount=0;
+let startTime=0;
+let elapsedMs=0;
+let animId=null;
+let lastTick=0;
+let feedStep=0;
+
+const divisors=[1,2,4,8,16,32,64,512];
+const OSCCLK=30;
+const SYSCLK=150;
+const WDCRCLK=SYSCLK/512;
+
+function calcTimeout(){
+const wdps=parseInt(document.getElementById('wdps').value);
+const divisor=divisors[wdps];
+const timeout=(256*divisor)/WDCRCLK*1000;
+return timeout;
+}
+
+function updateCalc(){
+const wdps=parseInt(document.getElementById('wdps').value);
+const divisor=divisors[wdps];
+const timeout=calcTimeout();
+
+document.getElementById('wdpsVal').textContent='÷'+divisor;
+document.getElementById('r_timeout').textContent=timeout.toFixed(2)+' ms';
+document.getElementById('r_threshold').textContent='255';
+
+const code=`// 看门狗配置
+EALLOW;
+SysCtrlRegs.WDCR.all = 0x0028;  // WDPS=÷${divisor}, WDDIS=0(使能)
+EDIS;
+
+// 喂狗 (在主循环中定期调用)
+void ServiceDog(void){
+    EALLOW;
+    SysCtrlRegs.WDKEY.bit.WDKEY = 0x55;  // 第1步
+    SysCtrlRegs.WDKEY.bit.WDKEY = 0xAA;  // 第2步 → 计数器清零
+    EDIS;
+}
+// 超时时间: ${timeout.toFixed(2)}ms (WDPS=÷${divisor})`;
+document.getElementById('codeOutput').textContent=code;
+}
+
+function startWatchdog(){
+if(running)return;
+const wddis=parseInt(document.getElementById('wddis').value);
+if(wddis===1){addLog('⚠️ 看门狗已禁止(WDDIS=1)，无法启动','warn');return}
+running=true;
+wdcntr=0;
+startTime=performance.now();
+lastTick=performance.now();
+addLog('▶ 看门狗启动 (WDPS=÷'+divisors[parseInt(document.getElementById('wdps').value)]+')','feed');
+tick();
+}
+
+function stopWatchdog(){
+running=false;
+if(animId)cancelAnimationFrame(animId);
+addLog('⏹ 看门狗停止','warn');
+}
+
+function feedDog(){
+if(!running)return;
+feedStep++;
+if(feedStep===1){
+document.getElementById('step55').className='wdkey-step active';
+addLog('  → WDKEY = 0x55','feed');
+}else if(feedStep===2){
+document.getElementById('stepAA').className='wdkey-step active';
+document.getElementById('step55').className='wdkey-step done';
+addLog('  → WDKEY = 0xAA → 计数器清零!','feed');
+wdcntr=0;
+feedCount++;
+feedStep=0;
+setTimeout(()=>{
+document.getElementById('step55').className='wdkey-step';
+document.getElementById('stepAA').className='wdkey-step';
+document.getElementById('stepRst').className='wdkey-step';
+},500);
+document.getElementById('stepRst').className='wdkey-step done';
+}
+}
+
+function triggerReset(){
+resetCount++;
+running=false;
+document.body.classList.add('reset-mode');
+document.getElementById('resetAlert').style.display='block';
+addLog('🚨 看门狗超时! SYSTEM RESET!','reset');
+
+setTimeout(()=>{
+document.body.classList.remove('reset-mode');
+document.getElementById('resetAlert').style.display='none';
+wdcntr=0;
+},2000);
+}
+
+function tick(){
+if(!running)return;
+
+const now=performance.now();
+const dt=now-lastTick;
+lastTick=now;
+
+const speed=parseInt(document.getElementById('speedSlider').value);
+document.getElementById('speedVal').textContent='×'+speed;
+
+const timeout=calcTimeout();
+const increment=(dt*speed)/timeout*256;
+wdcntr+=increment;
+
+if(wdcntr>=255){
+wdcntr=255;
+triggerReset();
+updateDisplay();
+return;
+}
+
+elapsedMs=(now-startTime)*speed;
+updateDisplay();
+animId=requestAnimationFrame(tick);
+}
+
+function updateDisplay(){
+const pct=Math.min(wdcntr/255*100,100);
+document.getElementById('counterDisplay').textContent=Math.floor(wdcntr)+' / 255';
+document.getElementById('progressFill').style.width=pct+'%';
+document.getElementById('progressText').textContent=Math.floor(pct)+'%';
+
+const fill=document.getElementById('progressFill');
+if(pct>80)fill.className='progress-bar-fill critical';
+else if(pct>50)fill.className='progress-bar-fill warning';
+else fill.className='progress-bar-fill';
+
+document.getElementById('r_wdcntr').textContent=Math.floor(wdcntr);
+document.getElementById('r_elapsed').textContent=(elapsedMs/1000).toFixed(2)+' ms';
+document.getElementById('r_feedcount').textContent=feedCount;
+document.getElementById('r_resetcount').textContent=resetCount;
+
+drawWD();
+}
+
+function drawWD(){
+const c=document.getElementById('wdCanvas');
+const dpr=window.devicePixelRatio||1;
+const w=c.clientWidth;
+const h=300;
+c.width=w*dpr;c.height=h*dpr;
+const ctx=c.getContext('2d');
+ctx.scale(dpr,dpr);
+ctx.clearRect(0,0,w,h);
+
+const cx=w/2;const cy=130;const r=80;
+
+ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+ctx.strokeStyle='#1e2a5a';ctx.lineWidth=3;ctx.stroke();
+
+const pct=wdcntr/255;
+const startAngle=-Math.PI/2;
+const endAngle=startAngle+pct*Math.PI*2;
+
+const grad=ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+if(pct>0.8){grad.addColorStop(0,'#ff6b6b');grad.addColorStop(1,'#ff0000')}
+else if(pct>0.5){grad.addColorStop(0,'#ffaa00');grad.addColorStop(1,'#ff6b6b')}
+else{grad.addColorStop(0,'#00ff88');grad.addColorStop(1,'#00d4ff')}
+
+ctx.beginPath();ctx.arc(cx,cy,r,startAngle,endAngle);
+ctx.strokeStyle=grad;ctx.lineWidth=8;ctx.lineCap='round';ctx.stroke();
+
+ctx.font='bold 28px Consolas';ctx.fillStyle=pct>0.8?'#ff6b6b':'#00d4ff';
+ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.fillText(Math.floor(pct*100)+'%',cx,cy-5);
+ctx.font='12px Microsoft YaHei';ctx.fillStyle='#7a8ba8';
+ctx.fillText('WDCNTR',cx,cy+20);
+
+const dogX=cx;const dogY=cy+r+50;
+ctx.font='40px serif';ctx.textAlign='center';
+if(pct>0.8){ctx.fillText('🐕💨',dogX,dogY)}
+else if(pct>0.5){ctx.fillText('🐕😰',dogX,dogY)}
+else{ctx.fillText('🐕😊',dogX,dogY)}
+
+ctx.font='11px Microsoft YaHei';ctx.fillStyle='#7a8ba8';
+ctx.textAlign='center';
+if(pct>0.8)ctx.fillText('即将复位! 快喂狗!',dogX,dogY+30);
+else if(pct>0.5)ctx.fillText('计数器过半，注意喂狗',dogX,dogY+30);
+else ctx.fillText('看门狗运行正常',dogX,dogY+30);
+}
+
+function addLog(msg,type){
+const box=document.getElementById('logBox');
+const time=new Date().toLocaleTimeString();
+const cls=type==='reset'?'log-reset':type==='warn'?'log-warn':'log-feed';
+box.innerHTML=`<div class="${cls}">[${time}] ${msg}</div>`+box.innerHTML;
+}
+
+document.getElementById('wdps').addEventListener('change',updateCalc);
+document.getElementById('wddis').addEventListener('change',updateCalc);
+document.getElementById('speedSlider').addEventListener('input',()=>{
+document.getElementById('speedVal').textContent='×'+document.getElementById('speedSlider').value;
+});
+window.addEventListener('resize',()=>{if(running)drawWD()});
+
+updateCalc();
+drawWD();
+</script>
+</body>
+</html>
