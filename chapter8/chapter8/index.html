@@ -1,0 +1,2616 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../chapter7/chapter7/">
+      
+      
+        <link rel="next" href="../../chapter9/chapter9/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第8章 - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#8" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第8章
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter2/chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter4/chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter5/chapter5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter6/chapter6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter7/chapter7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ecap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        增强型脉冲捕获模块(eCAP)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="增强型脉冲捕获模块(eCAP)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1脉冲捕获基本原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82f28335cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2F28335增强型CAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        所有捕获都发生在一个输入引脚上。
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="所有捕获都发生在一个输入引脚上。">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#83-f28335apwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 F28335捕获单元的APWM操作模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#84f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4F28335捕获操作模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.事件分频（预定标）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.边沿极性选择
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.连续/单次控制
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#432" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.32位计数器与相位控制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5cap1cap4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.CAP1~CAP4寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.中断控制
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.影子加载与锁存控制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.影子加载与锁存控制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#85-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.5 CAP寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1tsctr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.时间标志寄存器（TSCTR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2ctrphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.计数相位寄存器(CTRPHS)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31cap1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.捕获寄存器1(CAP1）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53cap3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.捕获寄存器3(CAP3）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64cap4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.捕获寄存器4(CAP4)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7ecap1ecctl1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.eCAP控制寄存器1(ECCTL1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8ecap2ecctl2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.eCAP控制寄存器2(ECCTL2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9ecapeceint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.eCAP中断使能寄存器(ECEINT)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10ecapecflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.eCAP中断标志寄存器(ECFLG)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11ecapecclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.eCAP中断清除寄存器(ECCLR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12ecapecfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.eCAP强制中断寄存器(ECFRC)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.eCAP强制中断寄存器(ECFRC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#86cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.6手把手教你实现CAP捕获信号发生器信号边沿
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        设置CAP的输引脚如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAP工作模式的配置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-setcap1modevoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        void SetCap1Mode(void)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#87cappwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.7手把手教你实现CAP捕获PWM信号边沿
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PIE中断向量表的初始化函数如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecapcap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eCAP初始化设置,CAP使能设置：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAP的输引脚设置如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAP工作模式的配置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PWM设置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter9/chapter9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ecap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        增强型脉冲捕获模块(eCAP)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="增强型脉冲捕获模块(eCAP)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1脉冲捕获基本原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82f28335cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2F28335增强型CAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        所有捕获都发生在一个输入引脚上。
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="所有捕获都发生在一个输入引脚上。">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#83-f28335apwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 F28335捕获单元的APWM操作模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#84f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4F28335捕获操作模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.事件分频（预定标）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.边沿极性选择
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.连续/单次控制
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#432" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.32位计数器与相位控制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5cap1cap4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.CAP1~CAP4寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.中断控制
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.影子加载与锁存控制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.影子加载与锁存控制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#85-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.5 CAP寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1tsctr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.时间标志寄存器（TSCTR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2ctrphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.计数相位寄存器(CTRPHS)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31cap1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.捕获寄存器1(CAP1）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53cap3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.捕获寄存器3(CAP3）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64cap4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.捕获寄存器4(CAP4)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7ecap1ecctl1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.eCAP控制寄存器1(ECCTL1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8ecap2ecctl2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.eCAP控制寄存器2(ECCTL2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9ecapeceint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.eCAP中断使能寄存器(ECEINT)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10ecapecflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.eCAP中断标志寄存器(ECFLG)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11ecapecclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.eCAP中断清除寄存器(ECCLR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12ecapecfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.eCAP强制中断寄存器(ECFRC)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12.eCAP强制中断寄存器(ECFRC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#86cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.6手把手教你实现CAP捕获信号发生器信号边沿
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        设置CAP的输引脚如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAP工作模式的配置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-setcap1modevoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        void SetCap1Mode(void)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#87cappwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.7手把手教你实现CAP捕获PWM信号边沿
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PIE中断向量表的初始化函数如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecapcap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eCAP初始化设置,CAP使能设置：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAP的输引脚设置如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cap_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAP工作模式的配置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PWM设置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="8">第 8 章</h1>
+<h2 id="ecap">增强型脉冲捕获模块(eCAP)</h2>
+<p>“事无巨细，无非因果”,输对输出有着非常重要的影响。脉冲量的输是在数字控制系统中最常见的一类输量，控制器专门设置了脉冲捕获模块(eCAP)来处理脉冲量，通过脉冲捕获模块捕获脉冲量的上升沿与下降沿，进而可以计算脉冲的宽度和占空比，可以采用脉冲信号进行相关控制。</p>
+<h3 id="81">8.1脉冲捕获基本原理</h3>
+<p>捕获单元模块能够捕获外部输入引脚的逻辑状态（电平的高或低、电平翻转时的上升沿或下降沿），并利用内部定时器对外部事件或者引脚状态变化进处理。典型应用如下：</p>
+<p>电机测速。</p>
+<p>》测量脉冲电平宽度。</p>
+<p>➢测量系列脉冲占空比和周期。</p>
+<p>➢电流/电压传感器的PWM编码信号的解码。</p>
+<p>捕获单元示意图如图8.1所示。控制器给每个捕获单元模块都分配了一个捕获引脚，在捕获引脚上输入待测脉冲波形，捕获模块会捕获到指定捕获的逻辑状态，如图8.1中的下降沿，捕获单元记录下定时器的时间，两个下降沿间的时间差就是脉冲周期，同理也可以</p>
+<p><img alt="" src="../images/2484581bd81e3187153c2c7a01188bad954b283e0af3732cc7d69b113982b150.jpg" /></p>
+<p>图8.1CAP示意图</p>
+<p>捕获脉冲的上升沿，计算上升沿与下降沿之间的时间差就可以获得占空比，所以捕获单元可以用于测量脉冲周期以及脉冲的宽度。在一些数字脉冲测速场合，如电机的常见测速方法之一，在电机某个固定位置通过光电传感器发出一个脉冲，每周一个脉冲，两个脉冲之间的时间，就是电机的转速。在一些精确控制的场合中，一周当然不止发出一个脉冲，这取决于传感器（光电编码器）的选型与性能。</p>
+<h3 id="82f28335cap">8.2F28335增强型CAP</h3>
+<p>F28335共有6组eCAP模块，每个eCAP不但具有捕获功能，而且还可用作PWM输出功能。F28335捕获模块的主要特征如下：</p>
+<p>150MHz系统时钟的情况下,32位时基的时间分辨率为6.67ns。</p>
+<p>4组32位的时间标志寄存器。</p>
+<p>4级捕获事件序列，可以灵活配置捕获事件边沿极性。</p>
+<p>4级触发事件均可以产生中断。</p>
+<p>》软件配置次捕获可以最多得到4个捕获时间。</p>
+<p>可连续循环4级捕获。</p>
+<p>绝对时间捕获。</p>
+<p>不同模式的时间捕获。</p>
+<h2 id="_1">所有捕获都发生在一个输入引脚上。</h2>
+<p>如果eCAP模块不作捕获使用，可以配置成个单通道输出的PWM模式。</p>
+<p>eCAP模块中个捕获通道完成次捕获任务，需要以下关键资源：</p>
+<p>专捕获输引脚。</p>
+<p>32位时基（计数器）。</p>
+<p>➢4×32位时间标签捕获寄存器。</p>
+<p>4级序列器，与外部eCAP引脚的上升/下降沿同步。</p>
+<p>4个事件可独立配置边沿极性。</p>
+<p>输入捕获信号预定标（2～62）。</p>
+<p>一个2位的比较寄存器，次触发后可以捕获4个时间标签事件。</p>
+<p>》采用4级深度的循环缓冲器以进行连续捕获。</p>
+<p>➢4个捕获事件中任意个都可以产生中断。</p>
+<h3 id="83-f28335apwm">8.3 F28335捕获单元的APWM操作模式</h3>
+<p>如果eCAP模块不用作捕获输，可以将它用来产生一个单通道的PWM。计数器作在计数增模式，可以提供时基能产不同占空的PWM。CAP1与CAP2寄存器作为主要的周期和比较寄存器，CAP3与CAP4寄存器作为周期和比较寄存器的影子寄存器，其原理框图如图8.2所示。</p>
+<p>其功能描述如下：</p>
+<p>时间计数器不断与2个32位的比较寄存器比较。</p>
+<p>CAP1与CAP2用作周期与比较寄存器。</p>
+<p>与影子寄存器APRD、ACMP（CAP3、CAP4）配合形成双缓冲机制。如果选择立即模式，只要数据写入影子寄存器，影子寄存器的值就会立即加载到CAP1或者CAP2寄存器；如果选择周期加载模式，在CTR=PRD的时候，影子寄存器的值就会加载到CAP1或者CAP2寄存器。</p>
+<p><img alt="" src="../images/5a919a26b029a666f9935a51319876b43495f2c0c602c427d60909e8ea8fcea8.jpg" /></p>
+<p>图8.2 APWM结构框图</p>
+<p>写数值到有效寄存器CAP1/2后，数值也将写到各自相应的影寄存器CAP3/4。</p>
+<p>➢在初始化的时候，周期值与较值必须写到有效寄存器CAP1与CAP2，模块会动复制初始化数值到影寄存器中。在之后的数据更改时，只需要使影子寄存器就可以了。</p>
+<p>APWM产生波形如图8.3所示。</p>
+<h2 id="_2"></h2>
+<h3 id="84f28335">8.4F28335捕获操作模式</h3>
+<p>F28335DSP中eCAP的原理框图如图8.4所示。</p>
+<p><img alt="" src="../images/ffa12e9e51bbaa08b2b80111b582c952a773f56a62c265c43b15e7d52cfe1e88.jpg" /></p>
+<p>图8.4eCAP原理框图</p>
+<h2 id="1">1.事件分频（预定标）</h2>
+<p>可以对一个输入的捕捉信号进分频系数为N=2～62的分频，这在输信号频率很的时候非常有用。其框图和信号波形分别如图8.5和图8.6所示。</p>
+<p><img alt="" src="../images/2af22aaab6a00deba641103378dee0a93399c8325429ceaeeaffe9f32638e7dc.jpg" /></p>
+<p><img alt="" src="../images/bebc9a006b7f4d1da6978b974744ed0d348e186c0eb3605c7cab7d439ab5ab78.jpg" /></p>
+<p>图8.5信号分频结构框图88图8.6分频波形</p>
+<h2 id="2">2.边沿极性选择</h2>
+<p>➢4个独立的边沿极性选择器，每个捕获事件可以设置不同的边沿极性。</p>
+<p>每个边沿事件由MODULE4序列发生器进事件量化。</p>
+<p>通过Mod4计数器将边沿事件锁存到相应的Cap寄存器中，Cap寄存器工作在下降沿。</p>
+<h2 id="3">3.连续/单次控制</h2>
+<p>2位的Mod4计数器对相应的边沿捕获事件递增计数(CEVT1～CEVT4)。</p>
+<p>Mod4计数器循环计数(0→1→2→3→0)，直至停止工作。</p>
+<p>➢在单次模式下，个2位的停寄存器与Mod4计数器的输出值进较，如果等于停寄存器的值，Mod4计数器将不再计数，并且阻CAP1~CAP4寄存器加载数值。</p>
+<p>连续/单次模块通过单次控制方式控制Mod4计数器的开始、停止和复位，这种单次控制方式由比较器的停止值触发，可通过软件进行强制控制。</p>
+<p>在单次控制的时候，eCAP模块等待N（1～4）个捕捉事件发生，N的值为停止寄存器的值。一旦N值达到后，MOD4计数器和CAP寄存器的值都被冻结。如果向CAP控制寄存器ECCTL2中的单次重加载RE-ARM位写1后，Mod4计数器就会复位并从冻结状态恢复作，同时如果将CAP控制寄存器ECCTL1中CAP寄存器加载使能CAPLDEN位置1，那么CAP1～CAP4寄存器会再次加载新值。</p>
+<p>在连续模式下，Mod4计数器持续工作(0→1→2→3→0)，捕捉值在一个环形缓冲按顺序不断地写CAP1~CAP4。图8.7为连续/单次控制框图。</p>
+<p><img alt="" src="../images/41818b44066f89ce71f5da4d9a68554e0d2f69a0622a76d6fcd9be7e8632d926.jpg" /></p>
+<h2 id="_3"></h2>
+<p>图8.7连续/单次模块控制框图</p>
+<h3 id="432">4.32位计数器与相位控制</h3>
+<p>计数器为事件捕获提供时基，其时钟信号为系统时钟的分频。通过软件或硬件强制，可以用相位寄存器与其他计数器同步。在APWM模式中，这个相位寄存器在模块之间需要相位差时很有。在4个捕捉事件的数值加载中，可以选择复位这个32位计数器，这点对时间偏差捕捉很有用。首先32位计数器的值被捕获到，然后被LD1～LD4中任意一个信号复位为0。其工作原理框图如图8.8所示。</p>
+<h2 id="5cap1cap4">5.CAP1~CAP4寄存器</h2>
+<p>CAP1~CAP4寄存器通过32位的定时/计数器总线加载数值，当相应的捕获事件发生时，CTR[0:31]值加载到相应的CAP寄存器中。</p>
+<p>通过控制CAP控制寄存器ECCTL1[CAPLDEN位可以阻捕捉寄存器数值的加载。在单次模式下，个停信号产的时候(StopValue=Mod4)该位被动</p>
+<p><img alt="" src="../images/e19ed0397e20813b9d9178a317be388340366d9cf0d68fc8529402fdcabb9732.jpg" /></p>
+<p>图8.8计数器与同步模块</p>
+<p>清除（不加载）。在APWM模式下CAP1与CAP2寄存器为有效的周期寄存器和较寄存器；CAP3与CAP4寄存器相对CAP1与CAP2寄存器为独的影子寄存器(APRD与ACMP)。</p>
+<h2 id="6">6.中断控制</h2>
+<p>捕捉事件的发生（CEVT1～CEVT4，CTROVF）或者APWM事件的发生（CTR都将会产生中断请求。</p>
+<p>这些事件中的任个事件都可以被选作中断源(从eCAPx模块中)连到PIE。</p>
+<p>中断使能寄存器（ECEINT）用于使能/屏蔽中断源。中断标志寄存器（ECFLG）包含中断事件标志和全局中断标志位(INT)。</p>
+<p>如果相应的中断事件使能标志位为1,INT标志位为0，那么一个中断脉冲就会告知PIE。</p>
+<p>在其他的中断脉冲产生之前，在中断服务程序里必须通过中断清除寄存器（EC-CLR)清除全局中断标志和相应的中断事件。通过强制中断寄存器（ECFRC)可以强制发某个中断事件，这个在测试的时候比较有。其框图如图8.9所示。</p>
+<p>注意：CEVT1、CEVT2、CEVT3、CEVT4标志工作在捕捉模式（ECCTL2[CAP/APWM]==0）;CTR=PRD，CTR=CMP标志工作在APWM模式（ECCTL2[CAP/APWM]==1);CNTOVF标志在两种模式下都可工作。</p>
+<p><img alt="" src="../images/36e9e35c4663c4eb006bf7f0b5ed481540f0091cde8b655a40bec6461437ffca.jpg" /></p>
+<p>图8.9 eCAP模块中的中断</p>
+<h2 id="7">7.影子加载与锁存控制</h2>
+<p>在捕捉模式下，锁存逻辑阻任何影数据从APRD和ACMP寄存器中加载到CAP1与CAP2中。</p>
+<p>在APWM模式下，允许影子寄存器里的数据加载，并且还有两种选择：</p>
+<p>即：只要有新的数据写影子寄存器，APRD或ACMP即向CAP1或CAP2加载数据。</p>
+<p>》在周期相等的时候：即 的时候有效寄存器从影寄存器加载数据。</p>
+<h3 id="85-cap">8.5 CAP寄存器</h3>
+<p>CAP所有寄存器及地址如表8.1所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+<th>大小</th>
+<th>描述</th>
+<th>名称</th>
+<th>地址</th>
+<th>大小</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TSCTR</td>
+<td>0x6A00</td>
+<td>2</td>
+<td>32位计数器</td>
+<td>ECCTL1</td>
+<td>0x6A14</td>
+<td></td>
+<td>捕获控制寄存器1</td>
+</tr>
+<tr>
+<td>CTRPHS</td>
+<td>0x6A02</td>
+<td>2</td>
+<td>相位偏置寄存器</td>
+<td>ECCTL2</td>
+<td>0x6A15</td>
+<td>n1</td>
+<td>捕获控制寄存器2</td>
+</tr>
+<tr>
+<td>CAP1</td>
+<td>0x6A04</td>
+<td>-2</td>
+<td>捕获寄存器1</td>
+<td>ECEINT</td>
+<td>0x6A16</td>
+<td>1</td>
+<td>捕获中断使能寄存器</td>
+</tr>
+<tr>
+<td>CAP2</td>
+<td>0x6A05</td>
+<td>2</td>
+<td>捕获寄存器23</td>
+<td>ECFLG</td>
+<td>0x6A17</td>
+<td></td>
+<td>捕获中断标志寄存器</td>
+</tr>
+<tr>
+<td>CAP3</td>
+<td>0x6A06</td>
+<td>2</td>
+<td>捕获寄存器3</td>
+<td>ECCLR</td>
+<td>0x6A18</td>
+<td></td>
+<td>捕获中断清零寄存器</td>
+</tr>
+<tr>
+<td>CAP4</td>
+<td>0x6A0A</td>
+<td>2</td>
+<td>捕获寄存器4</td>
+<td>ECFRC</td>
+<td>0x6A19</td>
+<td>1=19</td>
+<td>捕获中断强制寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表8.1 CAP相关寄存器</p>
+<h2 id="1tsctr">1.时间标志寄存器（TSCTR)</h2>
+<p>时间标志寄存器（TSCTR)的各位信息如表8.2所列。</p>
+<h2 id="2ctrphs">2.计数相位寄存器(CTRPHS)</h2>
+<p>计数相位寄存器(CTRPHS)的各位信息如表8.3所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>JTTSCTR</td>
+<td>32位计数寄存器，捕提事件的时间标志</td>
+</tr>
+</tbody>
+</table>
+<p>表8.2时间标志寄存器（TSCTR)位信息</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>CTRPHS</td>
+<td>计数相位寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表8.3计数相位寄存器（CTRPHS)位信息</p>
+<h2 id="31cap1">3.捕获寄存器1(CAP1）</h2>
+<p>捕获寄存器1（CAP1）的各位信息如表8.4所列空喜断意捕获寄存器2(CAP2）4</p>
+<p>捕获寄存器2（CAP2)的各位信息如表8.5所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>器CAP1</td>
+<td>这个寄存器的作用：在CMP模式中，加载捕获事件中的时间标志（TSCTR的计数值）；在APWM模式中，起到APRD的作用</td>
+</tr>
+</tbody>
+</table>
+<p>表8.4捕获寄存器1(CAP1）</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>址描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>中</td>
+<td>这个寄存器的作用：在 CMP模式中，加载捕获事 件中的时间标志（TSCTR</td>
+</tr>
+<tr>
+<td>31~0</td>
+<td>CAP2 的计数值);在APWM模式 中，起到ACMP的作用</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表8.5捕获寄存器2(CAP2)</p>
+<h2 id="53cap3">5.捕获寄存器3(CAP3）</h2>
+<p>捕获寄存器3(CAP3)的各位信息如表8.6所列。</p>
+<h2 id="64cap4">6.捕获寄存器4(CAP4)</h2>
+<p>捕获寄存器4(CAP4）的各位信息如表8.7所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>231~0</td>
+<td>品江解CAP3</td>
+<td>这个寄存器的作用：在CMP模式中，加载捕获事件中的时间标志（TSCTR的计数值)；在APWM模式</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>中，起到APRD影子寄存器的作用</td>
+</tr>
+</tbody>
+</table>
+<p>表8.6捕获寄存器3(CAP3)</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代同科品31~0</td>
+<td>CAP4</td>
+<td>这个寄存器的作用：在CMP模式中，加载捕获事</td>
+</tr>
+<tr>
+<td>件中的时间标志（TSCTR的计数值)；在APWM模式</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>器</td>
+<td>器</td>
+<td>中，起到ACMP影子寄存器的作用</td>
+</tr>
+</tbody>
+</table>
+<p>表8.7-捕获寄存器4(CAP4)</p>
+<h2 id="7ecap1ecctl1">7.eCAP控制寄存器1(ECCTL1)</h2>
+<p>eCAP控制寄存器1(ECCTL1)的各位信息如表8.8所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~14</td>
+<td>FREE/SOFT</td>
+<td>仿真控制00：仿真暂停时TSCTR计数立即停止01:TSCTR一直计数，直到为0</td>
+<td></td>
+</tr>
+<tr>
+<td>13~9</td>
+<td>PRESCALE</td>
+<td>输入信号分频选择00000:1分频（不分频）;00001:2分频；00010:4分频；00011：6分频；00100：8分频;00101：10分频；.</td>
+<td>.;11110:60分频;11111:62分频</td>
+</tr>
+<tr>
+<td>8</td>
+<td>CAPLDEN</td>
+<td>在捕获事件中使能CAP1-4寄存器的加载0：禁止在捕获事件中加载CAP1-4寄存器的时间；1：使能在捕获事件中加载CAP1-4寄存器的时间</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>CTRRST4</td>
+<td>CAP4事件中重置计数器MVT0：在CAP4事件中不重置计数器；1：在CAP4捕获后重置计数器</td>
+<td>捕获后重置计费</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CAP4POL</td>
+<td>捕提沿选择0:CAP4上升沿捕提（RE）;1：CAP4下降沿捕提（FE）</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>CTRRST3</td>
+<td>CAP3事件中重置计数器0：在CAP3事件中不重置计数器；1：在CAP3捕获后重置计数器</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表8.8eCAP控制寄存器1(ECCTL1）</p>
+<p>续表8.8</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>CAP3POL</td>
+<td>捕捉沿选择 $0 : { \mathrm { C A P 3 } }$ 上升沿捕提（RE）；1：CAP3下降沿捕提（FE）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CTRRST2</td>
+<td>CAP2事件中重置计数器0:在CAP2事件中不重置计数器；1：在CAP2捕获后重置计数器</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CAP2POL</td>
+<td>捕捉沿选择 $0 : { \mathrm { C A P 2 } }$ 上升沿捕提（RE）；1：CAP2下降沿捕提（FE）</td>
+</tr>
+<tr>
+<td></td>
+<td>CTRRST1</td>
+<td>CAP1事件中重置计数器0:在CAP1事件中不重置计数器；1：在CAP1捕获后重置计数器</td>
+</tr>
+<tr>
+<td>0</td>
+<td>CAP1POL</td>
+<td>捕捉沿选择0:CAP1上升沿捕提（RE)；1：CAP1下降沿捕提（FE)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8ecap2ecctl2">8.eCAP控制寄存器2(ECCTL2)</h2>
+<p>eCAP控制寄存器2(ECCTL2)的各位信息如表8.9所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~11</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>10</td>
+<td>APWMPOL</td>
+<td>APWM输出极性选择。仅限于APWM模式0:输出为高（比较值为高）；1：输出为低（比较值为低）</td>
+</tr>
+<tr>
+<td>9</td>
+<td>CAP/APWM</td>
+<td>CAP与APWM模式选择0:eCAP模块工作于捕捉模式。此模式做了下列配置：通过CTR=PRD阻止TSCTR重置V阻影子寄存器加载到CAP1与CAP2寄存器➢允许用户使能加载CAP1～4寄存器CAPx/APWMx引脚作为捕提输人1:eCAP模块工作于APWM模式。此模式做了下列配置：CTR=PRD重置TSCTR允许影子寄存器加载到CAP1与CAP2寄存器禁止时间标志加载到CAP1～4寄存器➢ $\mathrm { C A P x / A P W M x }$ 引脚作为APWM输出</td>
+</tr>
+<tr>
+<td>8</td>
+<td>SWSYNC</td>
+<td>软件强制计数器同步。它提供个简便的软件法使些或者所有eCAP时基同步。在APWM模式下也可以通过CTR=PRD实现同步0:无影响1:强制同步。写1后，该位返回一个0注意：选择CTR=PRD意味着仅限于APWM模式</td>
+</tr>
+</tbody>
+</table>
+<p>表8.9 eCAP控制寄存器2(ECCTL2）</p>
+<p>续表8.9</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7~6</td>
+<td>SYNCO_SEL</td>
+<td>同步输出选择00:选择同步输事件为同步信号输出；01:选择CTR=PRD事件为同步信号输出10或11：屏蔽同步信号输出</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SYNCI_EN</td>
+<td>计数器（TSCTR）同步输人选择模式0:屏蔽同步输操作;1：允许计数器根据一个SYNCI信号或者S/W事件从TSCTR寄存器中加载</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TSCTR-STOP</td>
+<td>计数器停止位控制0：计数器停止；1：计数器计数</td>
+</tr>
+<tr>
+<td>3</td>
+<td>RE-ARM</td>
+<td>单次重加载控制。也就是等待停止触发。重加载功能在单次或者连续模式下有效0：无影响；1：以下情况将强制为单次模式》复位Mod4计数器为0允许Mod4计数器持续计数使能捕捉寄存器加载</td>
+</tr>
+<tr>
+<td>2~1</td>
+<td>STOP_WRAP</td>
+<td>单次/连续模式下的停止值00：单次模式下，在CAP1的捕提事件发生后产生停止信号连续模式下，在CAP1的捕捉事件发生后计数器正常运行01：单次模式下，在CAP2的捕提事件发生后产生停止信号连续模式下，在CAP2的捕捉事件发生后计数器正常运行10:单次模式下，在CAP3的捕提事件发生后产生停止信号连续模式下，在CAP3的捕提事件发生后计数器正常运行11:单次模式下，在CAP4的捕提事件发生后产生停止信号连续模式下，在CAP4的捕提事件发生后计数器正常运行注意，该位的值与Mod4计数器的值向比较，如果相等，将发生以下两件事件：Mod4计数器暂停➢捕提寄存器不再加载新的数据在单次模式下，后续的中断事件将不会向PIE发出中断请求，除非重新配置模块</td>
+</tr>
+<tr>
+<td>0</td>
+<td>CONT/ONESHT</td>
+<td>连续/单次模式0:连续模式1：单次模式</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9ecapeceint">9.eCAP中断使能寄存器(ECEINT)</h2>
+<p>eCAP中断使能寄存器(ECEINT)的各位信息如表8.10所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>保留</td>
+<td>保留      Hj1</td>
+</tr>
+<tr>
+<td>7</td>
+<td>CTR=CMP</td>
+<td>计数器匹配中断使能0：屏蔽；1：使能</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CTR=PRD</td>
+<td>计数器周期匹配中断使能0:屏蔽；1：使能</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CTROVF</td>
+<td>计数器溢出中断使能0：屏蔽；1：使能</td>
+</tr>
+<tr>
+<td>4~1</td>
+<td>CEVT4~CEVT1</td>
+<td>捕捉事件4~1中断使能0：屏蔽；1：使能</td>
+</tr>
+<tr>
+<td>0</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表8.10eCAP中断使能寄存器（ECEINT）</p>
+<h2 id="10ecapecflg">10.eCAP中断标志寄存器(ECFLG)</h2>
+<p>eCAP中断标志寄存器（ECFLG)的各位信息如表8.11所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称  1</th>
+<th>描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>保留告</td>
+<td>保留</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>CTR=CMP</td>
+<td>计数器匹配状态标志位。仅限于APWM模式0：无；1：计数器匹配比较寄存器值（ACMP）</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>CTR=PRD</td>
+<td>计数器周期匹配状态标志位。仅限于APWM模式0：无；1：计数器匹配周期寄存器值（APER）并重置</td>
+<td></td>
+</tr>
+<tr>
+<td>5动</td>
+<td>CTRovF</td>
+<td>计数器溢出标志0:无；1：计数器从00000000变化到FFFFFFFF</td>
+<td></td>
+</tr>
+<tr>
+<td>4~1合。</td>
+<td>CEVT4~CEVT1</td>
+<td>分别表示捕捉事件4～1状态标记，该状态位只在CAP模式下有效0:无事件发生；1：有事件发生</td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>全局中断标志0：无；1：有中断产生</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表8.11 eCAP中断标志寄存器(ECFLG)</p>
+<h2 id="11ecapecclr">11.eCAP中断清除寄存器(ECCLR)</h2>
+<p>eCAP中断清除寄存器（ECCLR)的各位信息如表8.12所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>7</td>
+<td>CTR=CMP</td>
+<td>计数器匹配状态.                       雪0：无影响；1：清除该位标志位</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CTR=PRD</td>
+<td>计数器周期匹配状态0:无影响；1：清除该位标志位</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CTROVF</td>
+<td>计数器溢出0：无影响；1：清除该位标志位</td>
+</tr>
+<tr>
+<td>4~1</td>
+<td>CEVT4~CEVT1</td>
+<td>捕捉事件4~1标志0:无影响；1：清除该位标志位</td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>全局中断标志体0：无影响；1：清除该位标志位，不影响中断的使能</td>
+</tr>
+</tbody>
+</table>
+<p>表8.12eCAP中断清除寄存器(ECCLR）</p>
+<h2 id="12ecapecfrc">12.eCAP强制中断寄存器(ECFRC)</h2>
+<p>eCAP强制中断寄存器（ECFRC)的各位信息如表8.13所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>7</td>
+<td>CTR=CMP</td>
+<td>强制计数器匹配比较寄存器0：无影响；1：写1置位该标志位</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CTR=PRD</td>
+<td>强制计数器匹配周期寄存器0:无影响；1：写1置位该标志位</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CTROVF</td>
+<td>强制计数器溢出0：无影响；1：写1置位该标志位</td>
+</tr>
+<tr>
+<td>4</td>
+<td>CEVT4</td>
+<td>强制捕提事件4中断0:无影响；1：写1置位该标志位</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CEVT3</td>
+<td>强制捕捉事件3中断0:无影响：1：写1置位该标志位</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CEVT2</td>
+<td>强制捕提事件2中断0:无影响；1：写1置位该标志位</td>
+</tr>
+<tr>
+<td></td>
+<td>CEVT1</td>
+<td>强制捕提事件1中断0:无影响；1：写1置位该标志位</td>
+</tr>
+<tr>
+<td>0</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表8.13 eCAP强制中断寄存器（ECFRC)</p>
+<h3 id="86cap">8.6手把手教你实现CAP捕获信号发生器信号边沿</h3>
+<h2 id="1_1">1.实验目的</h2>
+<p>①掌握F28335CAP捕获原理。</p>
+<p>②运用CAP计算脉冲信号占空比。</p>
+<h2 id="2_1">2.实验主要步骤</h2>
+<p>①先打开已经配置好的CCS3.3软件。</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③ 在CCS中选择Debug→Connect菜单项，连接标板，确定标板连接成功。</p>
+<p>④将f28335_Cap录复制到CCS开发环境中的Myproject录下。</p>
+<p>⑤在CCS菜单中选择project→Open菜单项，加载f28335_Cap录中的f28335_Cap.pjt。</p>
+<p>⑥在CCS菜单中选择File→LoadProgram菜单项，加载Debug录下的f28335_Cap.out。</p>
+<p>⑦打开信号发生器，调信号发生器产生10kHz的0～3.3V的方波，然后将信号发生器的地线接到开发板的地线端，另一端接到YX-F28335开发板J8的第2脚。</p>
+<p>⑧在CCS菜单中选择Debug→Run菜单项，打开CCS的Watch Window，在Watch1窗中输变量T1、T2后回车，户可以看到T1和T2的值为15000。</p>
+<p>⑨也可以将信号发生器的地线接到开发板的地线端，另一端接到YX-F28335开发板J8的第3脚，在CCS中选择Debug→Run菜单项，打开CCS的Watch Window，在Watch1窗口中输T3、T4后回车，查看它们的值,若是15000的话，则说明CAP2正常。</p>
+<h2 id="3_1">3.实验原理说明</h2>
+<p>此实验利用CAP捕捉信号发生器产生的方波，T1和T2、T3和T4所测值的公式为：T=F28335作频率/所测信号频率;F28335作频率为150MHz，信号发生器产生方波的频率为10kHz，所以T的值应该是15000。</p>
+<p>eCAP的时钟计数器是以系统时钟为基准的，所以先需设置系统时钟，为eCAP提供基准。</p>
+<p>//使能系统时钟为CAP1提供基准//使能系统时钟为CAP2提供基准//其他CAP模块未用到，所以屏蔽</p>
+<h2 id="cap">设置CAP的输引脚如下：</h2>
+<h2 id="cap_1">CAP工作模式的配置如下所示：</h2>
+<h2 id="void-setcap1modevoid">void SetCap1Mode(void)</h2>
+<h2 id="4">4.实验观察与思考</h2>
+<p>①若把F28335的作频率设置为100MHz，则此时T1的值为多少？</p>
+<p>②若把信号发器的信号设为30kHz，此时T1的值为多少?</p>
+<p>③F28335的CAP能测量300MHz的波信号吗？如果可以，怎么测量？</p>
+<h3 id="87cappwm">8.7手把手教你实现CAP捕获PWM信号边沿</h3>
+<h2 id="1_2">1.实验目的</h2>
+<p>①掌握PWM原理。</p>
+<p>②掌握CAP原理。</p>
+<h2 id="2_2">2.实验主要步骤</h2>
+<p>①首先打开已经配置好的CCS3.3软件；</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③ 在CCS中选择DebugConnect菜单项，连接标板，确定目标板连接成功。</p>
+<p>④将PWM-CAP录复制到CCS开发环境中的Myproject目录下。</p>
+<p>⑤在CCS中选择project→Open菜单项，加载PWM-CAP录中的f28335.Cap. pjt。</p>
+<p>⑥在CCS中选择File→Load Program菜单项，加载Debug录下的f28335_</p>
+<p>Cap.out。</p>
+<p>⑦在CCS中选择Debug→Run，打开CCS的Watch Window,如果是将J8-2和J5-1短接的话，那么在Watch1窗口中输T1、T2后回车，用户将会看到T1和T2的值为15000。</p>
+<p>⑧如果是将J8-2和J5-2短接的话，那么在Watch1窗口中输入T3、T4后回 车，将会看到T3和T4的值为15000。</p>
+<h2 id="3_2">3.实验原理说明</h2>
+<p>此实验是将F28335产的PWM波送给其CAP端进捕捉。这样就可以在不使用示波器和信号发生器情况下，也可以分析其工作原理，达到同样实验学习、理解的目的。将F28335产生10kHz的PWM波，通过短接线，直接将此信号送给CAP输引脚，T值为15000，程序在实现的时候需要对PWM进行设置，然后再启动CAP。</p>
+<p>PWM输出引脚配置如下：</p>
+<p>PIE中断控制设置程序如下：</p>
+<h2 id="pie">PIE中断向量表的初始化函数如下：</h2>
+<h2 id="ecapcap">eCAP初始化设置,CAP使能设置：</h2>
+<h2 id="cap_2">CAP的输引脚设置如下：</h2>
+<h2 id="cap_3">CAP工作模式的配置如下所示：</h2>
+<h2 id="pwm">PWM设置如下所示：</h2>
+<h2 id="4_1">4.实验观察与思考</h2>
+<p>①通过程序改变PWM的频率，查看T值的变化？</p>
+<p>②PWM频率不变，改变占空比，会影响T值吗？为什么？</p>
+<p>③在不知道PWM频率和占空比的情况下，通过怎样的软件算法可以得出PWM的频率和占空？</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

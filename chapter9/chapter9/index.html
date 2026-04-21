@@ -1,0 +1,3624 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../chapter8/chapter8/">
+      
+      
+        <link rel="next" href="../../chapter10/chapter10/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第9章 - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#eqep" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第9章
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter2/chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter4/chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter5/chapter5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter6/chapter6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter7/chapter7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter8/chapter8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        增强型正交编码模块(eQEP)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="增强型正交编码模块(eQEP)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-qep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 正交编码器QEP概述
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.采用增量型光电编码器来判别电机转速向的基本原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.光电编码器电机测速的基本原理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.光电编码器电机测速的基本原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#92-f28335eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 F28335增强型正交编码模块eQEP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.eQEP引脚
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.eQEP功能描述
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.eQEP功能描述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#93-eqepqdu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 eQEP正交解码单元(QDU)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.位置计数器输入模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)正交-计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)方向计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)递增计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4)递减计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2qep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.QEP输入极性选择
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.位置比较同步输出
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.位置比较同步输出">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#94-eqeppccu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 eQEP位置计数和控制单元(PCCU)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.位置计数操作模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.位置计数器锁存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)索引事件锁存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)选择事件锁存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3。位置计数器初始化
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3。位置计数器初始化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#95-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.5 eQEP位置比较单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#96-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.6 eQEP边沿捕获单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#97-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.7 eQEP看门狗电路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#98-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.8 eQEP定时器基准单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#99-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.9 eQEP中断结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#910-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.10 eQEP寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1qepqdecctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.QEP解码控制寄存器QDECCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2qepqepctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.QEP控制寄存器QEPCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3qepqposctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.QEP位置比较控制寄存器QPOSCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4qepqcapctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.QEP捕获控制寄存器QCAPCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5qepqposcnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.QEP位置计数器QPOSCNT寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6qepqposinit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.QEP位置计数器初始化寄存器QPOSINIT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7qepqposmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.QEP最大位置计数器寄存器QPOSMAX
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8qepqposcmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.QEP位置比较寄存器QPOSCMP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9qepiqposilat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.QEP索引I位置加载寄存器QPOSILAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10qepqposslat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.QEP标记位置加载寄存器QPOSSLAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11qepqposlat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.QEP位置加载寄存器QPOSLAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12qepqutmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.QEP单位时间定时器QUTMR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13qepquprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.QEP单位时间周期寄存器QUPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14qepqwdtmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.QEP看狗定时器QWDTMR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15qepqwdprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15.QEP看狗周期寄存器QWDPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16qepqeint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.QEP中断使能寄存器QEINT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17qepqflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.QEP中断标志寄存器QFLG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18qepqclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.QEP中断清除寄存器QCLR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19qepqfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19.QEP中断强制寄存器QFRC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20qepqepsts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20.QEP状态寄存器QEPSTS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21qepqctmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        21.QEP捕获定时器QCTMR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22qepqcprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.QEP捕获周期寄存器QCPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23qepqcprdlat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        23.QEP捕获周期锁存寄存器QCPRDLAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24qepqctmrlat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24.QEP捕获定时锁存寄存器QCTMRLAT
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="24.QEP捕获定时锁存寄存器QCTMRLAT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#911eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.11手把手教你实现基于eQEP的电机测速
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        增强型正交编码模块(eQEP)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="增强型正交编码模块(eQEP)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-qep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 正交编码器QEP概述
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.采用增量型光电编码器来判别电机转速向的基本原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.光电编码器电机测速的基本原理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.光电编码器电机测速的基本原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#92-f28335eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 F28335增强型正交编码模块eQEP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.eQEP引脚
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.eQEP功能描述
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.eQEP功能描述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#93-eqepqdu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 eQEP正交解码单元(QDU)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.位置计数器输入模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)正交-计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)方向计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)递增计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4)递减计数模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2qep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.QEP输入极性选择
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.位置比较同步输出
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.位置比较同步输出">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#94-eqeppccu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 eQEP位置计数和控制单元(PCCU)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.位置计数操作模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.位置计数器锁存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)索引事件锁存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)选择事件锁存
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3。位置计数器初始化
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3。位置计数器初始化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#95-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.5 eQEP位置比较单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#96-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.6 eQEP边沿捕获单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#97-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.7 eQEP看门狗电路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#98-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.8 eQEP定时器基准单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#99-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.9 eQEP中断结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#910-eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.10 eQEP寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1qepqdecctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.QEP解码控制寄存器QDECCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2qepqepctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.QEP控制寄存器QEPCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3qepqposctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.QEP位置比较控制寄存器QPOSCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4qepqcapctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.QEP捕获控制寄存器QCAPCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5qepqposcnt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.QEP位置计数器QPOSCNT寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6qepqposinit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.QEP位置计数器初始化寄存器QPOSINIT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7qepqposmax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.QEP最大位置计数器寄存器QPOSMAX
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8qepqposcmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.QEP位置比较寄存器QPOSCMP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9qepiqposilat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.QEP索引I位置加载寄存器QPOSILAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10qepqposslat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.QEP标记位置加载寄存器QPOSSLAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11qepqposlat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.QEP位置加载寄存器QPOSLAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12qepqutmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.QEP单位时间定时器QUTMR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13qepquprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.QEP单位时间周期寄存器QUPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14qepqwdtmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.QEP看狗定时器QWDTMR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15qepqwdprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15.QEP看狗周期寄存器QWDPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16qepqeint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.QEP中断使能寄存器QEINT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17qepqflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.QEP中断标志寄存器QFLG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18qepqclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.QEP中断清除寄存器QCLR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19qepqfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19.QEP中断强制寄存器QFRC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20qepqepsts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20.QEP状态寄存器QEPSTS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21qepqctmr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        21.QEP捕获定时器QCTMR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22qepqcprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.QEP捕获周期寄存器QCPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23qepqcprdlat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        23.QEP捕获周期锁存寄存器QCPRDLAT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24qepqctmrlat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24.QEP捕获定时锁存寄存器QCTMRLAT
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="24.QEP捕获定时锁存寄存器QCTMRLAT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#911eqep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.11手把手教你实现基于eQEP的电机测速
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>第9章</h1>
+
+<h2 id="eqep">增强型正交编码模块(eQEP)</h2>
+<p>在运动控制系统中，不仅仅需要获取实时的速度信息，有时候为了精确控制，也需要位置信息以及运动方向信息，F28335中的eQEP模块通过应用正交编码器不仅仅可以获得速度信息，也可以获得方向信息以及位置信息。</p>
+<h3 id="91-qep">9.1 正交编码器QEP概述</h3>
+<p>光电编码器是集光、机、电技术于一体的数字化传感器，通过光电转换将输出轴上的机械几何位移量转换成脉冲或者数字量的传感器，可以高精度测量被测物的转或直线位移量，是目前应用最多的传感器之。它具有分辨率高、精度、结构简单、体积小、使用可靠、易于维护、性价比高等优点。在数控机床、机器人、雷达、光电经纬仪、地面指挥仪、高精度闭环调速系统、伺服系统等诸多领域中得到了泛的应。典型的光电编码器由码盘（Disk）、检测光栅（Mask）、光电转换电路（包括光源、光敏器件、信号转换电路）、机械部件等组成，如图9.1所示。</p>
+<p><img alt="" src="../images/10ec14400ba3f4b29506882b167f87b0ac4a548024f3c5f088e113dcc6918962.jpg" /></p>
+<p>图9.1光电编码器主要结构</p>
+<p>一般来说，根据光电编码器产生脉冲的方式不同，可以分为增量式、绝对式以及复合式3大类。按编码器运动部件的运动式来分，可以分为旋转式和直线式两种。</p>
+<p>由于直线式运动可以借助机械连接转变为旋转式运动，反之亦然。因此，只有在那些结构形式和运动方式都有利于使用直线式光电编码器的场合才使用。旋转式光电编码器容易做成全封闭型式，易于实现小型化，传感长度较长，具有较长的环境适用能力，因而在实际工业生产中得到广泛的应用。</p>
+<p>增量式光电编码器的特点是每产个输出脉冲信号就对应个增量位移，但是不能通过输出脉冲区别出在哪个位置上的增量。它能够产与位移增量等值的脉冲信号，其作用是提供种对连续位移量离散化或增量化以及位移变化（速度）的传感法，它是相对于某个基准点的相对位置增量，不能够直接检测出轴的绝对位置信息。一般来说，增量式光电编码器输出A、B两相互差 电度角的脉冲信号（即所谓的两组正交输出信号），从而可方便地判断出旋转方向。同时还有用作参考零位的Z相标志（指示）脉冲信号，码盘每旋转一周，只发出一个标志信号。标志脉冲通常用来指机械位置或对积累量清零，如图9.2所示。</p>
+<p><img alt="" src="../images/26136f49f4d87686bb74a6d10bece2ae74354c267cecd661721e970b6b128239.jpg" /></p>
+<p>图9.2增量式编码器</p>
+<p>增量式编码器以转动时输出脉冲，通过计数设备来知道其相对参考点的位置，当编码器不动或停电时，依靠计数设备的内部记忆来记住位置。这样，当停电后，编码器不能有任何的移动，当来电工作时，编码器输出脉冲过程中，也不能有干扰而丢失脉冲，不然，计数设备记忆的零点就会偏移，而且这种偏移的量是无从知道的，只有错误的产结果出现后才能知道。解决的法是增加参考点，编码器每经过参考点，将参考位置修正进计数设备的记忆位置。在参考点以前，是不能保证位置的准确性的。为此，在控中就有每次操作先找参考点，开机找零等法。例如，打印机扫描仪的定位就是用的增量式编码器原理，每次开机，我们都能听到噼哩啪啦的一阵响，它在找参考零点，然后才作。这样的法对有些控项比较麻烦，甚至不允许开机找零(开机后就要知道准确位置），于是就有了绝对编码器的出现。编码器的基本原理及组成部件与增量式光电编码器基本相同，也是由光源、码盘、检测光栅、光电检测器件和转换电路组成。与增量式光电编码器不同的是，绝对式光电编码器不同的数码分别指每个不同的增量位置，它是种直接输出数字量的传感器。在它的圆形码盘上沿径向有若干同心码道，每条上由透光和不透光的扇形区相间组成，相邻码道的扇区数目是双倍关系，码盘上的码道数就是它的二进制数码的位数，在码盘的一侧是光源，另一侧对应每一码道有一光敏元件；当码盘处于不同位置时，各光敏元件根据受光照与否转换出相应的电平信号，形成二进制数。这种编码器的特点是不要计数器，在转轴的任意位置都可读出一个固定的与位置相对应的数字码。显然，码道越多，分辨率就越高，对于一个具有N位二进制分辨率的编码器，其码盘必须有N条码道。绝对式光电编码器原理如图9.3所示。</p>
+<p><img alt="" src="../images/53b1b87a424794133f92f2da5d72fa012d2a0df7b8dbd97bf5b9091d5d744d35.jpg" /></p>
+<p>图9.3绝对式编码器</p>
+<p>绝对式光电编码器是利用自然二进制、循环二进制（格雷码）、二-十进制等方式进光电转换的。绝对式光电编码器与增量式光电编码器不同之处在于圆盘上透光、不透光的线条图形，绝对光电编码器可有若干编码，根据读出码盘上的编码，检测绝对位置。它的特点是：可以直接读出角度坐标的绝对值；没有累积误差；电源切除后位置信息不会丢失；编码器的精度取决于位数；最高运转速度比增量式光电编码器高。</p>
+<p>混合式光电编码器，就是在增量式光电编码器的基础上，增加了一组用于检测永磁伺服电机磁极位置的码道。它输出两组信息：一组信息用于检测磁极位置，带有绝对信息功能，另一组则完全同增量式编码器的输出信息。</p>
+<p>由于绝对编码器在位置定位方面明显地优于增量式编码器，已经越来越多地应用于工控定位中。测速需要可以无限累加测量，目前增量型编码器在测速应用方面仍处于无可取代的主流位置。F28335中的eQEP模块主要针对的是增量型的编码器。</p>
+<h2 id="1">1.采用增量型光电编码器来判别电机转速向的基本原理</h2>
+<p>增量型编码器一般安装在电机或其他旋转机构的轴上，在码盘旋转过程中，输出两个信号称为QEPA与QEPB，两路信号相差90°，这就是所谓的正交信号，当电机正转时，脉冲信号A的相位超前脉冲信号B的相位90°，此时逻辑电路处理后可形成电平的向信号Dir。当电机反转时，脉冲信号A的相位滞后脉冲信号B的相位90°，此时逻辑电路处理后的方向信号Dir为低电平。因此根据超前与滞后的关系可以确定电机的转向。其转速辩相的原理如图9.4所示。</p>
+<p><img alt="" src="../images/5113bebbc7b96d1166f5953f4abbabd4042bc198222f091a9e5d55f8b01a0d9d.jpg" /></p>
+<p>图9.4QEP编码器的顺时针和逆时针输出信号波形</p>
+<h2 id="2">2.光电编码器电机测速的基本原理</h2>
+<p>可以利定时器/计数器配合光电编码器的输出脉冲信号来测量电机的转速。具体的测速方法有M法、T法和M/T法3种。</p>
+<p>M法又称之为测频法，其测速原理是在规定的检测时间 内，对光电编码器输出的脉冲信号计数的测速方法，例如光电编码器是N线的，则每旋转一周可以有4N个脉冲，因为两路脉冲的上升沿与下降沿正好是编码器信号4倍频。现在假设检测时间是 ，计数器的记录的脉冲数是M1，则电机的每分钟的转速为：</p>
+<p>在实际的测量中，时间 内的脉冲个数不一定正好是整数，而且存在最大半个脉冲的误差。如果要求测量的误差小于规定的范围，比如说是小于百分之一，那么M1就应该大于50。在一定的转速下要增大检测脉冲数M1以减小误差，可以增大检测时间 ，但考虑到实际的应用中检测时间很短，例如伺服系统中的测量速度用于反馈控制，一般应在0.01s以下。由此可见，减小测量误差的方法是采用高线数的光电编码器。</p>
+<p>M法测速适用于测量高转速，因为对于给定的光电编码器线数N，测量时间 条件下，转速越高，计数脉冲M1越大，误差也就越小。</p>
+<p>T法也称之为测周法，该测速方法是在一个脉冲周期内对时钟信号脉冲进计数的方法。例如时钟频率为 ，计数器记录的脉冲数为 ，光电编码器是N线的，每周输出4N个脉冲，那么电机的每分钟的转速为：</p>
+<p>为了减小误差，希望尽可能地记录较多的脉冲数，因此 法测速适用于低运算</p>
+<p>行的场合。但转速太低，一个编码器输出脉冲的时间太长，时钟脉冲数会超过计数器最大计数值而产生溢出；另外，时间太长也会影响控制的快速性。与M法测速一样，选用线数较多的光电编码器可以提高对电机转速测量的快速性与精度。</p>
+<p>M/T法测速是将M法和T法两种方法结合在一起使用，在一定的时间范围内，同时对光电编码器输出的脉冲个数 和 进行计数，则电机每分钟的转速为</p>
+<p>实际工作时，在固定的 时间内对光电编码器的脉冲计数，在第一个光电编码器上升沿定时器开始定时，同时开始记录光电编码器和时钟脉冲数，定时器定时 时间到，对光电编码器的脉冲停计数，而在下一个光电编码器的上升沿到来时，时钟脉冲才停记录。采M/T法既具有M法测速的速优点，又具有T法测速的低速的优点，能够覆盖较的转速范围，测量的精度也较高，在电机的控制中有着十分广泛的应用。</p>
+<h3 id="92-f28335eqep">9.2 F28335增强型正交编码模块eQEP</h3>
+<h2 id="1eqep">1.eQEP引脚</h2>
+<p>F28335有两路eQEP模块，每个模块有4个引脚，分别是：QEPA/XCLK和QEPB/XDIR。这两个引脚被使在正交时钟模式或者直接计数模式。</p>
+<p>正交时钟模式：正交编码器提供两路相位差为 的脉冲，相位关系决定了电机旋转的方向信息，脉冲的个数可以决定电机的绝对位置信息。超前或者顺时针旋转时，A路信号超前B路信号，滞后或者逆时针旋转时，B路信号超前A路信号。正交编码器使用这两路输引脚可以产正交时钟和向信号。</p>
+<p>直接计数模式：在直接计数模式中，方向和时钟信号直接来自外部，此时QEPA引脚提供时钟输，QEPB引脚提供向输。</p>
+<p>:索引或者起始标记。</p>
+<p>正交编码器使用索引信号来确定一个绝对的起始位置，此引脚直接与正交编码器的索引输出端相连，当此信号到来时，可以将位置计数器复位清零，也可以初始化或者锁存位置计数器的值。</p>
+<p>QEPS：锁存输入引脚。</p>
+<p>锁存引脚输的主要作就是当规定事件信号到来时，初始或者锁存位置计数器的值，此引脚通常和传感器或者限制开关相连，来通知电机已经达到了预定位置。</p>
+<h2 id="2eqep">2.eQEP功能描述</h2>
+<p>eQEP主要包括以下几个功能单元：</p>
+<p>➢通过GPIOMUX寄存器编程锁定QEPA或者QEPB功能。</p>
+<p>正交解码单元（QDU）。</p>
+<p>➢位置计数器和位置计算控制单元(PCCU)。</p>
+<p>➢正交边沿捕获单元，用于低速测量（QCAP）。</p>
+<p>》用于速度/频率测量的时基单元(UTIME)。</p>
+<p>》用于检测的看门狗模块。</p>
+<p>QEP模块框图如图9.5所示。</p>
+<p><img alt="" src="../images/5a8b6d54c5df3f0b43a7be2527e3411f8935c9bad955534ea5c1d5a4e82e158f.jpg" /></p>
+<p>图9.5 QEP模块框图</p>
+<h3 id="93-eqepqdu">9.3 eQEP正交解码单元(QDU)</h3>
+<blockquote>
+<p>🔧 <strong>交互式学习</strong>：<a href="../../interactive/components/qep_decoder.html">eQEP正交解码机制</a></p>
+</blockquote>
+<p>正交解码单元功能框图如图9.6所示。</p>
+<h2 id="1_1">1.位置计数器输入模式</h2>
+<p>在正交计数模式下，正交解码模块产生位置计数器时钟信号和方向信号，位置计数器的计数模式由QDECCTL寄存器中的QSRC位决定，主要有如下4种模式：</p>
+<p>正交-计数模式。</p>
+<p>直接-计数模式。</p>
+<p><img alt="" src="../images/7229278975a8435a0f53a959b5dd2fb92ef4c51b3447349497c39e29d6ed0edd.jpg" /></p>
+<p>图9.6正交解码单元功能框图</p>
+<p>向上-计数模式。</p>
+<p>向下-计数模式。</p>
+<h2 id="1-">(1)正交-计数模式</h2>
+<p>在正交-计数模式下，正交解码器产向信号和时钟信号送给位置计数器。</p>
+<p>向解码通过确定QEPA和QEPB两个脉冲信号，哪一个超前，来解码出旋转向逻辑，并且将此向逻辑更新到QEPSTS的QDF位。表9.1给出了向解码逻辑的真值表。图9.7给出了向解码的状态机。TMS320F2833X系列DSP</p>
+<p>中的QEP还有相位错误检测机制，当QEPA和QEPB信号同步到来时，QEP中的相位错误标志会置位，而且会申请中断。</p>
+<p>时钟解码—QEP中的解码模块，会对QEPA和QEPB脉冲的上升沿及下降沿进计数，所以最后解码的时钟频率将会是实际输QEPA或者QEPB的4倍。</p>
+<table>
+<thead>
+<tr>
+<th>先前边沿</th>
+<th>当前边沿</th>
+<th>QDIR</th>
+<th>QPOSCNT</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QA↑</td>
+<td>QB↑</td>
+<td>上</td>
+<td>递增</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>QB+</td>
+<td>下</td>
+<td>递减</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>QAt</td>
+<td>翻转</td>
+<td>递增或递减</td>
+<td></td>
+</tr>
+<tr>
+<td>QAV</td>
+<td>QB↓</td>
+<td>上</td>
+<td>递增</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>QB↑</td>
+<td>下</td>
+<td>递减</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>QA↑</td>
+<td>翻转</td>
+<td>递增或递减</td>
+</tr>
+<tr>
+<td></td>
+<td>QB↑</td>
+<td>QA↑</td>
+<td>下</td>
+<td>递增</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>QA+</td>
+<td>上</td>
+<td>递减</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>QB</td>
+<td>翻转</td>
+<td>递增或递减</td>
+</tr>
+<tr>
+<td></td>
+<td>QB</td>
+<td>QA</td>
+<td>下</td>
+<td>递增</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>QA↑</td>
+<td>上</td>
+<td>递减</td>
+</tr>
+<tr>
+<td></td>
+<td>QB↑</td>
+<td>翻转</td>
+<td>递增或递减</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表9.1方向解码逻辑的真值表</p>
+<p><img alt="" src="../images/8522a3562c6820805a116a3b4793da79e7dd791f53bb7f06b96d9b4830daaf93.jpg" /></p>
+<p>图9.7方向解码的状态机</p>
+<p>相位错误标识：在正常操作条件下，正交输QEPA与QEPB在相位上相差90°，边沿信号是不会同时到达的，当同时检测到两者的边沿信号时，QFLG寄存器的相位错误标识(PHE)置位。图9.7中状态机的虚线就代表产生的相位错误的可能。</p>
+<p>反向计数：在正常正交计数操作时，QEPA输入送到正交解码器的QA输入，QEPB输入到正交解码器的QB输入。反向计数通过设置QDECCTLL寄存器的Swap位被使能，此时正交解码器的输入取反，从而计数方向也取反。</p>
+<h2 id="2_1">(2)方向计数模式</h2>
+<p>有些位置编码器提供了方向和时钟输出代替正交输出，如图9.8所示，此种情况</p>
+<p>下，可以使用方向计数模式。此时QEPA只能作为时钟输，QEPB只能作为方向输入。如果方向为高时，那么计数器会在QEPA输入的上升沿时递增计数，当方向为低时，那么计数器会在QEPA输入的上升沿自动递减计数。</p>
+<h2 id="3">(3)递增计数模式</h2>
+<p>计数器的方向信号被硬件规定为递增计数，此时位置计数器根据QDECCTL中的XCR位规定，对QEPA信号计数或者2倍关系计数。</p>
+<h2 id="4">(4)递减计数模式</h2>
+<p>计数器的向信号被硬件规定为递减计数，此时位置计数器根据QDECCTL中的XCR位规定，对QEPA信号计数或者2倍关系计数。</p>
+<h2 id="2qep">2.QEP输入极性选择</h2>
+<p>每个QEP输可以通过QDECCTL寄存器的8～5位决定极性。</p>
+<h2 id="3_1">3.位置比较同步输出</h2>
+<p>增强型的QEP包括个位置比较单元，主要于产位置较同步信号。当位置计数器的值与位置较寄存器QPOSCMP的值相等时，可以把QEPI或者QEPS配置为输出引脚，于产同步信号输出。具体配置请看QDECCTLSOEN和QDECCTL[SPSEL]。</p>
+<h3 id="94-eqeppccu">9.4 eQEP位置计数和控制单元(PCCU)</h3>
+<p>位置计数和控制单元提供了两个配置寄存器QEPCTL和QPOSCTL。用于设置位置计数器操作模式、位置计数器初始化/锁存模式和产生同步信号的位置比较逻辑。</p>
+<h2 id="1_2">1.位置计数操作模式</h2>
+<p>位置计数器的值可以有不同的方式进捕获。在有些系统中，位置计数器连续累加计数，位置计数器按照当前的参考位置提供计数信息。例如，在安装正交编码器的打印机中，通过将打印机头移动到起始位置从而使计数器复位，也即打印机头在起始位置时为参考位置。而在有些系统中，位置计数器通过索引脉冲实现每次索引脉冲到来时，位置计数器就自动复位，位置计数器提供了相对于索引脉冲的相对位置信息。位置计数器可以配置为如下几种模式：</p>
+<p>在索引事件到来时，位置计数器复位。</p>
+<p>》在计数值达到设定的最大值时，位置计数器复位。</p>
+<p>》第一个索引事件到来时，位置计数器复位。</p>
+<p>》在定时（单位时间)事件到达时，位置计数器复位。</p>
+<p>上述所有的操作模式，位置计数器都会在上溢时复位到0，在下溢时复位到QPOSMAX最大值。上溢是指位置计数器向上计数达到最大值后，下溢是指位置计数器向下计数达到0之后。</p>
+<p>①在索引事件到来时，位置计数器复位[QEPCTL[PCRM]=00]。</p>
+<p>如果索引事件发生在正向运动时，那么位置计数器在下一个QEP时钟复位到0。如果索引事件发生在反向运动时，那么位置计数器在下一个QEP时钟复位到QPOSMAX最大设定值。</p>
+<p>第一个索引标识为在第一个索引边沿后的正交边沿。eQEP外设记录了第一个索引标识（QEPSTSFIMF）的发以及第一个索引事件标识向（QEPSTS[FIDF)，它也记录了第个索引标识的正交边沿，从而可使这个相关的正交转换于索引事件的复位操作。例如，在正向运动过程中，第一次复位操作发生在QEPB的下降沿，那么所有后来的复位必须分配在正向运动中的QEPB的下降沿或者反向运动中的QEPB的上升沿，如图9.9所示。</p>
+<p>在每个索引事件发生时，位置计数器的值锁存到QPOSILAT寄存器中，方向信号更新到QEPSTS[QDLF中。在这种情况下，如果锁存的值不是0或者QPOSMAX值时，位置计数错误标志位和错误中断标志位会置1。在索引事件被标识时，位置计数器错误标识（QEPSTS[PCEF）被更新并且错误中断标识（QFLG[PCE)将被置位，只有通过软件才能清楚这两个错误标识。</p>
+<p>这种模式下，索引事件锁存配置QEPCTLIEL]位被忽略，位置计数器错误标识以及中断标识只有在索引事件复位模式下产。</p>
+<p>②在计数值达到设定最值时，位置计数器复位[QEPCTL[PCRM]=01]。</p>
+<p>如果位置计数器达到QPOSMAX时，那么在正向运动过程中，位置计数器在下个eQEP时钟时置0，且位置计数器上溢标识位置位；如果位置计数器等于0，且在反向运动的条件下，那么位置计数器在QEP的下个时钟复位到QPOSMAX，且位置计数器下溢标识位置位，如图9.10所示。</p>
+<p>③第一个索引事件发生时，位置计数器复位[QEPCTL[PCRM]=10]。</p>
+<p>如果第个索引事件发在正向运动时，位置计数器会在下一个QEP时钟复位为0;如果第个索引事件发在反向运动时，位置计数器会在下一个QEP时钟复位为QPOSMAX。注意只有在第个索引事件发时，位置计数器才会复位，后面的索引事件，不会使位置计数器复位。</p>
+<p>④在定时(单位时间)事件到达时，位置计数器复位[QEPCTL[PCRM]=11]。</p>
+<p>在此种模式下，事件发生时QPOSCNT的值会锁存到QPOSLAT寄存器中，然后位置计数器会复位到0或者QPOSMAX，取决于QDECCTLQSRC]设置的向模式。这种模式对测量频率很有效。</p>
+<h2 id="2_2">2.位置计数器锁存</h2>
+<p>QEP的索引和标记输引脚输事件发时，将位置计数器的值锁存到QPOSILAT和QPOSSLAT中。</p>
+<h2 id="1_3">(1)索引事件锁存</h2>
+<p>在某些应用中，并不要求在每次索引事件到来时复位位置计数器，而是要求在32位模式（QEPCTL[PCRM]=01和QEPCTL[PCRM]=10)下，操作位置计数器。</p>
+<p>在这种情况下，eQEP的位置计数器可以在如下事件配置锁存并且在每次索引事件标识时，向信息被记录到QEPSTS[QDLF]中。</p>
+<p>①上升沿锁存(QEPCTL[IEL]=01)。</p>
+<p>② 下降沿锁存(QEPCTL[IEL]=10)。</p>
+<p>③索引事件标识锁存（QEPCTL[IEL]=11)。</p>
+<p>这个作为错误检查机制很有用，可以用来检查位置计数器在索引事件之间能否正确累加。例如，1000线的编码器当按照相同方向运动时，在两个索引事件之间应当有4000个脉冲，进累加4000次。</p>
+<p>位置计数器的值锁存到QPOSILAT寄存器中时，索引事件中断标志位（QFLG[IEL)被置位。当QEPCTL=0时，索引事件锁存配置位(QEPCTZ(IEL))被忽略。</p>
+<p>上升沿锁存（QEPCTL[IEL]=01）——在输索引事件的每次上升沿到来时，位置计数器的值（QPOSCNT)锁存到QPOSILAT寄存器中。</p>
+<p>下降沿锁存(QEPCTL[IEL]=10）——在输索引事件的每次下降沿到来时，位置计数器的值（QPOSCNT）锁存到QPOSILAT寄存器中。</p>
+<p>索引事件标识锁存/软件索引标识(QEPCTL[IEL]=11）第个索引标识在第个索引边沿后的正交边沿。eQEP外设记录了第一个索引标识（QEPSTS[FIMF])的发生以及第一个索引事件标识方向（QEPSTS[FIDF），它也记录了第一个索引标识的正交边沿，从而可使这个相关的正交转换可以用于位置计数器锁存（QEPCTL[IEL]=11)。</p>
+<p>如图9.11所为应用索引事件标识的位置计数器锁存时序图。</p>
+<p><img alt="" src="../images/7064aa37572bf726b81c279e1add442f1a79691302502a664ff682d757d53243.jpg" /></p>
+<p>图9.111000线编码器使用索引事件标识锁存位置计数器的时序图</p>
+<h2 id="2_3">(2)选择事件锁存</h2>
+<p>位置计数器的值在选择输入信号的上升沿被锁存到QPOSSLAT寄存器中，并且QEPCTL[SE1位被清零。如果QEPCTL[SE1]位被置位，位置计数器的值在正向运动时，选择输入信号的上升沿进行锁存，反向运动时，选择输入信号的下降沿进锁存。如图9.12所。</p>
+<p>当位置计数器的值锁存到寄存器后，选择事件锁存中断标志位(QFLG[SE1)被置位。</p>
+<h2 id="3_2">3。位置计数器初始化</h2>
+<p>位置计数器可以由以下事件进初始化：</p>
+<p>》索引事件。</p>
+<p><img alt="" src="../images/806286ce6fe3245a909f469b5f3811d5430d8c44bd2a8fec3905aa1dbdb2adac.jpg" /></p>
+<p>图9.12 选择事件锁存</p>
+<p>选择事件。</p>
+<p>软件初始化。</p>
+<p>①索引事件初始化(IEI)QEPI索引输在索引输上升沿或者下降沿的时候可以触发位置计数器的初始化。如果QEPCTL(IEI)位是10，那么位置计数器在索引输上升沿时会初始化为寄存器QPOSINIT的值，相反，如果QEPCTL(IEI)位是11，位置计数器的值在输入索引的下降沿初始化。当位置计数器初始化为QPOSINIT的值后，索引事件初始化中断位（QFLG[IEI)被置位。</p>
+<p>②选择事件初始化(SEI）如果QEPCTL(SEI)位是10，那么位置计数器在选择输上升沿时会初始化为寄存器QPOSINIT的值；如果QEPCTL（SEI）位是11,位置计数器的值在正转时会在选择输的上升沿初始化为QPOSINIT的值，否则，在反转时，在选择输入的下降沿初始化。当位置计数器初始化为QPOSINIT的值后，选择事件初始化中断位（QFLG[IEI)被置位。</p>
+<p>③软件初始化(SWI)将QEPCTL(SWI)位设置为1时，位置计数器由软件初始化，而QEPCTL(SWI)位在初始化后会动清除。</p>
+<h3 id="95-eqep">9.5 eQEP位置比较单元</h3>
+<p>QEP模块包含个位置较单元，于产同步信号输出或者产匹配中断。原理框图如图9.13所示。</p>
+<p>位置较寄存器QPOSCMP有影寄存器，影寄存器模式可以通过QPOSCTL[PSSHDW]使能或者禁。如果影寄存器模式禁时，CPU直接写到有效位置比较寄存器即可。</p>
+<p><img alt="" src="../images/260c46caa45d96717b318b71d05dfdd1011f64528caab15438ce307bea56d14d.jpg" /></p>
+<p>图9.13QEP位置比较单元框图</p>
+<p>在影子寄存器模式使能时，可以配置位置比较单元（QPOSCTL[PCLOAD]）位以将影寄存器内的值在下列事件来临时装有效寄存器并且在装载完成后，会产生位置比较就绪中断位（QFLG[PCR）。</p>
+<p>较匹配装载。</p>
+<p>位置计数器清零装载。</p>
+<p>当位置计数器的值（QPOSCNT)与工作位置比较寄存器（QPOSCMP)的值匹配时，位置比较位(QFLG[PCM)被置位，并且会产位置比较同步可调宽脉冲以触发外部设备。</p>
+<p>例如，假设QPOSCM=2，在正向计数时，位置比较单元在eQEP位置计数器的1~2转换过程中产一个位置比较事件；而在反向计数时，位置计数器3～2转换过程中产生个位置比较事件，如图9.14所示。</p>
+<p><img alt="" src="../images/bbe20a614486ea738ac7492c2cef6af22b2552738d1a88d75a64978a84836576.jpg" /></p>
+<p>图9.14eQEP位置比较事件发生时序</p>
+<p>位置较的脉冲扩展逻辑在位置较匹配时可以输出个可编程的位置比较同步脉冲，当前个位置比较脉冲仍在作并且产新的位置比较匹配时，脉冲扩展器</p>
+<p>会根据新的位置比较事件延伸脉冲宽度，如图9.15所示。</p>
+<p><img alt="" src="../images/e2eebb23b22ce24aabdc46414a70833022df19071eca8304b7e1b90be8b74226.jpg" /></p>
+<p>图9.15 eQEP位置比较同步输出脉冲宽度扩展器</p>
+<h3 id="96-eqep">9.6 eQEP边沿捕获单元</h3>
+<p>QEP模块包括一个集成的边沿捕获单元来测量转速，如图9.16所示，其中针对慢速和高速，此单元提供了两种方式进行计算。</p>
+<p><img alt="" src="../images/3e6a96b61bec944126dcbf87fc6816573200b3c6cf4548d980c6c80e2f65fad3.jpg" /></p>
+<p>图9.16eQEP边沿捕获单元置</p>
+<p>①低速测量公式：</p>
+<p>低速测量思想就是在设定编码器脉冲数时，计量在此脉冲数内所消耗的时间，从而计算出速度，即T法。具体工作过程如下：</p>
+<p>捕获时钟（QCTMR）以系统时钟分频后的时基作基准运行，在每个单位位置事件发时，QCTMR的值会自动加载到捕获周期寄存器QCPRD中，之后捕获时钟自动清零，同时QEPSTS中的UPEVNT标志位会置1，表明有新值锁存到QCPRD寄存器，通知CPU进行操作。图9.17所示是低速速度测量的时序。此种测量式，只有在下面两个条件满足时才是正确的。</p>
+<p><img alt="" src="../images/da55a8e3c6c6901ebc35fb4bbd42125712a4c1cb93ba8a49e446983870f9e57c.jpg" /></p>
+<p>图9.17低速测量时序（QCAPCTL[UPPS]=0010)</p>
+<p>条件：单位位置事件之间不能超过捕获时钟的最大值，不能超过65335。</p>
+<p>条件二：没有换向发生。</p>
+<p>如果上述条件不满足，定时器上溢时，捕获单元的错误标志位QEPSTS[COEF]会置1，如果两个单元位置事件发生向变化，则状态寄存器QEPSTS[CDEF]错误标识被置位。所以这种方式只适用于低速的时候。</p>
+<p>②高速测量公式：</p>
+<p>高速测量思想是在设定的单位时间里面，计量采集到的脉冲数，即可确定速度值，即M法。</p>
+<p>捕获时钟寄存器和捕获周期寄存器可以配置成如下事件发生时，会把值锁存到QCTMRLAT和QPPRDLAT中。</p>
+<p>事件一 读QPOSCNT寄存器时。</p>
+<p>事件二：单位时间事件发生时。</p>
+<p>如果QEPCTL[QCLM位被清零了，那么当CPU读取位置计数器时，捕获时钟和捕获周期寄存器的值分别被锁存到QCTMRLAT和QCPRDLAT寄存器中。</p>
+<p>eQEP也沿捕获单元时序如图9.18所。</p>
+<p>如果QEPCTL[QCLM]位置1，那么当单位时间事件发时，位置计数器、捕获时钟寄存器和捕获周期寄存器的值分别锁存到QPOSLAT、QCTMRLAT和QCPRDLAT中。</p>
+<p><img alt="" src="../images/8f7e244e54069ed82895b0e93d58f404e2066f51583e9b80d5a11f84a2f365b9.jpg" /></p>
+<p>图9.18eQEP边沿捕获单元时序图</p>
+<h3 id="97-eqep">9.7 eQEP看门狗电路</h3>
+<p>QEP模块包括个16位的看门狗计数器，来监测正交编码脉冲状态。若有正交编码脉冲到来，看门狗计数器可以复位，如果正交编码脉冲没有到来，当看门狗计数器的值与其周期寄存器的值匹配时，可以产中断信号给CPU。该看门狗单元可以通过软件使能或者禁。看门狗模块原理如图9.19所。</p>
+<p><img alt="" src="../images/72721009a3cff2d1797670e2a6acb15eba0071bb299e6813557565e1af2894c5.jpg" /></p>
+<p>图9.19 eQEP看门狗定时器</p>
+<h3 id="98-eqep">9.8 eQEP定时器基准单元</h3>
+<p>QEP模块还包括了一个32位定时器（QUTMR），由SYSCLKOUT提供时钟，可产生用于速度计算的周期性中断。当定时器(QUTMR）与周期寄存器（QUPRD)匹配时，单位超时中断（QFLG[UTO]）被置位。</p>
+<p>一个单位事件超时时，eQEP可以配置为锁存位置计数器、捕捉定时器和捕捉周期值，从而用这些锁存的值来计算速度。图9.20给出了定时器的结构图。</p>
+<p><img alt="" src="../images/d1230cf6367f712ececd01e1aeb50f328955bc3783d95e80ea07647909e6f1a4.jpg" /></p>
+<p>图9.20eQEP定时器结构图</p>
+<h3 id="99-eqep">9.9 eQEP中断结构</h3>
+<p>eQEP模块中断的工作机制如图9.21所示。</p>
+<p><img alt="" src="../images/20d2ba4c1f183614b793d974f9733a9560f2973617486b8fe989d76a60ce1a52.jpg" /></p>
+<p>图9.21 eQEP中断结构图</p>
+<p>QEP一共可以产生11个中断事件，分别为PCE、PHE、QDC、WTO、PCU、PCO、PCR、PCM、SEL、IEL、UTO。这些中断可以通过中断控制寄存器QEINT来</p>
+<p>设置使能或者禁止。如果每个中断都使能，那么中断源会产生中断脉冲送给PIE模块，进而送给CPU。这些中断标志可以通过中断清除寄存器QCLR来清除。而且还可以通过中断强制寄存器来软件强制中断事件，这样对系统测试比较有利。</p>
+<h3 id="910-eqep">9.10 eQEP寄存器</h3>
+<h2 id="1qepqdecctl">1.QEP解码控制寄存器QDECCTL</h2>
+<p>QDECCTL解码控制寄存器的位信息与功能描述如表9.2所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1中</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>OT</td>
+<td></td>
+<td>00011011</td>
+<td>位置计数器源选择正交计数模式直接计数模式向上计数模式向下计数模式</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>15~14</td>
+<td>QSRC</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>SOEN</td>
+<td>SOEN1</td>
+<td>同步信号输出使能禁止位置比较同步输出使能位置比较同步输出</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>SPSEL</td>
+<td>0</td>
+<td>同步信号引脚选择Index引脚用于输出Strobe引脚用于输出  中</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>XCR</td>
+<td>90</td>
+<td>外部时钟频率2倍：上下边沿计数1倍：上边沿计数          6口</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>SWAP</td>
+<td></td>
+<td>交换正交时钟输人正交时钟交换禁止正交时钟交换使能</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>IGATE</td>
+<td>0一</td>
+<td>索引脉冲选通禁止索引脉冲选通使能索引脉冲选通</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>QAp</td>
+<td>201</td>
+<td>QEPA输极性无效果反向QEPA极性</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表9.2QEP解码控制寄存器描述</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td>QBP</td>
+<td>01</td>
+<td>QEPB输极性无效果反向QEPB极性</td>
+</tr>
+<tr>
+<td>6</td>
+<td>QIP</td>
+<td>01</td>
+<td>QEPI输入极性无效果反向QEPI极性</td>
+</tr>
+<tr>
+<td>5</td>
+<td>QSP</td>
+<td>01</td>
+<td>QEPS输人极性无效果反向QEPS极性</td>
+</tr>
+<tr>
+<td>4~0</td>
+<td>保留</td>
+<td></td>
+<td>写人总是为0</td>
+</tr>
+</tbody>
+</table>
+<p>续表9.2</p>
+<h2 id="2qepqepctl">2.QEP控制寄存器QEPCTL</h2>
+<p>QEPCTL控制寄存器的位信息与功能描述如表9.3所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~14</td>
+<td>FREE,SOFT</td>
+<td>00011x00011x00011x</td>
+<td>仿真控制位位置计数器立刻停止（位置计数器为）位置计数器继续运行位置计数器不受影响看门狗计数器停止（看门狗计时器行为）看门狗计数器继续运行看门狗计数器不受影响捕获定时器立刻停止（捕获定时器行为）捕获定时器继续运行捕获定时器不受影响</td>
+</tr>
+<tr>
+<td>13~12</td>
+<td>PCRM</td>
+<td>00011011</td>
+<td>位置计数器复位模式当索引事件发生时复位当达到最大位置时复位当第一个索引事件时复位当单位时间事件时复位</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11~10</td>
+<td>SEI</td>
+<td>00011011</td>
+<td>索引事件初始位置计数器不动作不动作初始化位置计数器在QEPI信号的上升沿    初始化位置计数器在QEPI信号的下降沿</td>
+</tr>
+</tbody>
+</table>
+<p>表9.3QEP控制寄存器描述</p>
+<p>续表9.3</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9~8</td>
+<td>IEI</td>
+<td></td>
+<td>索引事件初始位置计数器</td>
+</tr>
+<tr>
+<td>00</td>
+<td>不动作</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>01</td>
+<td>不动作</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>初始位置计数器在QEPI上升沿</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td></td>
+<td>11</td>
+<td>初始位置计数器在QEPI下降沿</td>
+</tr>
+<tr>
+<td></td>
+<td>软件初始化位置计数器</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SWI</td>
+<td>0</td>
+<td>不动作</td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>初始化位置计数器</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>SEL</td>
+<td>0</td>
+<td>索引事件锁存位置计数器 在QEPS的上升沿锁存位置计数器的值</td>
+</tr>
+<tr>
+<td>1</td>
+<td>如果QDECCTL的QSP=1，那么在QEPS的下降沿锁存数据</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>在QEPS的顺时针方向：在QEPS的上升沿锁存位置计数器逆</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>时针：在QEPS的下降沿锁存位置计数器</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5~4</td>
+<td>IEL</td>
+<td>00 01</td>
+<td>索引事件锁存位置计数器 保留</td>
+</tr>
+<tr>
+<td>10</td>
+<td>在索引信号上升沿锁存位置计数器</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>在索引信号下降沿锁存位置计数器</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>软件索引标记</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>QPEN</td>
+<td></td>
+<td>正交位置计数器使能</td>
+</tr>
+<tr>
+<td>0 1</td>
+<td>软件复位QEP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>QEP计数器使能</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>QCLM</td>
+<td>0</td>
+<td>QEP捕捉锁存模式</td>
+</tr>
+<tr>
+<td>1</td>
+<td>当CPU读位置计数器时，锁存数据</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>当单位时间事件发生时，锁存数据</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>UTE</td>
+<td>0</td>
+<td>QEP单位定时器使能 禁止定时器</td>
+</tr>
+<tr>
+<td>1</td>
+<td>使能单位定时器</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>QEP看门狗使能</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>WDE</td>
+<td>0</td>
+<td>禁止QEP看门狗</td>
+</tr>
+<tr>
+<td>1</td>
+<td>使能QEP看门狗</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3qepqposctl">3.QEP位置比较控制寄存器QPOSCTL</h2>
+<p>QPOSCTL位置控制寄存器的位信息与功能描述如表9.4所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>PCSHDW</td>
+<td>01</td>
+<td>位置比较影子映射使能禁止此功能使能此功能</td>
+</tr>
+<tr>
+<td>14</td>
+<td>PCLOAD</td>
+<td>01</td>
+<td>位置比较影映射加载模式在QPOSCNT=0时加载在QPOSCNT=QPOSCMP时加载</td>
+</tr>
+<tr>
+<td>13</td>
+<td>PCPOL</td>
+<td>01</td>
+<td>同步信号输出极性输出高有效脉冲输出低有效脉冲</td>
+</tr>
+<tr>
+<td>12</td>
+<td>PCE</td>
+<td>01</td>
+<td>位置比较功能使能/禁止禁止此功能使能此功能</td>
+</tr>
+<tr>
+<td>11~0</td>
+<td>PCSPw</td>
+<td>0x0000x0010xfff</td>
+<td>选择位置比较同步输出脉冲宽度1X4XSYSCLKOUT2X4XSYSCLKOUT                    置4096X4XSYSCLKOUT</td>
+</tr>
+</tbody>
+</table>
+<p>表9.4QEP位置控制寄存器描述</p>
+<h2 id="4qepqcapctl">4.QEP捕获控制寄存器QCAPCTL</h2>
+<p>QCAPCTL捕获控制寄存器的位信息与功能描述如表9.5所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>CEN</td>
+<td>01</td>
+<td>使能QEP捕捉功能禁止QEP捕捉单元使能QEP捕捉单元</td>
+</tr>
+<tr>
+<td>14~7</td>
+<td>保留</td>
+<td></td>
+<td>总是写人0</td>
+</tr>
+<tr>
+<td>6~4</td>
+<td>CCPS</td>
+<td>000001010011100101110111</td>
+<td>QEP捕提时钟分频数CAPCLK=SYSCLK/1CAPCLK=SYSCLK/2CAPCLK=SYSCLK/4CAPCLK=SYSCLK/8CAPCLK=SYSCLK/16CAPCLK=SYSCLK/32CAPCLK=SYSCLK/64CAPCLK=SYSCLK/128</td>
+</tr>
+</tbody>
+</table>
+<p>表9.5 QEP捕获控制寄存器描述</p>
+<p>续表9.5</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3~0</td>
+<td>UPPS</td>
+<td>0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011</td>
+<td>单位位置事件分频数 UPEVNT=QCLK/1 UPEVNT=QCLK/2 UPEVNT=QCLK/4 UPEVNT=QCLK/8 UPEVNT=QCLK/16 UPEVNT=QCLK/32 UPEVNT=QCLK/64 UPEVNT=QCLK/128 UPEVNT=QCLK/256</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5qepqposcnt">5.QEP位置计数器QPOSCNT寄存器</h2>
+<p>QPOSCNT位置计数器的位信息与功能描述如表9.6所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSCNT</td>
+<td>32位位置计数寄存器，它会根据方向进行增或者减计数</td>
+</tr>
+</tbody>
+</table>
+<p>表9.6QEP位置计数器描述</p>
+<h2 id="6qepqposinit">6.QEP位置计数器初始化寄存器QPOSINIT</h2>
+<p>QEP位置计数器初始化寄存器QPOSINIT的位信息与功能描述如表9.7所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSINIT</td>
+<td>这个寄存器的值可以对QPOSCNT进行初始化</td>
+</tr>
+</tbody>
+</table>
+<p>表9.7QEP位置计数器初始化寄存器描述</p>
+<h2 id="7qepqposmax">7.QEP最大位置计数器寄存器QPOSMAX</h2>
+<p>QEP最位置计数器寄存器QPOSMAX的位信息与功能描述如表9.8所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSMAX</td>
+<td>此寄存器为最大的位置计数器的值</td>
+</tr>
+</tbody>
+</table>
+<p>表9.8QEP最大位置计数器寄存器描述</p>
+<h2 id="8qepqposcmp">8.QEP位置比较寄存器QPOSCMP</h2>
+<p>QEP位置较寄存器QPOSCMP的位信息与功能描述如表9.9所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSCMP</td>
+<td>当位置计数器的值与位置比较寄存器的值相同时，会输出同步信号或者产生中断</td>
+</tr>
+</tbody>
+</table>
+<p>表9.9 QEP位置比较寄存器描述</p>
+<h2 id="9qepiqposilat">9.QEP索引I位置加载寄存器QPOSILAT</h2>
+<p>QEP索引位置加载寄存器QPOSILAT的位信息与功能描述如表9.10所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSILAT</td>
+<td>当索引事件发生时，位置计数器的值会加载到这个寄存器中</td>
+</tr>
+</tbody>
+</table>
+<p>表9.10QEP索引位置加载寄存器描述</p>
+<h2 id="10qepqposslat">10.QEP标记位置加载寄存器QPOSSLAT</h2>
+<p>QEP标记位置加载寄存器QPOSSLAT的位信息与功能描述如表9.11所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSSLAT</td>
+<td>当标记事件发生时，位置计数器的值会加载到这个寄存器中</td>
+</tr>
+</tbody>
+</table>
+<p>表9.11QEP标记位置加载寄存器描述</p>
+<h2 id="11qepqposlat">11.QEP位置加载寄存器QPOSLAT</h2>
+<p>QEP位置加载寄存器QPOSLAT的位信息与功能描述如表9.12所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QPOSLAT</td>
+<td>当单位时间事件发生时，位置计数器的值会加载到这个寄存器中</td>
+</tr>
+</tbody>
+</table>
+<p>表9.12QEP位置加载寄存器描述</p>
+<h2 id="12qepqutmr">12.QEP单位时间定时器QUTMR</h2>
+<p>QEP单位时间定时器QUTMR的位信息与功能描述如表9.13所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述中           e</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QUTMR</td>
+<td>当此定时器的值与单位时间周期寄存器的值相同时，单位时间事件就会发生</td>
+</tr>
+</tbody>
+</table>
+<p>表9.13QEP单位时间定时器寄存器描述</p>
+<h2 id="13qepquprd">13.QEP单位时间周期寄存器QUPRD</h2>
+<p>QEP单位时间周期寄存器QUPRD的位信息与功能描述如表9.14所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QUPRD</td>
+<td>此寄存器中的值为单位时间周期值</td>
+</tr>
+</tbody>
+</table>
+<p>表9.14QEP单位时间周期寄存器描述</p>
+<h2 id="14qepqwdtmr">14.QEP看狗定时器QWDTMR</h2>
+<p>QEP看门狗定时器QWDTMR的位信息与功能描述如表9.15所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QWDTMR</td>
+<td>这个为看门狗的定时器，当此值与看门狗的周期寄存器的值相同时，看门狗中断就会产生</td>
+</tr>
+</tbody>
+</table>
+<p>表9.15QEP看门狗定时器寄存器描述</p>
+<h2 id="15qepqwdprd">15.QEP看狗周期寄存器QWDPRD</h2>
+<p>QEP看狗定时器QWDPRD的位信息与功能描述如表9.16所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>QWDPRD</td>
+<td>看门狗的周期寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表9.16QEP看门狗周期寄存器描述</p>
+<h2 id="16qepqeint">16.QEP中断使能寄存器QEINT</h2>
+<p>QEP中断使能寄存器QEINT的位信息与功能描述如表9.17所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~12</td>
+<td>保留</td>
+<td>0</td>
+<td>写入全部为0</td>
+<td>6</td>
+<td>PcO</td>
+<td>01</td>
+<td>位置计数器上溢中断使能中断禁止</td>
+</tr>
+<tr>
+<td>11</td>
+<td>UTO</td>
+<td>01</td>
+<td>单位时间事件中断使能中断禁止中断使能</td>
+<td>5</td>
+<td>PCU</td>
+<td>01</td>
+<td>位置计数器下溢中断使能中断禁止中断使能</td>
+</tr>
+<tr>
+<td>10</td>
+<td>IEL</td>
+<td>01</td>
+<td>索引事件锁存中断使能中断禁止中断使能</td>
+<td>4</td>
+<td>器WTO</td>
+<td>家痘01</td>
+<td>看门狗事件中断使能中断禁止中断使能</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SEL</td>
+<td>01</td>
+<td>标记事件锁存中断使能中断禁止中断使能</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>QDC</td>
+<td>01</td>
+<td>看门狗方向改变中断使能中断禁止中断使能</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>QPE</td>
+<td>01</td>
+<td>正交相位错误中断使能中断禁止中断使能</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>PCM</td>
+<td>01</td>
+<td>位置比较匹配中断使能中断禁止C5中断使能</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>PcE</td>
+<td>01</td>
+<td>位置计数器错误中断使能中断禁止中断使能</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>PCR</td>
+<td>01</td>
+<td>位置比较准备中断使能中断禁止 特服医豆中断使能中断使能</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表9.17QEP中断使能寄存器描述</p>
+<h2 id="17qepqflg">17.QEP中断标志寄存器QFLG</h2>
+<p>QEP中断标志寄存器QFLG的位信息与功能描述如表9.18所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>y     描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~12</td>
+<td>保留</td>
+<td></td>
+<td>写入全部为0</td>
+<td>5</td>
+<td>PCU</td>
+<td>01</td>
+<td>位置计数器下溢中断标志没有中断产生中断产生</td>
+</tr>
+<tr>
+<td>$1ac</td>
+<td>UTO</td>
+<td>01</td>
+<td>单位时间事件中断标志没有中断产生中断产生</td>
+<td>4</td>
+<td>WTO</td>
+<td>0</td>
+<td>看门狗事件中断标志没有中断产生中断产生</td>
+</tr>
+<tr>
+<td>10</td>
+<td>IEL</td>
+<td>01</td>
+<td>索引事件锁存中断标志没有中断产生中断产生</td>
+<td>3</td>
+<td>QDC</td>
+<td>01</td>
+<td>正交方向改变中断标志没有中断产生中断产生</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SEL</td>
+<td>01</td>
+<td>标记事件锁存中断标志没有中断产生中断产生</td>
+<td>2</td>
+<td>PHE</td>
+<td>0</td>
+<td>正交相位错误中断标志没有中断产生中断产生</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Pcm</td>
+<td>01</td>
+<td>QEP比较匹配中断标志没有中断产生中断产生</td>
+<td>1</td>
+<td>PCE</td>
+<td>01</td>
+<td>位置计数器错误中断标志没有中断产生中断产生</td>
+</tr>
+<tr>
+<td>7</td>
+<td>PCR</td>
+<td>01</td>
+<td>QEP较准备中断标志没有中断产生中断产生</td>
+<td>0</td>
+<td>INT</td>
+<td>01</td>
+<td>全局中断状态标志没有中断产生中断产生</td>
+</tr>
+<tr>
+<td>6</td>
+<td>PCO</td>
+<td>01</td>
+<td>位置计数器上溢中断标志没有中断产生中断产生</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表9.18QEP中断标志寄存器描述</p>
+<h2 id="18qepqclr">18.QEP中断清除寄存器QCLR</h2>
+<p>QEP中断清除寄存器QCLR的位信息与功能描述如表9.19所列。</p>
+<h2 id="19qepqfrc">19.QEP中断强制寄存器QFRC</h2>
+<p>QEP中断强制寄存器QFRC的位信息与功能描述如表9.20所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~12</td>
+<td>保留</td>
+<td></td>
+<td>写人全部为0</td>
+</tr>
+<tr>
+<td>11</td>
+<td>uTO</td>
+<td>01</td>
+<td>清除单位时间事件中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>10</td>
+<td>IEL</td>
+<td>01</td>
+<td>清除索引事件锁存中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SEL</td>
+<td>01</td>
+<td>清除标记事件锁存中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>8</td>
+<td>PCM</td>
+<td>01</td>
+<td>清除QEP比较匹配中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>7福</td>
+<td>PCR</td>
+<td>01</td>
+<td>清除QEP比较准备中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>6</td>
+<td>PCO</td>
+<td>01</td>
+<td>清除位置计数器上溢中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>虚呼5</td>
+<td>PCU</td>
+<td>01</td>
+<td>清除位置计数器下溢中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>4</td>
+<td>WTO</td>
+<td>1</td>
+<td>清除看门狗事件中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>3</td>
+<td>QDC</td>
+<td>01</td>
+<td>清除正交方向改变中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PHE</td>
+<td>01</td>
+<td>清除正交相位错误中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>1</td>
+<td>PCE</td>
+<td>01</td>
+<td>清除位置计数器错误中断标志没有效果清除中断标志</td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>R01</td>
+<td>清除全局中断状态标志没有效果清除中断标志</td>
+</tr>
+</tbody>
+</table>
+<p>表9.19 QEP中断清除寄存器描述</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5~12</td>
+<td>保留</td>
+<td></td>
+<td>写入全部为0</td>
+</tr>
+<tr>
+<td>11</td>
+<td>UTO</td>
+<td>01</td>
+<td>强制单位时间事件中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>10</td>
+<td>IEL</td>
+<td>01</td>
+<td>强制索引事件锁存中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SEL</td>
+<td>01</td>
+<td>强制标记事件锁存中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>1p1.8</td>
+<td>PCM</td>
+<td>0</td>
+<td>强制QEP比较匹配中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>7</td>
+<td>PCR具</td>
+<td>01</td>
+<td>强制QEP比较准备中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>6</td>
+<td>PCO</td>
+<td>01</td>
+<td>强制位置计数器上溢中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>5志阳湖</td>
+<td>PCU的对</td>
+<td>01</td>
+<td>强制位置计数器下溢中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>4</td>
+<td>正WTO</td>
+<td>01</td>
+<td>强制看门狗事件中断标志没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>3</td>
+<td>活QDC</td>
+<td>01</td>
+<td>强制正交方向改变中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>1O02音中</td>
+<td>酱PHE</td>
+<td>1</td>
+<td>强制正交相位错误中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>STO</td>
+<td>奇PCE</td>
+<td>01</td>
+<td>强制位置计数器错误中断没有效果强制中断产生</td>
+</tr>
+<tr>
+<td>0</td>
+<td>保留</td>
+<td></td>
+<td>写入全部为0</td>
+</tr>
+</tbody>
+</table>
+<p>表9.20QEP中断强制寄存器描述</p>
+<h2 id="20qepqepsts">20.QEP状态寄存器QEPSTS</h2>
+<p>QEP状态寄存器QEPSTS的位信息与功能描述如表9.21所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>家菜描述L</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>保留</td>
+<td></td>
+<td>写人的值全部为0</td>
+<td>3</td>
+<td>福2COEF2</td>
+<td>器0业-</td>
+<td>捕获溢出错误标志无意义新在QEP捕获计时器发生溢出</td>
+</tr>
+<tr>
+<td>7</td>
+<td>UPEVNT</td>
+<td>01</td>
+<td>单位位置事件标志没有检测此事件检测到此事件，写1清零</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>FDF</td>
+<td>01净</td>
+<td>第一个索引标记方向第一个索引标记锁存逆时针方向第一个索引标记锁存顺时针方向</td>
+<td>2</td>
+<td>CDEF</td>
+<td>01</td>
+<td>捕获方向错误标志位无意义在捕获事件发生时，方向改变丰</td>
+</tr>
+<tr>
+<td>5</td>
+<td>QDF</td>
+<td>01</td>
+<td>正交方向标志逆时针方向顺时针方向</td>
+<td>1</td>
+<td>FIMF</td>
+<td>01</td>
+<td>第一个索引标记标志位无意义金室第一个索引标记事件发生</td>
+</tr>
+<tr>
+<td>4</td>
+<td>QdLF</td>
+<td>01</td>
+<td>QEP方向锁存标志在索引标记事件锁存逆时针方向在索引标记事件锁存顺时针方向</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>惠意PCEF</td>
+<td>01</td>
+<td>位置计数器错误标志位没有发生错误位置计数器错误</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表9.21QEP状态寄存器描述</p>
+<h2 id="21qepqctmr">21.QEP捕获定时器QCTMR</h2>
+<p>QEP捕获定时器QCTMR的位信息与功能描述如表9.22所列</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>QCTMR</td>
+<td>这个寄存器为边沿捕获单元提供时基</td>
+</tr>
+</tbody>
+</table>
+<p>表9.22QEP捕获定时器描述</p>
+<h2 id="22qepqcprd">22.QEP捕获周期寄存器QCPRD</h2>
+<p>QEP捕获周期寄存器QCPRD的位信息与功能描述如表9.23所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>QCPRD</td>
+<td>QEP边沿捕获周期寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表9.23QEP捕获周期寄存器描述</p>
+<h2 id="23qepqcprdlat">23.QEP捕获周期锁存寄存器QCPRDLAT</h2>
+<p>QEP捕获周期锁存寄存器QCPRDLAT的位信息与功能描述如表9.24所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>限 描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>QCPRDLAT</td>
+<td>QEP边沿捕获周期锁存寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表9.24QEP捕获周期锁存寄存器描述</p>
+<h2 id="24qepqctmrlat">24.QEP捕获定时锁存寄存器QCTMRLAT</h2>
+<p>QEP捕获定时锁存寄存器QCPTMRLAT的位信息与功能描述如表9.25所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>QCTMRLAT</td>
+<td>QEP边沿捕获定时锁存寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表9.25 QEP捕获定时锁存寄存器描述</p>
+<h3 id="911eqep">9.11手把手教你实现基于eQEP的电机测速</h3>
+<h2 id="1_4">1.实验目的</h2>
+<p>①掌握编码器信号测速原理。</p>
+<p>②掌握eQEP原理。</p>
+<h2 id="2_4">2.实验主要步骤</h2>
+<p>①先打开已经配置好的CCS3.3软件。</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③在CCS中选择Debug→Connect菜单项，连接目标板，确定目标板连接成功。</p>
+<p>④将QEP-POS-SPEED目录复制到CCS开发环境中的Myproject目录下。</p>
+<p>⑤在CCS中选择project→Open菜单项，加载的 目录中的QEP-POS-SPEED.pjt。</p>
+<p>⑥在CCS中选择File→Load Program菜单项，加载Debug目录下的QEP-POS-SPEED.out。</p>
+<p>⑦在CCS中选择Debug→Run菜单项，打开CCS的Watch Window，如果是将J8-2和J5-1短接的话，在Watch1窗口中输T1、T2后回车，将会看到T1和T2的值为15000。</p>
+<p>⑧如果是将J8-2和J5-2短接的话，在Watch1窗口中输T3、T4后回车，将会看到T3和T4的值为15000。</p>
+<h2 id="3_3">3.实验原理说明</h2>
+<p>此实验通过编码器信号的读取，编码器的信号可以为ABZ增量式1000线编码</p>
+<p>器，将编码器与电机转轴连接固定后，可以完成最大速度为6000转/分，最低速度为10转/分，极对数为2的电机测速。</p>
+<p>QEP测速主要针对编码器信号，通过编码器信号的运算得到的速度量应用频繁，因此在程序中设置了位置速度结构体。</p>
+<p>位置速度结构体定义如下：</p>
+<h2 id="_1"></h2>
+<p>如何通过增量式编码器ABZ信号，进电机位置的精确控制?</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

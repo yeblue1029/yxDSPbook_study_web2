@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eQEP正交解码机制 — AB相脉冲与电机转向判定</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','Segoe UI',sans-serif;background:#0a0e27;color:#e0e6ff;min-height:100vh;padding:20px}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:1.5em}
+.subtitle{text-align:center;color:#7a8ba8;margin-bottom:15px;font-size:0.9em}
+.container{display:flex;gap:20px;max-width:1400px;margin:0 auto;flex-wrap:wrap}
+.panel{background:linear-gradient(135deg,#111633,#0d1229);border:1px solid #1e2a5a;border-radius:12px;padding:18px;flex:1;min-width:320px}
+.panel-title{color:#00d4ff;font-size:1em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1e2a5a}
+.result-box{background:#080c1f;border:1px solid #1e2a5a;border-radius:8px;padding:12px;margin-top:8px}
+.result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111633;font-size:0.85em}
+.result-row:last-child{border-bottom:none}
+.result-label{color:#7a8ba8}
+.result-value{font-weight:bold;font-family:'Consolas',monospace}
+canvas{width:100%;border-radius:8px;background:#080c1f}
+.rotor-container{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+.rotor-canvas{cursor:grab;border-radius:50%;background:radial-gradient(circle,#111633,#080c1f);border:2px solid #1e2a5a}
+.rotor-canvas:active{cursor:grabbing}
+.direction-indicator{font-size:2em;margin:10px 0;text-align:center}
+.control-group{margin-bottom:14px}
+.control-group label{display:block;color:#7a8ba8;margin-bottom:4px;font-size:0.82em}
+.control-group .value{color:#00d4ff;font-weight:bold;float:right;font-family:'Consolas',monospace}
+input[type=range]{width:100%;height:5px;-webkit-appearance:none;background:#1e2a5a;border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#00d4ff;cursor:pointer}
+select{width:100%;padding:6px 10px;background:#1e2a5a;color:#e0e6ff;border:1px solid #2a3a7a;border-radius:6px;font-size:0.85em;cursor:pointer}
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:0.9em;cursor:pointer;font-family:'Microsoft YaHei',sans-serif;transition:all 0.2s;margin:5px}
+.btn-cw{background:linear-gradient(135deg,#00ff88,#00aa55);color:#fff}
+.btn-ccw{background:linear-gradient(135deg,#ff6b6b,#cc3333);color:#fff}
+.btn-stop{background:#1e2a5a;color:#7a8ba8;border:1px solid #1e2a5a}
+.btn:hover{transform:scale(1.05)}
+</style>
+</head>
+<body>
+<h1>🔧 eQEP正交解码机制</h1>
+<p class="subtitle">第9章 9.3 eQEP正交解码单元(QDU) — AB相脉冲与电机转向判定</p>
+
+<div class="container">
+<div class="panel" style="max-width:400px">
+<div class="panel-title">🔄 虚拟电机转子</div>
+<div class="rotor-container">
+<canvas id="rotorCanvas" class="rotor-canvas" width="220" height="220"></canvas>
+<div class="direction-indicator" id="dirIndicator">⏸ 停止</div>
+</div>
+
+<div style="display:flex;gap:8px;justify-content:center;margin:10px 0">
+<button class="btn btn-ccw" onclick="rotateCCW()">↺ 逆时针</button>
+<button class="btn btn-stop" onclick="stopRotation()">⏹ 停止</button>
+<button class="btn btn-cw" onclick="rotateCW()">↻ 顺时针</button>
+</div>
+
+<div class="control-group">
+<label>旋转速度 <span class="value" id="speedVal">50 RPM</span></label>
+<input type="range" id="speed" min="10" max="500" value="50" step="10">
+</div>
+
+<div class="control-group">
+<label>编码器线数 (PPR) <span class="value" id="pprVal">1000</span></label>
+<select id="ppr">
+<option value="100">100 线</option>
+<option value="256">256 线</option>
+<option value="500">500 线</option>
+<option value="1000" selected>1000 线</option>
+<option value="2000">2000 线</option>
+<option value="4096">4096 线</option>
+</select>
+</div>
+
+<div class="control-group">
+<label>解码模式</label>
+<select id="decMode">
+<option value="1">1× (仅A相上升沿)</option>
+<option value="2">2× (A相上升+下降沿)</option>
+<option value="4" selected>4× (AB两相全部边沿)</option>
+</select>
+</div>
+
+<div class="result-box">
+<div class="result-row">
+<span class="result-label">QDF (方向标志)</span>
+<span class="result-value" id="r_qdf" style="color:#7a8ba8">0 (停止)</span>
+</div>
+<div class="result-row">
+<span class="result-label">QPOSCNT (位置计数器)</span>
+<span class="result-value" id="r_qposcnt" style="color:#00d4ff">0</span>
+</div>
+<div class="result-row">
+<span class="result-label">机械角度</span>
+<span class="result-value" id="r_angle" style="color:#00d4ff">0.0°</span>
+</div>
+<div class="result-row">
+<span class="result-label">每转计数脉冲数</span>
+<span class="result-value" id="r_pulses" style="color:#00ff88">4000</span>
+</div>
+<div class="result-row">
+<span class="result-label">分辨率提升</span>
+<span class="result-value" id="r_resolution" style="color:#00ff88">4×</span>
+</div>
+</div>
+</div>
+
+<div class="panel" style="flex:2;min-width:500px">
+<div class="panel-title">📊 AB相正交信号波形</div>
+<canvas id="waveCanvas" height="300"></canvas>
+
+<div class="panel-title" style="margin-top:12px">🔍 解码状态表</div>
+<canvas id="stateCanvas" height="180"></canvas>
+
+<div class="result-box" style="margin-top:10px">
+<div class="panel-title" style="border:none;padding:0;margin:0 0 6px 0;font-size:0.9em">📋 寄存器配置代码</div>
+<pre id="codeOutput" style="color:#00ff88;font-family:'Consolas',monospace;font-size:0.75em;white-space:pre-wrap;line-height:1.5"></pre>
+</div>
+</div>
+</div>
+
+<script>
+let rotation=0;
+let direction=0;
+let qposcnt=0;
+let animId=null;
+let lastTime=0;
+let waveHistory=[];
+const maxWavePoints=400;
+
+const rotorCanvas=document.getElementById('rotorCanvas');
+const rotorCtx=rotorCanvas.getContext('2d');
+const waveCanvas=document.getElementById('waveCanvas');
+const waveCtx=waveCanvas.getContext('2d');
+const stateCanvas=document.getElementById('stateCanvas');
+const stateCtx=stateCanvas.getContext('2d');
+
+function getPPR(){return parseInt(document.getElementById('ppr').value)}
+function getDecMode(){return parseInt(document.getElementById('decMode').value)}
+function getSpeed(){return parseInt(document.getElementById('speed').value)}
+
+function rotateCW(){direction=1;startAnim()}
+function rotateCCW(){direction=-1;startAnim()}
+function stopRotation(){direction=0;if(animId)cancelAnimationFrame(animId);animId=null;updateDisplay()}
+
+function startAnim(){
+if(animId)return;
+lastTime=performance.now();
+animId=requestAnimationFrame(animate);
+}
+
+function animate(now){
+const dt=(now-lastTime)/1000;
+lastTime=now;
+
+const rpm=getSpeed();
+const degPerSec=rpm*360/60;
+const deltaAngle=direction*degPerSec*dt;
+
+rotation+=deltaAngle;
+if(rotation>=360)rotation-=360;
+if(rotation<0)rotation+=360;
+
+const ppr=getPPR();
+const decMode=getDecMode();
+const countsPerRev=ppr*decMode;
+const deltaCounts=deltaAngle/360*countsPerRev;
+qposcnt+=deltaCounts;
+
+const phaseA=Math.sin(rotation/180*Math.PI)>0?1:0;
+const phaseB=Math.sin((rotation+90)/180*Math.PI)>0?1:0;
+
+waveHistory.push({t:now,a:phaseA,b:phaseB,dir:direction});
+if(waveHistory.length>maxWavePoints)waveHistory.shift();
+
+updateDisplay();
+if(direction!==0)animId=requestAnimationFrame(animate);
+}
+
+function updateDisplay(){
+const ppr=getPPR();
+const decMode=getDecMode();
+const countsPerRev=ppr*decMode;
+
+document.getElementById('speedVal').textContent=getSpeed()+' RPM';
+document.getElementById('pprVal').textContent=ppr;
+document.getElementById('r_pulses').textContent=countsPerRev;
+document.getElementById('r_resolution').textContent=decMode+'×';
+
+const dirEl=document.getElementById('dirIndicator');
+const qdfEl=document.getElementById('r_qdf');
+if(direction>0){
+dirEl.textContent='↻ 顺时针';
+qdfEl.textContent='1 (顺时针)';qdfEl.style.color='#00ff88';
+}else if(direction<0){
+dirEl.textContent='↺ 逆时针';
+qdfEl.textContent='0 (逆时针)';qdfEl.style.color='#ff6b6b';
+}else{
+dirEl.textContent='⏸ 停止';
+qdfEl.textContent='— (停止)';qdfEl.style.color='#7a8ba8';
+}
+
+document.getElementById('r_qposcnt').textContent=Math.floor(qposcnt);
+document.getElementById('r_angle').textContent=(rotation%360).toFixed(1)+'°';
+
+drawRotor();
+drawWave();
+drawStateTable();
+
+const code=`// eQEP正交解码配置
+EQep1Regs.QDECCTL.bit.QSRC = 0;      // 正交计数模式
+EQep1Regs.QDECCTL.bit.XCR = 0;       // 2×分辨率(A相上升+下降沿)
+EQep1Regs.QDECCTL.bit.SWPC = 1;      // 软件交换A/B相(方向反转)
+
+EQep1Regs.QPOSMAX = ${countsPerRev-1};  // 最大位置计数值
+EQep1Regs.QPOSCNT = 0;                  // 位置计数器清零
+
+// 读取位置和方向
+int32_t position = EQep1Regs.QPOSCNT;
+int direction = EQep1Regs.QEPSTS.bit.QDF;  // 1=顺时针, 0=逆时针
+float angle = (float)position / ${countsPerRev} * 360.0;`;
+document.getElementById('codeOutput').textContent=code;
+}
+
+function drawRotor(){
+const dpr=window.devicePixelRatio||1;
+const w=220;const h=220;
+rotorCanvas.width=w*dpr;rotorCanvas.height=h*dpr;
+rotorCtx.scale(dpr,dpr);
+rotorCtx.clearRect(0,0,w,h);
+
+const cx=w/2;const cy=h/2;const r=90;
+
+rotorCtx.beginPath();rotorCtx.arc(cx,cy,r,0,Math.PI*2);
+rotorCtx.strokeStyle='#1e2a5a';rotorCtx.lineWidth=2;rotorCtx.stroke();
+
+const ppr=getPPR();
+const lineCount=Math.min(ppr,36);
+for(let i=0;i<lineCount;i++){
+const angle=i/lineCount*Math.PI*2+rotation*Math.PI/180;
+const innerR=i%2===0?r*0.5:r*0.65;
+const outerR=r*0.9;
+rotorCtx.beginPath();
+rotorCtx.moveTo(cx+Math.cos(angle)*innerR,cy+Math.sin(angle)*innerR);
+rotorCtx.lineTo(cx+Math.cos(angle)*outerR,cy+Math.sin(angle)*outerR);
+rotorCtx.strokeStyle=i%2===0?'#00d4ff':'#1e2a5a';
+rotorCtx.lineWidth=1;rotorCtx.stroke();
+}
+
+const markerAngle=rotation*Math.PI/180;
+rotorCtx.beginPath();
+rotorCtx.moveTo(cx,cy);
+rotorCtx.lineTo(cx+Math.cos(markerAngle)*r*0.85,cy+Math.sin(markerAngle)*r*0.85);
+rotorCtx.strokeStyle='#ff6b6b';rotorCtx.lineWidth=3;rotorCtx.stroke();
+
+rotorCtx.beginPath();rotorCtx.arc(cx,cy,5,0,Math.PI*2);
+rotorCtx.fillStyle='#ff6b6b';rotorCtx.fill();
+
+const aAngle=0;
+const bAngle=Math.PI/2;
+rotorCtx.fillStyle='#00d4ff';rotorCtx.font='bold 12px Consolas';rotorCtx.textAlign='center';
+rotorCtx.fillText('A',cx+Math.cos(aAngle)*(r+12),cy+Math.sin(aAngle)*(r+12)+4);
+rotorCtx.fillStyle='#ffaa00';
+rotorCtx.fillText('B',cx+Math.cos(bAngle)*(r+12),cy+Math.sin(bAngle)*(r+12)+4);
+}
+
+function drawWave(){
+const dpr=window.devicePixelRatio||1;
+const w=waveCanvas.clientWidth;const h=300;
+waveCanvas.width=w*dpr;waveCanvas.height=h*dpr;
+waveCtx.scale(dpr,dpr);
+waveCtx.clearRect(0,0,w,h);
+
+const pad={l:50,r:15,t:25,b:30};
+const plotW=w-pad.l-pad.r;
+const secH=(h-pad.t-pad.b)/2;
+
+drawChannel(0,'A相信号 (QEPA)',waveHistory.map(p=>p.a),'#00d4ff');
+drawChannel(1,'B相信号 (QEPB)',waveHistory.map(p=>p.b),'#ffaa00');
+
+function drawChannel(idx,label,data,color){
+const y0=pad.t+idx*(secH+10);
+const plotH=secH-20;
+
+waveCtx.fillStyle='#7a8ba8';waveCtx.font='10px Microsoft YaHei';
+waveCtx.textAlign='left';waveCtx.fillText(label,pad.l,y0-3);
+
+waveCtx.strokeStyle='#1e2a5a';waveCtx.lineWidth=0.5;
+waveCtx.beginPath();waveCtx.moveTo(pad.l,y0+5);waveCtx.lineTo(pad.l+plotW,y0+5);waveCtx.stroke();
+waveCtx.beginPath();waveCtx.moveTo(pad.l,y0+5+plotH);waveCtx.lineTo(pad.l+plotW,y0+5+plotH);waveCtx.stroke();
+
+waveCtx.fillStyle='#555';waveCtx.font='8px Consolas';waveCtx.textAlign='right';
+waveCtx.fillText('H',pad.l-4,y0+12);waveCtx.fillText('L',pad.l-4,y0+5+plotH);
+
+if(data.length<2)return;
+waveCtx.strokeStyle=color;waveCtx.lineWidth=2;
+waveCtx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/maxWavePoints)*plotW;
+const y=y0+5+plotH-data[i]*plotH;
+if(i===0)waveCtx.moveTo(x,y);
+else{
+const prevY=y0+5+plotH-data[i-1]*plotH;
+if(data[i]!==data[i-1]){waveCtx.lineTo(x,prevY);waveCtx.lineTo(x,y)}
+waveCtx.lineTo(x,y);
+}
+}
+waveCtx.stroke();
+
+waveCtx.globalAlpha=0.1;
+waveCtx.beginPath();
+for(let i=0;i<data.length;i++){
+const x=pad.l+(i/maxWavePoints)*plotW;
+const y=y0+5+plotH-data[i]*plotH;
+if(i===0)waveCtx.moveTo(x,y);
+else{
+const prevY=y0+5+plotH-data[i-1]*plotH;
+if(data[i]!==data[i-1]){waveCtx.lineTo(x,prevY);waveCtx.lineTo(x,y)}
+waveCtx.lineTo(x,y);
+}
+}
+waveCtx.lineTo(pad.l+(data.length-1)/maxWavePoints*plotW,y0+5+plotH);
+waveCtx.lineTo(pad.l,y0+5+plotH);waveCtx.closePath();
+waveCtx.fillStyle=color;waveCtx.fill();
+waveCtx.globalAlpha=1;
+}
+}
+
+function drawStateTable(){
+const dpr=window.devicePixelRatio||1;
+const w=stateCanvas.clientWidth;const h=180;
+stateCanvas.width=w*dpr;stateCanvas.height=h*dpr;
+stateCtx.scale(dpr,dpr);
+stateCtx.clearRect(0,0,w,h);
+
+const pad=20;
+const colW=(w-2*pad)/5;
+const rowH=30;
+
+const headers=['状态','A','B','A↑','B↑','方向'];
+const states=[
+['S0','0','0','→S1','→S2','—'],
+['S1','1','0','→S3','→S0','CW↻'],
+['S2','0','1','→S0','→S3','CCW↺'],
+['S3','1','1','→S2','→S1','—']
+];
+
+stateCtx.font='bold 10px Microsoft YaHei';stateCtx.textAlign='center';
+for(let i=0;i<headers.length;i++){
+stateCtx.fillStyle='#00d4ff';
+stateCtx.fillText(headers[i],pad+colW*i+colW/2,pad);
+}
+
+for(let r=0;r<states.length;r++){
+const y=pad+15+r*rowH;
+const isCurrent=waveHistory.length>0&&
+states[r][1]==String(waveHistory[waveHistory.length-1].a)&&
+states[r][2]==String(waveHistory[waveHistory.length-1].b);
+
+for(let c=0;c<states[r].length;c++){
+stateCtx.fillStyle=isCurrent?'#00ff88':'#7a8ba8';
+stateCtx.font=(c===0&&isCurrent?'bold ':'')+'10px Consolas';
+stateCtx.fillText(states[r][c],pad+colW*c+colW/2,y+rowH/2);
+}
+
+if(isCurrent){
+stateCtx.strokeStyle='#00ff88';stateCtx.lineWidth=1;
+stateCtx.strokeRect(pad,y,pad+colW*5-2*pad,rowH);
+}
+}
+}
+
+document.getElementById('speed').addEventListener('input',()=>{
+document.getElementById('speedVal').textContent=document.getElementById('speed').value+' RPM';
+});
+document.getElementById('ppr').addEventListener('change',updateDisplay);
+document.getElementById('decMode').addEventListener('change',updateDisplay);
+window.addEventListener('resize',()=>{updateDisplay()});
+
+let isDragging=false;
+let lastDragAngle=0;
+rotorCanvas.addEventListener('mousedown',(e)=>{
+isDragging=true;
+const rect=rotorCanvas.getBoundingClientRect();
+lastDragAngle=Math.atan2(e.clientY-rect.top-110,e.clientX-rect.left-110);
+});
+window.addEventListener('mousemove',(e)=>{
+if(!isDragging)return;
+const rect=rotorCanvas.getBoundingClientRect();
+const angle=Math.atan2(e.clientY-rect.top-110,e.clientX-rect.left-110);
+const delta=(angle-lastDragAngle)*180/Math.PI;
+if(Math.abs(delta)>0.5){
+rotation+=delta;
+if(rotation>=360)rotation-=360;
+if(rotation<0)rotation+=360;
+direction=delta>0?1:-1;
+const ppr=getPPR();
+const decMode=getDecMode();
+qposcnt+=delta/360*ppr*decMode;
+lastDragAngle=angle;
+const phaseA=Math.sin(rotation/180*Math.PI)>0?1:0;
+const phaseB=Math.sin((rotation+90)/180*Math.PI)>0?1:0;
+waveHistory.push({t:performance.now(),a:phaseA,b:phaseB,dir:direction});
+if(waveHistory.length>maxWavePoints)waveHistory.shift();
+updateDisplay();
+}
+});
+window.addEventListener('mouseup',()=>{isDragging=false;direction=0;updateDisplay()});
+
+updateDisplay();
+</script>
+</body>
+</html>

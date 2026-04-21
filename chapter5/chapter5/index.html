@@ -1,0 +1,4340 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../chapter4/chapter4/">
+      
+      
+        <link rel="next" href="../../chapter6/chapter6/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第5章 GPIO - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#5" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第5章 GPIO
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter2/chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter4/chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F28335中断系统及应用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="F28335中断系统及应用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1F28335中断概述以及中断源
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-f283353" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 F28335的3级中断机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.外设级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2pie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.PIE级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.CPU级中断
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.CPU级中断">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#53-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 F28335中断向量
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.中断向量分配
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.中断向量表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        续表5.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.中断向量的映射方式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.中断向量的映射方式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#54-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 F28335中断操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.复用中断操作过程
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.使能/禁止复用外设中断的处理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3cpu_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.外设复用中断向CPU申请中断的流程
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.可屏蔽中断处理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)CPU级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2pie_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)PIE级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.不可屏蔽中断处理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.不可屏蔽中断处理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#55-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 F28335中断相关寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1piepiectrl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.PIE控制寄存器(PIECTRL)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2piepieack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.PIE中断应答寄存器(PIEACK)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3piepieifrx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.PIE中断标志寄存器(PIEIFRx)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4piepieierx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.PIE中断使能寄存器(PIEIERx)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5cpuifr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.CPU中断标志寄存器(IFR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6cpuier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.CPU中断使能寄存器（IER)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7cpudbgier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.CPU调试中断使能寄存器（DBGIER）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8xintncr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.外部中断控制寄存器（XINTnCR）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9nmixnmicr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.外部NMI中断控制寄存器(XNMICR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10xxintxctr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.外部中断x计数器（XINTxCTR)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.外部中断x计数器（XINTxCTR)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#56" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6手把手教你应用定时器中断
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)定时器操作原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）定时器相关寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ②定时器预定标寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③定时器计数器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④定时器周期寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)程序清单与注释
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ②定时器0的设置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④中断向量表的初始化函数如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7手把手教你应用按钮触发外部中断
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter6/chapter6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter7/chapter7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter8/chapter8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter9/chapter9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F28335中断系统及应用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="F28335中断系统及应用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1F28335中断概述以及中断源
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-f283353" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 F28335的3级中断机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.外设级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2pie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.PIE级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.CPU级中断
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.CPU级中断">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#53-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 F28335中断向量
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.中断向量分配
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.中断向量表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        续表5.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.中断向量的映射方式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.中断向量的映射方式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#54-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 F28335中断操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.复用中断操作过程
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.使能/禁止复用外设中断的处理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3cpu_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.外设复用中断向CPU申请中断的流程
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.可屏蔽中断处理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)CPU级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2pie_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)PIE级中断
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.不可屏蔽中断处理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.不可屏蔽中断处理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#55-f28335" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 F28335中断相关寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1piepiectrl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.PIE控制寄存器(PIECTRL)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2piepieack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.PIE中断应答寄存器(PIEACK)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3piepieifrx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.PIE中断标志寄存器(PIEIFRx)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4piepieierx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.PIE中断使能寄存器(PIEIERx)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5cpuifr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.CPU中断标志寄存器(IFR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6cpuier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.CPU中断使能寄存器（IER)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7cpudbgier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.CPU调试中断使能寄存器（DBGIER）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8xintncr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.外部中断控制寄存器（XINTnCR）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9nmixnmicr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.外部NMI中断控制寄存器(XNMICR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10xxintxctr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.外部中断x计数器（XINTxCTR)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.外部中断x计数器（XINTxCTR)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#56" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6手把手教你应用定时器中断
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)定时器操作原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）定时器相关寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ②定时器预定标寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③定时器计数器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④定时器周期寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)程序清单与注释
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ②定时器0的设置如下所示：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④中断向量表的初始化函数如下：
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7手把手教你应用按钮触发外部中断
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="5">第 5 章</h1>
+<h2 id="f28335">F28335中断系统及应用</h2>
+<p>CPU进正常程序处理的时候，有时会被要求接收更级别的指令或实时性要求更高的任务，不得不中断当前的程序处理，而去响应后者，即进入中断服务程序。当处理完这些任务后，要继续刚才的处理，因此在执中断服务程序的时候，必须保存执现场以确保在完成更级别任务或指令时能够再接着做刚才被打断的任务，整个过程就是CPU的中断响应机制。额外的任务未必是更级的任务，没必要一定要中断当前任务去响应它，当然有时候，过来的任务非即执不可，因此这些中断请求被分类管理。这些中断请求被分为可屏蔽中断和不可屏蔽中断两大类。可屏蔽中断就是根据前处理任务的优先级别来考虑其是否优先处理，或者是即处理，可以根据实际情况来设置优先级别以及决定到底要不要响应此类中断，而不可屏蔽中断，只要接到中断请求，就要做出中断处理。同时多个任务到来，究竟先处理哪个中断请求，这就需要对各个中断进优先级别排序。下边详细介绍F28335的中断机制。</p>
+<h3 id="51f28335">5.1F28335中断概述以及中断源</h3>
+<p>F28335有很多资源，很多外设，这些外设与相关资源都有可能发布新的任务让内核来判断与处理，也就是F28335的可能中断源有很多。F28335的中断源可分为内外设中断源，如PWM、CAP、QEP、定时器等，外中断源，外部中断输引脚XINT1、XINT2引的外部中断源。这些中断源将中断请求信号传递给内核就肯定需要中断线，F28335的中断线是有限的。</p>
+<p>F28335内部有16个中断线，其中包括2个不可屏蔽中断（RESET和NMI）与14个可屏蔽中断。可屏蔽中断通过相应的中断使能寄存器使能或者禁产的中断，在这14个可屏蔽中断中，其中定时器1与定时器2产生的中断请求通过INT13、INT14中断线到达CPU，这两个中断已经预留给了实时操作系统，因此剩下12个可屏蔽中断可供外部中断和处理器内部的单元使。F28335的外设中断源远不12个，有58个，如何将这58个外设中断源分配给这12个中断线，这就需要F28335PIE外设中断扩展模块来完成。F28335的中断源以及连接如图5.1和图5.2所示。</p>
+<p><img alt="" src="../images/3766b011b0924252d0805247bade3ffa816dec17b9601a06646474fb7d2d984f.jpg" /></p>
+<p>内部中断源</p>
+<p><img alt="" src="../images/3c6fbe02c0df4e7366ae534e71c8216a18967cdfa25fdbe157dbde0ad693cd56.jpg" /></p>
+<p>图5.128335处理器中断源以及连接关系图5.2F28335中断源和复用情况</p>
+<h3 id="52-f283353">5.2 F28335的3级中断机制</h3>
+<blockquote>
+<p>🔧 <strong>交互式学习</strong>：<a href="../../interactive/components/pie_interrupt.html">PIE中断级联与放行演示器</a></p>
+</blockquote>
+<p>F28335的中断采用的是3级中断机制，分别为外设级中断、PIE级中断和CPU级中断，最内核部分为CPU级中断，也就是CPU只能响应从CPU中断线上过来的中断请求，但F28335中断源众多，CPU没有那么多中断线，在有限中断线的情况下，只能安排中断线进行复用，其复用管理就有了中间层的PIE级中断，外设要能够成功产生中断响应，就要首先经外设级中断允许，然后经PIE允许，然后经CPU允许，最终CPU做出响应。原理如图5.3所示。</p>
+<p>从图5.3中可以看到，中断响应过程可以分为两块，下半部分为PIE小组响应外设中断的过程，上半部分为CPU响应12组PIE中断的过程。</p>
+<p><img alt="" src="../images/f20cffcb0be6c0388d7bb18ab7889b451fdeedb8b24437a5c731496872421b26.jpg" /></p>
+<p>图5.3 处理器中断扩展模块结构图</p>
+<h2 id="1">1.外设级中断</h2>
+<p>CPU正常处理程序，而外设产了中断事件（如某个通信接口接收到了固定的信号；如定时器定时时间到了），那么该外设对应中断标志寄存器（IF）相应的位将被自动置位，如果该外设对应中断使能寄存器（IE）中相应的使能位正好置位（通常需要编程控制使能），则外设产生的中断将向PIE控制器发出中断申请。如果对应外设级中没有被使能，就相当于该中断被屏蔽，不会向PIE提出中断申请，更不会产生CPU中断响应，但此时中断标志寄存器的标志位将保持不变，直处在中断置位状态，要使该中断信号消失，中断标志寄存器复位，就需要软件编程清除，如果未被清除，中断产后，旦中断使能位被使能，同样会向PIE申请中断。进中断服务后，有部分硬件外设会动复位中断标志寄存器，多数外设需要在中断服务中编程复</p>
+<p>位中断标志寄存器。</p>
+<h2 id="2pie">2.PIE级中断</h2>
+<p>F28335处理器内部集成了多种外设，每个外设都会产生一个或者多个外设级中断。由于CPU没有能力处理所有外设级的中断请求，因此F28335的CPU让出了12个中断线交给PIE模块进复用管理。图5.4给出了中断扩展模块的结构图。</p>
+<p>PIE将外设中断分成了12个组，分别对应着CPU的12个可屏蔽中断线，每1组由8个外设级中断组成，这8个外设中断分别对应相应外设接口的中断引脚，PIE通过一个8选1的多路选择器将这8个外设中断组成1组。具体连接关系如表5.1所列。实际有效外设中断为58个，其余为保留。PIE第一组中断分别为WAKE信号、TIMER0信号、ADC信号、XINT2、XINT1、第3个中断保留、SEQ2、SEQ1。</p>
+<p><img alt="" src="../images/9c52c9f859890e45baaed3173eb1aaba9ec95a20ef4f0ca9614a5e3880da5a84.jpg" /></p>
+<p>图5.4PIE中断扩展原理</p>
+<p>与外设级中断类似，在PIE模块内每组中断有相应的中断标志位（PIEIFRx）和使能位(PIE-IERx.y）。除此之外，每组PIE中断(INT1INT12)有个响应标志位(PIEACK)。图5.5给出了PIEIFR和PIEIER不同设置时的PIE硬件的操作流程。</p>
+<p>一旦PIE控制器有中断产生，相应的中断标志位（PIEIFRx.y）将置1。如果相应的PIE中断使能位也置1，则PIE将检查相应的PIEACKx以确定CPU是否准备响应该中断。如果相应的PIEACKx位清零，PIE向CPU申请中断；如果PIEACKx置1，PIE将等待到相应的PIEACKx清零才向CPU申请中断。PIE通过对PIEACKx的位控制来控制每1组中只有1个中断能被响应，一旦响应后，就需要将PIEACKX相应位清零，以让它能够响应该组中后边过来的中断。</p>
+<table>
+<thead>
+<tr>
+<th>INTX</th>
+<th>INTx.8</th>
+<th>INTx.7</th>
+<th>INTx.6</th>
+<th>INTx.5</th>
+<th>INTx.4</th>
+<th>INTx.3</th>
+<th>INTx.2</th>
+<th>INTx.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>WAKE</td>
+<td>TIMERO</td>
+<td>ADC</td>
+<td>XINT2</td>
+<td>XINT1</td>
+<td>保留</td>
+<td>SEQ2</td>
+<td>SEQ1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>保留</td>
+<td>保留</td>
+<td>EPWM6_TZINT</td>
+<td>EPWM5TZINT</td>
+<td>EPWM4TZINT</td>
+<td>EPWM3TZINT</td>
+<td>EPWM2_TZINT</td>
+<td>EPWM1_TZINT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>保留</td>
+<td>保留</td>
+<td>EPWM6_INT</td>
+<td>EPWM5INT</td>
+<td>EPWM4_INT</td>
+<td>EPWM3_INT</td>
+<td>EPWM2_INT</td>
+<td>EPWM1INT</td>
+</tr>
+<tr>
+<td>4</td>
+<td>保留</td>
+<td>保留</td>
+<td>ECAP6_INT</td>
+<td>ECAP5_INT</td>
+<td>ECAP4_INT</td>
+<td>ECAP3_INT</td>
+<td>ECAP2_INT</td>
+<td>ECAP1INT</td>
+</tr>
+<tr>
+<td>5</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>EQEP1_INT</td>
+<td>EQEP1_INT</td>
+</tr>
+<tr>
+<td>6</td>
+<td>保留</td>
+<td>保留</td>
+<td>MXINTB</td>
+<td>MRINTB</td>
+<td>MXINTA</td>
+<td>MRINTA</td>
+<td>SPITXINTA</td>
+<td>SPIRXINTA</td>
+</tr>
+<tr>
+<td>7</td>
+<td>保留</td>
+<td>保留</td>
+<td>DINTCH6</td>
+<td>DINTCH5</td>
+<td>DINTCH4</td>
+<td>DINTCH3</td>
+<td>DINTCH2</td>
+<td>DINTCH1</td>
+</tr>
+<tr>
+<td>8</td>
+<td>保留</td>
+<td>保留</td>
+<td>SCITXINTC</td>
+<td>SCIRXINTC</td>
+<td>保留</td>
+<td>保留</td>
+<td>12CINT2A</td>
+<td>I2CINT1A</td>
+</tr>
+<tr>
+<td>9</td>
+<td>ECAN1INTB</td>
+<td>ECANO1NTB</td>
+<td>ECAN1INTA</td>
+<td>ECANOINTA</td>
+<td>SCITXINTB</td>
+<td>SCIRXINT</td>
+<td>SCITXINTA</td>
+<td>SCIRX</td>
+</tr>
+<tr>
+<td>INTA</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留 zp</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>11</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>12</td>
+<td>LUF</td>
+<td>LVF</td>
+<td>保留</td>
+<td>XINT7</td>
+<td>XINT6</td>
+<td>XINT5</td>
+<td>XINT4</td>
+<td>XINT3</td>
+</tr>
+</tbody>
+</table>
+<p>表5.1PIE中断分组</p>
+<h2 id="3cpu">3.CPU级中断</h2>
+<p>一旦CPU申请中断，CPU级中断标志位（IFR）将置1。中断标志位锁存到标志寄存器后，只有CPU中断使能寄存器（IER）或中断调试使能寄存器（DBGIER)相应的使能位和全局中断屏蔽位（INTM)被使能时才会响应中断申请。</p>
+<p>CPU级使能可屏蔽中断采CPU中断使能寄存器（IER）还是中断调试使能寄存器（DBGIER)与中断处理方式有关。标准处理模式下，不使用中断调试使能寄存器（DBGIER）。只有当F28335使用实时调试（Real-timeDebug）且CPU被停止（Halt)时，才使用中断调试使能寄存器（DBGIER），此时INTM不起作用。如果F28335使用实时调试而CPU仍然工作运，则采用标准的中断处理。</p>
+<p><img alt="" src="../images/589e4fa174f3d60fcc5ce0bca97e9f23795698aa4f91cef94ce16783f7aadc09.jpg" /></p>
+<p>图5.5典型的PIEICPU响应流程图</p>
+<h3 id="53-f28335">5.3 F28335中断向量</h3>
+<p>CPU响应中断，就是CPU要去执相应的中断服务程序，其响应过程是CPU将现在执程序的指令地址压人堆栈，跳转到中断服务程序入口地址，中断服务程序的口地址就是中断向量，这个中断向量用2个16位寄存器存放。口地址是22位的，地址的低16位保存在该向量的低16位；地址的高16位则保存在它的高6位，更高的10位保留。</p>
+<h2 id="1_1">1.中断向量分配</h2>
+<p>PIE最多可以持96个中断，每个中断都有自己对应的中断向量，也就是每个中断源都对应着自己的中断服务程序的口地址，这些中断向量均连续存放在RAM中，这就构成了整个系统的中断向量表，用户可以根据需要适当地对中断向量表进调整。在响应中断时，CPU将自动地从中断向量表中获取相应的中断向量。CPU获取中断向量和保存重要的寄存器需要花费9个CPU时钟周期，因此CPU能够快速响应中断。CPU响应中断是通过中断线的，且只能1次响应其中1条中断线，每条中断线连接的中断向量都在中断向量表中占32位地址空间，用来存放中断服务程序的口地址。有可能这16条中断线上的中断请求同时到达CPU，这时就要对各个中断请求进优先级定义。 .±RE.19</p>
+<p>每条中断线对应的不是唯一中断，每组PIE对应的也不是唯一中断，中断服务程序要处理所有输人的中断请求，这就要求编程人员在服务程序的入口处采用软件方法将这些中断线内复用的中断分开，以便能够正确响应中断。但软件分离的方法势必会影响中断的响应速度，在实时性要求高的应用中不能使用。这就涉及如何加快中断服务程序的问题。</p>
+<h2 id="2">2.中断向量表</h2>
+<p>在F28335DSP中采用PIE中断向量表来解决上述问题，通过PIE中断向量表使得96个可能产生的中断都有各自独立的32位口地址。PIE向量表由256×16B的SRAM内连续存放，如果这部分空间不用作PIE模块时，可用作数据RAM。复位时，PIE向量表内容没有定义。CPU的中断优先级由到低依次是从INT1～INT12。每组PIE控制的8个中断优先级依次是从INTx.1～INTx.8。PIE中断向量表如表5.2所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>向量ID</th>
+<th>地址</th>
+<th>长度16位</th>
+<th>描述</th>
+<th>CPU优先级</th>
+<th>PIE组优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reset</td>
+<td>0</td>
+<td>0x00000D00</td>
+<td>2</td>
+<td>复位总是从地址位0x3FFFCO的BootROM中获取</td>
+<td>1最高</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1</td>
+<td>1</td>
+<td>0x00000D02</td>
+<td>2</td>
+<td>未使用，参考PIE组1</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT2</td>
+<td>2</td>
+<td>0x00000D04</td>
+<td>2</td>
+<td>未使用，参考PIE组2</td>
+<td>6</td>
+<td>,</td>
+</tr>
+<tr>
+<td>INT3</td>
+<td>3</td>
+<td>0x00000D06</td>
+<td>2</td>
+<td>未使用，参考PIE组3</td>
+<td>7</td>
+<td>州</td>
+</tr>
+<tr>
+<td>INT4</td>
+<td>4</td>
+<td>0x00000D08</td>
+<td>2</td>
+<td>未使用，参考PIE组4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT5</td>
+<td>5</td>
+<td>0x00000D0A</td>
+<td>2</td>
+<td>未使用，参考PIE组5</td>
+<td>9</td>
+<td></td>
+</tr>
+<tr>
+<td>INT6</td>
+<td>6</td>
+<td>0x00000DOC</td>
+<td>2</td>
+<td>未使用，参考PIE组6</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr>
+<td>INT7</td>
+<td>7</td>
+<td>0x00000D0E</td>
+<td>2</td>
+<td>未使用，参考PIE组7</td>
+<td>11</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表5.2PIE中断向量表</p>
+<p>续表5.2</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>向量ID</th>
+<th>地址</th>
+<th>长度/16位</th>
+<th>描述</th>
+<th>CPU优先级</th>
+<th>PIE组优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INT8</td>
+<td>8</td>
+<td>0x00000D10</td>
+<td>2</td>
+<td>未使用，参考PIE组8</td>
+<td>12</td>
+<td>M</td>
+</tr>
+<tr>
+<td>INT9</td>
+<td>9</td>
+<td>0x00000D12</td>
+<td>2</td>
+<td>未使用，参考PIE组9</td>
+<td>13</td>
+<td></td>
+</tr>
+<tr>
+<td>INT10</td>
+<td>10</td>
+<td>0x00000D14</td>
+<td>2V</td>
+<td>未使用，参考PIE组10</td>
+<td>14</td>
+<td>ITW</td>
+</tr>
+<tr>
+<td>INT11</td>
+<td>11</td>
+<td>0x00000D16</td>
+<td>2</td>
+<td>未使用，参考PIE组11</td>
+<td>15</td>
+<td></td>
+</tr>
+<tr>
+<td>INT12</td>
+<td>12</td>
+<td>0x00000D18</td>
+<td>2W</td>
+<td>未使用，参考PIE组12</td>
+<td>16</td>
+<td></td>
+</tr>
+<tr>
+<td>INT13</td>
+<td>13</td>
+<td>0x00000D1A</td>
+<td>2</td>
+<td>XINT13或CPU定时器1</td>
+<td></td>
+<td>17</td>
+</tr>
+<tr>
+<td>INT14</td>
+<td>14</td>
+<td>0x00000D1C</td>
+<td>2</td>
+<td>CPU定时器2（用于TI/RTOS)</td>
+<td>18</td>
+<td></td>
+</tr>
+<tr>
+<td>DATALOG</td>
+<td>15</td>
+<td>0x0000D1E</td>
+<td></td>
+<td>CPU数据记录中断°01</td>
+<td>19（最低）</td>
+<td>低）</td>
+</tr>
+<tr>
+<td>RTOSINT</td>
+<td>16</td>
+<td>0x00000D20</td>
+<td>2</td>
+<td>CPU实时操作系统中断</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>EMUINT</td>
+<td>17</td>
+<td>0x00000D22</td>
+<td>2</td>
+<td>CPU仿真中断</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td>NMI</td>
+<td>18</td>
+<td>0x00000D24</td>
+<td>月2</td>
+<td>外部不可屏蔽中断</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>ILLEGAL</td>
+<td>19</td>
+<td>0x00000D26</td>
+<td>2</td>
+<td>非法操作     CI0 004s G</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER1</td>
+<td>20</td>
+<td>0x00000D28</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER2</td>
+<td>21</td>
+<td>0x00000D2A</td>
+<td>27</td>
+<td>用户定义的软件操作（TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER3</td>
+<td>22</td>
+<td>0x00000D2C</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER4</td>
+<td>23</td>
+<td>0x00000D2E</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER5</td>
+<td>24</td>
+<td>0x00000D30</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP)</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td>USER6</td>
+<td>25</td>
+<td>0x00000D32</td>
+<td></td>
+<td>用户定义的软件操作（TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER7</td>
+<td>26</td>
+<td>0x00000D34</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER8</td>
+<td>27</td>
+<td>0x00000D36</td>
+<td>日2</td>
+<td>用户定义的软件操作（TRAP）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER9</td>
+<td>28</td>
+<td>0x0000 0D38</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER10</td>
+<td>29</td>
+<td>0x00000D3A</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER11</td>
+<td>30</td>
+<td>0x00000D3C</td>
+<td>2</td>
+<td>用户定义的软件操作(TRAP)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>USER12</td>
+<td>31</td>
+<td>0x00000D3E</td>
+<td>2</td>
+<td>用户定义的软件操作（TRAP）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组1向量1复用CPU的INT1中断4</td>
+<td></td>
+<td></td>
+<td>BT1</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.1</td>
+<td>32</td>
+<td>0x00000D40</td>
+<td>2</td>
+<td>SEQ1INT（ADC)</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.2</td>
+<td>33</td>
+<td>0x00000D42</td>
+<td></td>
+<td>SEQ2INT(ADC)</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.3</td>
+<td>34</td>
+<td>0x00000D44</td>
+<td>2</td>
+<td>保留</td>
+<td>a 5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.4</td>
+<td>35</td>
+<td>0×00000D46</td>
+<td>2</td>
+<td>XINT1</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.5</td>
+<td>36</td>
+<td>0x00000D48</td>
+<td>2</td>
+<td>XINT2           G00x</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.6</td>
+<td>37</td>
+<td>0x00000D4A</td>
+<td>2</td>
+<td>ADCINT(ADC)</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>INT1.7</td>
+<td>38</td>
+<td>0x00000D4C</td>
+<td>2</td>
+<td>TINTO（CPU定时器0）</td>
+<td>5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>续表5.2</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>向量ID</th>
+<th>地址</th>
+<th>长度/16位</th>
+<th>描述</th>
+<th>CPU优先级</th>
+<th>PIE组优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INT1.8</td>
+<td>39</td>
+<td>0x00000D4E</td>
+<td>2</td>
+<td>WAKEINT（LPM/WD)</td>
+<td>8 5</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组2向量复用CPU的INT2中断</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT2.1</td>
+<td>40</td>
+<td>0x00000D50</td>
+<td>2</td>
+<td>ePWM1_TZINT(ePWM1）</td>
+<td>6</td>
+<td>1（最高）</td>
+</tr>
+<tr>
+<td>INT2.2</td>
+<td>41</td>
+<td>0x00000D52</td>
+<td>2</td>
+<td>ePWM2_TZINT(ePWM2)</td>
+<td>6</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT2.3</td>
+<td>42</td>
+<td>0x00000D54</td>
+<td>2</td>
+<td>ePWM3_TZINT(ePWM3)</td>
+<td>6</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT2.4</td>
+<td>43</td>
+<td>0x00000D56</td>
+<td>2</td>
+<td>ePWM4_TZINT(ePWM4)</td>
+<td>6</td>
+<td>7L4</td>
+</tr>
+<tr>
+<td>INT2.5</td>
+<td>44</td>
+<td>0x00000D58</td>
+<td>2</td>
+<td>ePWM5_TZINT(ePWM5)</td>
+<td>6</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>INT2.6</td>
+<td>景45</td>
+<td>0x00000D5A</td>
+<td>2</td>
+<td>ePWM6_TZINT(ePWM6)</td>
+<td>6</td>
+<td>1.61</td>
+</tr>
+<tr>
+<td>INT2.7</td>
+<td>46</td>
+<td>0x00000D5C</td>
+<td>12</td>
+<td>保留</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>INT2.8</td>
+<td>47</td>
+<td>0x00000D5E</td>
+<td>2</td>
+<td>保留</td>
+<td>6</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组3向量一复用CPU的INT3中断</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT3.1</td>
+<td>48</td>
+<td>0x00000D60</td>
+<td>2</td>
+<td>ePWM1_INT(ePWM1)</td>
+<td>7</td>
+<td>1（最高）</td>
+</tr>
+<tr>
+<td>INT3.2</td>
+<td>49</td>
+<td>0x00000D62</td>
+<td>2</td>
+<td>ePWM2_INT(ePWM2)</td>
+<td>7</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT3.3</td>
+<td>50</td>
+<td>0x00000D64</td>
+<td>-2</td>
+<td>ePWM3_INT(ePWM3)</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT3.4</td>
+<td>51</td>
+<td>0x00000D66</td>
+<td>2</td>
+<td>ePWM4_INT（ePWM4)</td>
+<td>7</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT3.5</td>
+<td>52</td>
+<td>0x00000D68</td>
+<td>2</td>
+<td>ePWM5_INT(ePWM5)</td>
+<td>7</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT3.6</td>
+<td>53</td>
+<td>0x00000D6A</td>
+<td>2</td>
+<td>ePWM6_INT(ePWM6）</td>
+<td>7</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT3.7</td>
+<td>54</td>
+<td>0x00000D6C</td>
+<td>2</td>
+<td>保留</td>
+<td>7</td>
+<td>7</td>
+</tr>
+<tr>
+<td>INT3.8</td>
+<td>55</td>
+<td>0x00000D6E</td>
+<td>2</td>
+<td>保留</td>
+<td>7</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组4向量   复用CPU的INT4中断</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT4.1</td>
+<td>56</td>
+<td>0x00000D70</td>
+<td>2</td>
+<td>eCAP1_INT（eCAP1）</td>
+<td>8</td>
+<td>1（最高）</td>
+</tr>
+<tr>
+<td>INT4.2</td>
+<td>57</td>
+<td>0x00000D72</td>
+<td>2</td>
+<td>eCAP2_INT(eCAP2)</td>
+<td>8</td>
+<td>12</td>
+</tr>
+<tr>
+<td>INT4.3</td>
+<td>58</td>
+<td>0x00000D74</td>
+<td>2</td>
+<td>eCAP3_INT（eCAP3）</td>
+<td>8</td>
+<td></td>
+</tr>
+<tr>
+<td>INT4.4</td>
+<td>59</td>
+<td>0x00000D76</td>
+<td>2</td>
+<td>eCAP4_INT（eCAP4）</td>
+<td>8</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT4.5</td>
+<td>60</td>
+<td>0x00000D78</td>
+<td>2</td>
+<td>eCAP5_INT(eCAP5)</td>
+<td>8</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT4.6</td>
+<td>61</td>
+<td>0x00000D7A</td>
+<td>2</td>
+<td>eCAP6_INT(eCAP6)</td>
+<td>8</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT4.7</td>
+<td>62</td>
+<td>0x00000D7C</td>
+<td>2</td>
+<td>保留</td>
+<td>8</td>
+<td>7</td>
+</tr>
+<tr>
+<td>INT4.8</td>
+<td>63</td>
+<td>0x00000D7E</td>
+<td>2</td>
+<td>保留</td>
+<td>8</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td>PIE组5向量  复用CPU的INT5中断</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT5.1</td>
+<td>64</td>
+<td>0x0000 0D80</td>
+<td>2</td>
+<td>eQEP1_INT(eCAP1)</td>
+<td>9</td>
+<td>1(最高）</td>
+</tr>
+<tr>
+<td>INT5.2</td>
+<td>65</td>
+<td>0x00000D82</td>
+<td>2</td>
+<td>eQEP2_INT（eQEP2)</td>
+<td>9</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT5.3</td>
+<td>66</td>
+<td>0x00000D84</td>
+<td>2</td>
+<td>保留</td>
+<td>9</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>续表5.2</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>向量ID</th>
+<th>地址</th>
+<th>长度/16位</th>
+<th>描述</th>
+<th>CPU优先级</th>
+<th>PIE组优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INT5.4</td>
+<td>67</td>
+<td>0x00000D86</td>
+<td>2</td>
+<td>保留</td>
+<td>9</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT5.5</td>
+<td>68</td>
+<td>0x00000D88</td>
+<td>2</td>
+<td>保留</td>
+<td>9</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT5.6</td>
+<td>69</td>
+<td>0x00000D8A</td>
+<td></td>
+<td>保留</td>
+<td>9</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT5.7</td>
+<td>70</td>
+<td>0x00000D8C</td>
+<td>2</td>
+<td>保留</td>
+<td>9</td>
+<td>117</td>
+</tr>
+<tr>
+<td>INT5.8</td>
+<td>71</td>
+<td>000000D8E</td>
+<td>2</td>
+<td>保留</td>
+<td>9</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组6向量</td>
+<td>复用CPU的INT6中断</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT6.1</td>
+<td>72</td>
+<td>0x00000D90</td>
+<td>2</td>
+<td>SPIRXINTA(SPI-A)</td>
+<td>10</td>
+<td>1（最高）</td>
+</tr>
+<tr>
+<td>INT6.2</td>
+<td>73</td>
+<td>0×00000D92</td>
+<td>2</td>
+<td>SPITXINTA(SPI-A)</td>
+<td>10</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT6.3</td>
+<td>74</td>
+<td>0x00000D94</td>
+<td>2</td>
+<td>MRINTB(McBSP- B)</td>
+<td>10</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT6.4</td>
+<td>75</td>
+<td>0x00000D96</td>
+<td>2</td>
+<td>（McBSP-B)(SPI-B)</td>
+<td>10</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT6.5</td>
+<td>76</td>
+<td>0x00000D98</td>
+<td>2</td>
+<td>MRINTA(McBSP-A)</td>
+<td>10</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT6.6</td>
+<td>77</td>
+<td>0x00000D9A</td>
+<td>2</td>
+<td>MXINTA(MeBSP-A)</td>
+<td>10</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT6.7</td>
+<td>78</td>
+<td>0x00000D9C</td>
+<td>2</td>
+<td>保留</td>
+<td>10</td>
+<td>7</td>
+</tr>
+<tr>
+<td>INT6.8</td>
+<td>79</td>
+<td>0x00000D9E</td>
+<td>2</td>
+<td>保留</td>
+<td>10</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组7向量  复用CPU的INT7中断</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT7.1</td>
+<td>80</td>
+<td>0x00000DAO</td>
+<td>2</td>
+<td>DINTCH1 DMA通道1</td>
+<td>11</td>
+<td>1(最高）</td>
+</tr>
+<tr>
+<td>INT7.2</td>
+<td>81</td>
+<td>0x00000DA2</td>
+<td>2</td>
+<td>DINTCH2DMA通道2</td>
+<td>11</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT7.3</td>
+<td>82</td>
+<td>0x00000DA4</td>
+<td>2</td>
+<td>DINTCH3DMA通道3</td>
+<td>11</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT7.4</td>
+<td>83</td>
+<td>0x00000DA6</td>
+<td>2</td>
+<td>DINTCH4DMA通道4</td>
+<td>11</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT7.5</td>
+<td>84</td>
+<td>0x00000DA8</td>
+<td>2</td>
+<td>DINTCH5DMA通道5</td>
+<td>11</td>
+<td>15</td>
+</tr>
+<tr>
+<td>INT7.6</td>
+<td>85</td>
+<td>0x0000ODAA</td>
+<td>2</td>
+<td>DINTCH6DMA通道6</td>
+<td>11</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT7.7</td>
+<td>86</td>
+<td>0x0000ODAC</td>
+<td>2</td>
+<td>保留</td>
+<td>11</td>
+<td>7</td>
+</tr>
+<tr>
+<td>INT7.8</td>
+<td>87</td>
+<td>0×00000DAE</td>
+<td>2</td>
+<td>保留</td>
+<td>11</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组8向量  复用CPU的INT8中断</td>
+<td></td>
+<td>11k</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT8.1</td>
+<td>88</td>
+<td>0x00000DB0</td>
+<td></td>
+<td>I2CINT1A(I2C-A)</td>
+<td>12</td>
+<td>1（最高）</td>
+</tr>
+<tr>
+<td>INT8.2</td>
+<td>89</td>
+<td>0x00000DB2</td>
+<td>2</td>
+<td>I2CINT2A(I2C-A)</td>
+<td>12</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT8.3</td>
+<td>90</td>
+<td>0x00000DB4</td>
+<td>2</td>
+<td>保留</td>
+<td>12</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT8.4</td>
+<td>91</td>
+<td>0x00000DB6</td>
+<td>2</td>
+<td>保留</td>
+<td>12</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT8.5</td>
+<td>92</td>
+<td>0x00000DB8</td>
+<td>2</td>
+<td>SCIRXINTC(SCI-C)</td>
+<td>12</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT8.6</td>
+<td>93</td>
+<td>0x00000DBA</td>
+<td>2</td>
+<td>SCITXINTC(SCI-C)</td>
+<td>12</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT8.7</td>
+<td>94</td>
+<td>0x00000DBC</td>
+<td>2</td>
+<td>保留</td>
+<td>$12$</td>
+<td>7</td>
+</tr>
+<tr>
+<td>INT8.8</td>
+<td>95</td>
+<td>0x00000DBE</td>
+<td>2</td>
+<td>保留</td>
+<td>12</td>
+<td>8（最低）</td>
+</tr>
+</tbody>
+</table>
+<p>续表5.2</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>向量ID</th>
+<th>地址</th>
+<th>长度/16位</th>
+<th>描述</th>
+<th>CPU优先级</th>
+<th>PIE组优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组9向量  复用CPU的INT9中断                         11</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT9.1</td>
+<td>96</td>
+<td>0x00000DCO</td>
+<td>2</td>
+<td>SCIRXINTA(SCI-A)</td>
+<td>13</td>
+<td>1（最高)</td>
+</tr>
+<tr>
+<td>INT9.2</td>
+<td>97</td>
+<td>0x00000DC2</td>
+<td>22</td>
+<td>SCITXINTA(SCI-A)</td>
+<td>13</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT9.3</td>
+<td>98</td>
+<td>0x00000DC4</td>
+<td>2</td>
+<td>SCIRXINTB(SCI-B)</td>
+<td>13</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT9.4</td>
+<td>99</td>
+<td>0x00000DC6</td>
+<td>2</td>
+<td>SCITXINTB(SCI- B)</td>
+<td>13</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT9.5</td>
+<td>100</td>
+<td>0x00000DC8</td>
+<td>2</td>
+<td>ECANOINTA(eCAN-A)</td>
+<td>13</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT9.6</td>
+<td>101</td>
+<td>0x00000DCA</td>
+<td>2</td>
+<td>ECAN1INTA(eCAN-A)</td>
+<td>13</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT9.7</td>
+<td>102</td>
+<td>0x00000DCC</td>
+<td>2</td>
+<td>ECANoINTB(eCAN-B)</td>
+<td>13</td>
+<td>7</td>
+</tr>
+<tr>
+<td>INT9.8</td>
+<td>103</td>
+<td>0x00000DCE</td>
+<td>2</td>
+<td>ECAN1INTB(eCAN-B)</td>
+<td>13</td>
+<td>8（最低）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组10向量  复用CPU的INT10中断</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT10.1</td>
+<td>104</td>
+<td>0x00000DD0</td>
+<td>2</td>
+<td>保留</td>
+<td>14</td>
+<td>1（最高）</td>
+</tr>
+<tr>
+<td>INT10.2</td>
+<td>105</td>
+<td>0x00000DD2</td>
+<td>21</td>
+<td>保留</td>
+<td>14</td>
+<td>2</td>
+</tr>
+<tr>
+<td>INT10.3</td>
+<td>106</td>
+<td>0x00000DD4</td>
+<td>2</td>
+<td>保留</td>
+<td>A14</td>
+<td>3</td>
+</tr>
+<tr>
+<td>INT10.4</td>
+<td>107</td>
+<td>0x00000DD6</td>
+<td>2</td>
+<td>保留</td>
+<td>14</td>
+<td>4</td>
+</tr>
+<tr>
+<td>INT10.5</td>
+<td>108</td>
+<td>0x00000DD8</td>
+<td>2</td>
+<td>保留</td>
+<td>14</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT10,6</td>
+<td>109</td>
+<td>0x00000DDA</td>
+<td>2</td>
+<td>保留</td>
+<td>14</td>
+<td>6</td>
+</tr>
+<tr>
+<td>INT10.7</td>
+<td>110</td>
+<td>0x00000DDC</td>
+<td>21</td>
+<td>保留</td>
+<td></td>
+<td>14</td>
+</tr>
+<tr>
+<td>INT10.8</td>
+<td>111</td>
+<td>0x00000DDE</td>
+<td>2</td>
+<td>保留</td>
+<td></td>
+<td>14</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组11向量</td>
+<td></td>
+<td>一复用CPU的INT11中断</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT11.1</td>
+<td>112</td>
+<td>0×00000DE0</td>
+<td>2</td>
+<td>保留</td>
+<td></td>
+<td>15</td>
+</tr>
+<tr>
+<td>INT11.2</td>
+<td>113</td>
+<td>0x00000DE2</td>
+<td>2</td>
+<td>保留</td>
+<td></td>
+<td>15</td>
+</tr>
+<tr>
+<td>INT11.3</td>
+<td>114</td>
+<td>0x00000DE4</td>
+<td>2</td>
+<td>保留</td>
+<td></td>
+<td>15</td>
+</tr>
+<tr>
+<td>INT11.4</td>
+<td>115</td>
+<td>0x00000DE6</td>
+<td>2</td>
+<td>保留</td>
+<td></td>
+<td>15</td>
+</tr>
+<tr>
+<td>INT11.5</td>
+<td>116</td>
+<td>0x00000DE8</td>
+<td>021</td>
+<td>保留</td>
+<td>15</td>
+<td>5</td>
+</tr>
+<tr>
+<td>INT11.6</td>
+<td>117</td>
+<td>0x00000DEA</td>
+<td>112</td>
+<td>保留</td>
+<td></td>
+<td>8R15</td>
+</tr>
+<tr>
+<td>INT11.7</td>
+<td>118</td>
+<td>0x00000DEC</td>
+<td>121</td>
+<td>保留</td>
+<td></td>
+<td>15</td>
+</tr>
+<tr>
+<td>INT11.8</td>
+<td>119</td>
+<td>0x00000DEE</td>
+<td>2</td>
+<td>保留</td>
+<td></td>
+<td>15</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>PIE组12向量复用CPU的INT12中断         让</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>INT12.1</td>
+<td>120</td>
+<td>0x00000DF0</td>
+<td>121</td>
+<td>XINT3</td>
+<td></td>
+<td>16</td>
+</tr>
+<tr>
+<td>INT12.2</td>
+<td>121</td>
+<td>0x00000DF2</td>
+<td>2</td>
+<td>XINT4</td>
+<td></td>
+<td>16</td>
+</tr>
+<tr>
+<td>INT12.3</td>
+<td>122</td>
+<td>0x00000DF4</td>
+<td>2</td>
+<td>XINT5</td>
+<td></td>
+<td>16</td>
+</tr>
+<tr>
+<td>INT12,4</td>
+<td>123</td>
+<td>0x00000DF6</td>
+<td>2</td>
+<td>XINT6</td>
+<td></td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+<h2 id="52">续表5.2</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>向量ID</th>
+<th>地址</th>
+<th>长度/16位</th>
+<th>描述</th>
+<th>营公乐</th>
+<th>CPU优先级</th>
+<th>PIE组优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INT12.5</td>
+<td>124</td>
+<td>0×00000DF8</td>
+<td>2</td>
+<td>XINT7</td>
+<td>3015i</td>
+<td>16</td>
+<td></td>
+</tr>
+<tr>
+<td>INT12.6</td>
+<td>125</td>
+<td>0x00000DFA</td>
+<td>2</td>
+<td>保留</td>
+<td>招</td>
+<td>16-</td>
+<td></td>
+</tr>
+<tr>
+<td>INT12.7</td>
+<td>126</td>
+<td>0x00000DFC</td>
+<td>2</td>
+<td>LVF FPU</td>
+<td>X1AO</td>
+<td>16</td>
+<td></td>
+</tr>
+<tr>
+<td>INT12.8</td>
+<td>127</td>
+<td>0x0000ODFE</td>
+<td>2</td>
+<td>LUF FPU</td>
+<td>3</td>
+<td>16</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">3.中断向量的映射方式</h2>
+<p>在F28335中，中断向量表可以被映射到4个不同的存储区域，在实际应用中，F28335只使PIE中断向量表映射区域。中断向量表映射主要由以下信号控制。</p>
+<p>①VMAP：该位在状态寄存器1(ST1)的第3位，复位后值为1。可以通过改变ST1的值或使用SETC/CLRCVMAP指令改变VMAP的值，正常操作时该位置1。</p>
+<p>②M0M1MAP：该位在状态寄存器1(ST1)的第11位，复位后该位置1。可以通过改变ST1的值或使用SETC/CLRCMoM1MAP指令改变MOM1MAP的值，正常操作该位置1。M0M1MAP=0为厂家测试使用。</p>
+<p>③ENPIE：该位在PIECTRL寄存器的第0位，复位的默认值为O（PIE被屏蔽）。器件复位后，可以通过调整PIECTRL寄存器(OxO00O0CEO)的值进修改。</p>
+<p>依据上述控制位的不同设置，中断向量表有不同的映射式，如表5.3所列。</p>
+<table>
+<thead>
+<tr>
+<th>向量映射</th>
+<th>向量获取位置</th>
+<th>HVSM  地址范围</th>
+<th>WMAP</th>
+<th>M0M1MAP</th>
+<th>ENPIE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1向量</td>
+<td>M1 SARAM</td>
+<td>0x000000~0x00003f</td>
+<td>0</td>
+<td>0</td>
+<td>三  X</td>
+</tr>
+<tr>
+<td>MO向量</td>
+<td>MO SARAM</td>
+<td>0x000000~0x00003f</td>
+<td>70</td>
+<td>1</td>
+<td>X</td>
+</tr>
+<tr>
+<td>BROM向量</td>
+<td>BOOTROM</td>
+<td>0x3fffc0~0x3ffff</td>
+<td>1</td>
+<td>x</td>
+<td>0</td>
+</tr>
+<tr>
+<td>PIE向量</td>
+<td>PIE</td>
+<td>0x000d00~0x000dff</td>
+<td>1</td>
+<td>x</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>表5.3中断向量表映射配置表</p>
+<p>注：M1和MO向量表映射保留，只供TI公司测试使用。MO和M1映射区域可作为SARAM使用，可以随意使用没有任何限制。</p>
+<p>复位后器件默认的向量映射如表5.4所列。</p>
+<table>
+<thead>
+<tr>
+<th>向量映射</th>
+<th>向量获取位置</th>
+<th>5地址范围</th>
+<th>WMAP</th>
+<th>MOM1MAP</th>
+<th>ENPIE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BROM向量</td>
+<td>BOOT ROM</td>
+<td>0x3fffc0~0x3ffff</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>表5.4复位操作后的向量表映射</p>
+<p>复位程序引导(Boot)完成后，户需要重新初始化PIE中断向量表，应用程序使能PIE中断向量表，并从PIE向量表中获取中断向量。当器件复位时，复位向量</p>
+<p>总是从5.3表中获取。复位完成后，PIE向量表将被屏蔽，相应的中断向量分配如图5.6所示。重新分配方法如图5.7所示。</p>
+<p><img alt="" src="../images/eb8aabf0185329c7b507316f1a38ee9e4f3fa745a221ea70afeb0fc9d416c819.jpg" /></p>
+<p><img alt="" src="../images/b7871099d6bc571f428d28c1fa3c2a670bbc3b212a2fb18f031edbb3a8913d87.jpg" /></p>
+<p>图5.6处理器复位后默认的中断向量分配图5.7 中断向量重新分配方法</p>
+<h3 id="54-f28335">5.4 F28335中断操作</h3>
+<h2 id="1_2">1.复用中断操作过程</h2>
+<p>PIE模块8个中断分成一组与外部中断一起复用一个CPU中断，总共有12组中断（INT1～INT12）。每组中断有相应的中断标志（PIEIFR）和使能（PIEIER）寄存器，这些寄存器控制PIE向CPU申请中断。同时CPU还根据PIEIFR和PIEIER寄存器确定执哪个中断服务程序。在清除PIEIFR和PIEIER的位时，要遵循以下3个规则。</p>
+<p>①不要用软件编程清除PIEIFR的位：清除PIEIFR寄存器的位时，有可能会使产的中断丢失。要清除PIEIFR位时，还未被执的中断必须被执，如果户希望在执行正常的服务程序之前就要清除PIEIFR位时，需要遵循以下步骤：</p>
+<p>步骤1：设置EALLOW位为1，允许修改PIE向量表。</p>
+<p>步骤2：修改PIE向量表，使外设服务程序指针向量指向一个临时的ISR，这个临时的ISR只执一个中断返回（IRET)操作。</p>
+<p>步骤3：使能中断，使中断执行临时中断服务程序。</p>
+<p>步骤4：在执完中断服务程序之后，PIEIFR位将被清除。</p>
+<p>步骤5：修改PIE向量表，重新映射外设服务程序到正确的中断服务程序。</p>
+<p>步骤6：清除EALLOW位。</p>
+<p>CPU中断标志寄存器IFR在CPU内部，这样操作将不会影响任何向CPU申请的中断。</p>
+<p>②软件设置中断优先级。使用CPUIER寄存器控制全部中断的优先级，PIE-IER寄存器控制每组中断的优先级，只有与被服务的中断在同一组时，修改PIEIER寄存器的值才有意义，当PIEACK位保持来CPU的中断时，修改操作才被最终执。当来自无关本组的中断被执时，禁本组的PIEIER位没有意义。</p>
+<p>③使PIEIER禁中断。如果PIEIER寄存器来使能个中断，同样可以禁止该中断，本章具体步骤参见下文。畜中广通中国影积</p>
+<h2 id="2_1">2.使能/禁止复用外设中断的处理</h2>
+<p>应用外设中断的使能/禁止标志位使能/禁止外设中断，PIEIER和CPUIER寄存器主要是在同组中断内设置中断优先级。如果要修改PIEIER寄存器的设置，有两种方法。第一个方法是保护相应的PIE标志寄存器标志位，防止中断丢失：第个法是清除相应PIE寄存器的标志位。</p>
+<p>法1:利PIEIERx寄存器禁中断并保护相应的PIEIFRx相关的标志位，需要采取以下步骤：</p>
+<p>步骤1：屏蔽全局中断（INTM=1）。</p>
+<p>步骤2：清除PIEIERx.y位，屏蔽给定的外设中断。这样可以屏蔽同一组中断的一个或多个外设中断。</p>
+<p>步骤3：等待5个周期，这个延时是为了保证在CPUIFR寄存器中产的任何中断都能向CPU发出申请。</p>
+<p>步骤4:清除CPUIFRx内相应外设中断组的标志位，在CPUIFR寄存器上采用这样的操作是比较安全的。</p>
+<p>步骤5：清除相应外设中断组的PIEACKx寄存器位。</p>
+<p>步骤6：使能全局中断（INTM=0)。</p>
+<p>方法2：使用PIEIFRx寄存器屏蔽中断并清除相应的PIEIFRx的标志位。为了完成外设中断的软件复位和清除PIEIFRx和CPUIFR内相应的标志位，需要采取以下的处理步骤：</p>
+<p>步骤1：屏蔽全局中断（INTM=1)。</p>
+<p>步骤2:设置EALLOW位为1。</p>
+<p>步骤3：修改PIE向量表，使外设服务程序指针向量指向一个临时的ISR，这个临时的ISR只执个中断返回（IRET)操作，这种法能够清除单个中断标志位PIEIFRx.y，而且保证不会丢失同一组内其他外设产生的中断。</p>
+<p>步骤4：屏蔽外设寄存器中的外设中断。</p>
+<p>步骤5：使能全局中断（INTM=0)。</p>
+<p>步骤6:等待所有挂起外设中断由空的中断服务程序处理。</p>
+<p>步骤7：屏蔽全局中断（INTM=1）。</p>
+<p>步骤8:调整PIE向量表，将外设中断向量映射到原来的中断服务程序。</p>
+<p>步骤9:清除EALLOW位。</p>
+<p>步骤10：屏蔽给定的PIEIER位。</p>
+<p>步骤11;清除给定外设中断组的标志位IFR(对CPUIFR寄存器操作比较安全)。</p>
+<p>步骤12：清除PIE组的PIEACK位。</p>
+<p>步骤13：使能全局中断。</p>
+<h2 id="3cpu_1">3.外设复用中断向CPU申请中断的流程</h2>
+<p>外设复用中断向CPU申请中断的流程，如图5.8所示</p>
+<p>步骤1：任何一个PIE中断组的外设或外部中断产生中断。如果外设模块内的中断被使能，中断请求将被送到PIE模块。</p>
+<p>步骤2:PIE模块将识别出PIE中断组x内的y中断(INTx.y)申请，然后相应的PIE中断标志位被锁存：PIEIFRx.y=1。</p>
+<p>步骤3：PIE的中断如要送到CPU需满足下面两个条件：</p>
+<p>①相应的使能位必须被设置(PIEIERx.y=1)。</p>
+<p>②相应的PIEACKx位必须被清除。</p>
+<p><img alt="" src="../images/8f8fe1afe50dfd3498e2b841cb0098170b5d95cdf68d10b213f79bd0a1840c00.jpg" /></p>
+<p>图5.8外设复用中断向CPU申请中断的流程图</p>
+<p>步骤4：如果满足步骤3中的两个条件，中断请求将被送到CPU并且相应的响应寄存器位被置1（PIEACKx=1）。PIEACKx位将保持不变，除非为了使本组中的其他中断向CPU发出申请而清除该位。</p>
+<p>步骤5：CPU中断标志位被置位(CPUIFRx=1)，表明产生一个CPU级的挂起中断。</p>
+<p>步骤6：如果CPU中断被使能（CPUIERx=1，或DBGIERx=1），并且全局中断使能(INTM=0)，CPU将处理中断INTx。</p>
+<p>步骤7：CPU识别到中断并自动保存相关的中断信息，清除使能寄存器（IER）位，设置INTM，清除EALLOW。CPU完成这些任务准备执行中断服务程序。</p>
+<p>步骤8：CPU从PIE中获取响应的中断向量。</p>
+<p>步骤9：对于复用中断，PIE模块用PIEIERx和PIEIFRx寄存器中的值确定响应中断的向量地址。有以下两种情况：</p>
+<p>①在步骤4中若有更高优先级的中断产，并使能了PIEIERx寄存器，且PIE-IFRx的相应位处于挂起状态，则首先响应优先级高的中断。</p>
+<p>②如果在本组内没有挂起的中断被使能，PIE将响应组内优先级最高的中断，调转地址使INTx.1。这种操作相当于处理器的TRAP或INT指令。</p>
+<p>CPU进入中断服务程序后，将清除PIEIFRx.y位。需要说明的是，PIEIERx寄存器来确定中断向量，在清除PIEIERx寄存器时必须注意。</p>
+<h2 id="4">4.可屏蔽中断处理</h2>
+<p>按照是否可以被屏蔽，可将中断分为两大类：不可屏蔽中断（又叫非屏蔽中断，NonmaskableInterrupt，NMI)和可屏蔽中断。不可屏蔽中断源一旦提出中断请求，CPU必须条件响应；而对可屏蔽中断源的请求，CPU可以响应，也可以不响应。对于可屏蔽中断，除了受本身的屏蔽位控制外，还都要受一个总的控制，即CPU标</p>
+<p>志寄存器中的中断允许标志位IF（InterruptFlag）的控制。IF位为1，可以得到CPU响应；否则得不到响应。IF位可以由用户控制。</p>
+<p>可屏蔽中断的响应过程实质上就是中断的产生、使能到处理过程，其结构如图5.9所示，包括两部分设置：CPU级中断设置（INT1~INT4）和PIE级中断设置(INTx.1~INTx.8)。</p>
+<p><img alt="" src="../images/b1816ebc451cac657d710140165d633a8a30de2d37286d5ff6328b090d04f16c.jpg" /></p>
+<p>图5.9可屏蔽中断控制结构</p>
+<h2 id="1cpu">(1)CPU级中断</h2>
+<p>①CPU级中断标志设置。除了系统初始化，般不建议改变标志寄存器的状态，否则可能清除某些有的中断信息或者产意外中断。但有时也可能希望通过软件式使某些中断标志位置位或者清零，在这种情况下可以通过以下2条指令完成。</p>
+<p>如果在清除中断标志寄存器中的某些状态位时刚好有中断产，则此时中断有更高的优先级，相应的标志位仍为1。在系统复位和CPU相应中断后，中断标志位将自动清零。</p>
+<p>②CPU级中断使能。CPU级中断使能寄存器的16位分别控制每个中断的使能状态。当相应的位置1时，使能中断，写0禁止中断。在C语中可采用下面代码实现中断的控制，系统复位禁止所有中断。</p>
+<p>③全局中断使能。状态寄存器ST1的位O(INTM)为全局中断使能控制位，当该位等于0时全局中断使能，当该位等于1时禁止所有中断。CPU要实现中断处理必须在产生中断的前提下，相应的IER寄存器位使能并且需要全局使能位使能。可采用下列代码实现全局中断使能控制。</p>
+<h2 id="2pie_1">(2)PIE级中断</h2>
+<p>当系统有中断请求到PIE模块时，相应的PIE中断标志寄存器（PIEIFRx.y）置1,如果相应的PIE中断使能寄存器（PIEIERx.y)也已经置1，则PIE开始检查相应的中断响应寄存器(PIEACKx)来决定CPU是否准备响应该组的中断。如果该组的PIEACKx已经清零，PIE送该中断请求到CPU级，否则PIE等待，直到PIEACKx已经清零，才送中断请求到CPU级。</p>
+<h2 id="5_1">5.不可屏蔽中断处理</h2>
+<p>）客血中</p>
+<p>不可屏蔽中断设置简单得多，以XNMI_XINT13引脚外部中断设置为例，只要配置好相应的引脚配置寄存器就可以，因为NMI优先级最高，CPU必须响应，须配置CPU。</p>
+<h3 id="55-f28335">5.5 F28335中断相关寄存器</h3>
+<h2 id="1piepiectrl">1.PIE控制寄存器(PIECTRL)</h2>
+<p>PIE控制寄存器(PIECTRL)各位信息如表5.5所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~1</td>
+<td>PIEVECT</td>
+<td>PIE中断向量。这些位确定了PIE提供的中断向量在PIE中断向量表中的 地址。地址最低位忽略，所以只给出1～15位的地址，用户可以通过读向量 值来确定哪个中断产生</td>
+</tr>
+</tbody>
+</table>
+<p>表5.5PIE控制寄存器</p>
+<p>续表5.5</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>ENPIE</td>
+<td>PIE向量表使能位。从PIE向量表中获取中断向量的使能位 0：禁止PIE模块，中断向量从bootROM中或中断向量表中获取。此时，当 禁止PIE单元时，所有的PIE模块寄存器（PIEACK，PIEIFR，PIEIER）均可 被访问 1：除复位之外的所有中断向量取自PIE向量表，复位向量始终取自 bootROM</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2piepieack">2.PIE中断应答寄存器(PIEACK)</h2>
+<p>PIE中断应答寄存器各位信息如表5.6所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述                          )他</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~12</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>11~0</td>
+<td>PIEACK</td>
+<td>PIE中断响应标志位X=0：说明PIE可以从相应的中断组向CPU发送中断，写0无效X=1:说明来自中断组的中断向量已经向CPU发送了中断请求，该中断组的其他中断目前被锁存；向相应的中断位写1，可以让该位清零，并且让PIE模块产生一个脉冲给CPU中断，以使得CPU可以响应该组中尚未被响应的中断</td>
+</tr>
+</tbody>
+</table>
+<p>表5.6PIE中断应答寄存器</p>
+<h2 id="3piepieifrx">3.PIE中断标志寄存器(PIEIFRx)</h2>
+<p>PIE 中断标志寄存器PIEIFRx(x=1一12)各位信息如表5.7所列。1</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>H功能描述器喜者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>7</td>
+<td>INTx.8</td>
+<td>装等商</td>
+</tr>
+<tr>
+<td>6</td>
+<td>INTx.7</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>INTx.6</td>
+<td>表示相应的中断是否被激活。与CPU中断标志寄存器位的功能相似，当一个中断被激活时，相应的寄存器位被置1；当中断响应后或向这些寄存器写0时，对应的寄存器位被清零，可以通过读取该值来确定哪个中断有效或被挂起，访问该寄存器时，硬件比CPU有更高的优先级</td>
+</tr>
+<tr>
+<td>日法</td>
+<td>INTx5</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>INTx.4</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>INTx.3</td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>INTx.2</td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>INTx.1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表5.7 PIE中断标志寄存器PIEIFRx</p>
+<h2 id="4piepieierx">4.PIE中断使能寄存器(PIEIERx)</h2>
+<p>PIE中断使能寄存器PIEIERx(x=1～12)各位信息如表5.8所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>7</td>
+<td>INTx.8</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>INTx.7</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>INTx.6</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>INTx.5</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>INTx.4</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>INTx.3</td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>INTx.2</td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>INTx.1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表5.8PIE中断使能寄存器（PIEIERx）</p>
+<h2 id="5cpuifr">5.CPU中断标志寄存器(IFR)</h2>
+<p>CPU中断标志寄存器是个16位的CPU寄存器，于标志和清除被执的中断。CPU中断寄存器（IFR）包含CPU级可屏蔽中断（INT1～INT14、DLOGINT和RTOSINT)的标志位。当PIE模块被使能，PIE模块为中断组INT1～INT12提供复用中断源。</p>
+<p>当一个可屏蔽请求发生时，相应外设控制寄存器的标志位置1，如果相应的屏蔽位也是1，则该中断请求被送到CPU，并在IFR中相应的标志位置1，这表示中断未被执行或等待应答。</p>
+<p>为识别未执行的中断，可利用PUSHIFR指令以测试堆栈的值，利用ORIFR指令去置位IFR位，利ANDIFR指令动清除未被执的指令。所有未执的中断ADNIFR#O指令或硬件复位清除。</p>
+<p>CPU的应答中断和硬件复位也可以清除IFR标志。CPU中断标志寄存器(IFR)各位信息如表5.9所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>RTOSINT</td>
+<td>实时操作系统标志位0:已处理完成所有的RTOS中断1:至少1个RTOS中断未被执行，向该位写0可以将其清零，并清除中断请求</td>
+</tr>
+<tr>
+<td>14</td>
+<td>DLOGINT</td>
+<td>数据记录中断标志位0:没有DLOGINT中断1:至少有个DLOGINT中断未被执，向该位写0可以将其清零，并清除中断请求</td>
+</tr>
+</tbody>
+</table>
+<p>表5.9 CPU中断标志寄存器(IFR）</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13~0</td>
+<td>INTxx=1~14</td>
+<td>中断x标志位，X=1~140：没有INTx的中断</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>1：至少一个INTx中断未被执行，向该位写0可以将其清零，并清除中断请求</td>
+</tr>
+</tbody>
+</table>
+<p>（）器音治動德中续表5.9</p>
+<h2 id="6cpuier">6.CPU中断使能寄存器（IER)</h2>
+<p>CPU中断使能寄存器是个16位的CPU寄存器，包含可屏蔽CPU级中断（INT1～INT14，DLOGINT和RTOSINT）的使能位。IER中既不包含NMI也不包括XRS，这样IER不受这些中断的影响。</p>
+<p>用户可以通过读IER来定义使能中断或设置中断的级别，也可以通过写IER来激活中断。利ORIER指令将相应的IER位置1可以使能中断，利ANDIER指令将相应的IER位置为0，可以禁个中断。当个中断被禁，不管INTM位的值是多少，它都不会应答，当一个中断被使能，如果相应的IFR位为1，且INTM位是0，那么中断就被响应了。</p>
+<p>CPU使能中断寄存器的各位信息如表5.10所列。</p>
+<h2 id="7cpudbgier">7.CPU调试中断使能寄存器（DBGIER）</h2>
+<p>CPU在实时仿真模式下暂停中需要中断的时候就要到CPU调试中断使能寄存器DBGIER，其各位信息如表5.11所列。CPU在实时暂停模式时，中断服务也需要IER寄存器进使能。在实时仿真模式中，采用的是标准的中断服务进程，忽略DBGIER。同IER一样，可以通过读DBGIER寄存器的值，使能或禁止中断，采用PUSHDBGIER指令从DBGIER读取数据，采用POPDBGIER将值写DBGIER，复位时，所有的DBGIER位均为0。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>RTOSINT</td>
+<td>实时操作系统中断使能位0:禁止1：使能</td>
+</tr>
+<tr>
+<td>14</td>
+<td>DLOGINT</td>
+<td>数据记录中断使能位0:禁止1:使能</td>
+</tr>
+<tr>
+<td>13~0</td>
+<td>INTxx=1~14</td>
+<td>中断x使能位，X=1~140：禁止1:使能</td>
+</tr>
+</tbody>
+</table>
+<p>表5.10CPU中断使能寄存器(IER）</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>5RTOSINT</td>
+<td>实时操作系统中断使能位0:禁止1：使能</td>
+</tr>
+<tr>
+<td>14</td>
+<td>DLOGINT</td>
+<td>数据记录中断使能位0：禁止1：使能</td>
+</tr>
+<tr>
+<td>13~0</td>
+<td>INTxx=1~14</td>
+<td>中断x使能位，X=1~140:禁止1：使能</td>
+</tr>
+</tbody>
+</table>
+<p>表5.11CPU调试中断使能寄存器(DBGIER）</p>
+<h2 id="8xintncr">8.外部中断控制寄存器（XINTnCR）</h2>
+<p>F28335共持7个外部中断XINT1～XINT7,XINT13还有个不可屏蔽的外部中断XNMI共用中断源。每个外部中断可以被选择为正边沿或负边沿触发，也可以被使能或禁止（包括XNMI)。可屏蔽中断单元包括一个16位增计数器，该计数器在检测到有效中断边沿时复位为0，同时用来准确记录中断发生的时间。</p>
+<p>外部中断控制寄存器(XINTnCRn=1~7)各位信息如表5.12所列。</p>
+<h2 id="9nmixnmicr">9.外部NMI中断控制寄存器(XNMICR)</h2>
+<p>外部中断控制寄存器（XNMICR)各位信息如表5.13所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>Polarity</td>
+<td>决定中断时产生在信号的上升沿还是下降沿00：中断产生在下降沿01：中断产生在上升沿10:中断产生在下降沿11:既产生在上升沿也产生在下降沿</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Reserved</td>
+<td>保留                 [</td>
+</tr>
+<tr>
+<td>0</td>
+<td>Enable</td>
+<td>决定外部中断XINTn的使能或禁止0:禁止中断1：使能中断</td>
+</tr>
+</tbody>
+</table>
+<p>表5.12外部中断控制寄存器（XINTnCR）</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>Polarity</td>
+<td>决定中断时产生在信号的上升沿还是下降沿00:中断产生在下降沿01:中断产生在上升沿10:中断产生在下降沿11：既产生在上升沿也产生在下降沿</td>
+</tr>
+<tr>
+<td></td>
+<td>Select</td>
+<td>INT13选择信号源0：定时器1接到INT131:XNMI_XINT13接到INT13</td>
+</tr>
+<tr>
+<td>1et</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>Enable</td>
+<td>决定外部中断XIMTn的使能或禁止0：禁止中断1:使能中断</td>
+</tr>
+</tbody>
+</table>
+<p>表5.13外部NMI中断控制寄存器（XNMICR）</p>
+<h2 id="10xxintxctr">10.外部中断x计数器（XINTxCTR)</h2>
+<p>外部中断x计数器各位信息如表5.14所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>INTCTR</td>
+<td>这是一个独立运行的16位递增计数器，其计数频率锁定在SYSCLKOUT。 当检测到有效的中断边沿信号时，将被复位到0x0000，然后继续进行计数直 到检测到下一个有效中断边沿信号。当中断被禁止时，计数器停止工作。计 数器达到最大值时返回0。该计数器是一个只读寄存器，通过有效的中断边 沿信号或复位将其复位为0</td>
+</tr>
+</tbody>
+</table>
+<p>表5.14外部中断x计数器(XINTxCTR)</p>
+<h3 id="56">5.6手把手教你应用定时器中断</h3>
+<h2 id="1_3">1.实验目的</h2>
+<p>①掌握F28335的定时器工作原理。</p>
+<p>②掌握F28335的中断设置。</p>
+<h2 id="2_2">2.实验主要步骤</h2>
+<p>①先打开已经配置的CCS3.3软件。</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③在CCS中选择Debug→Connect菜单项，连接目标板，确定目标板连接成功。</p>
+<p>④将TIMERO录复制到CCS开发环境中的Myproject录下。</p>
+<p>⑤在CCS菜单栏选择project→Open菜单项，加载TIMERo目录中的TIM-ERO.pjt。</p>
+<p>⑥在CCS菜单栏选择File→Load Program菜单项，加载Debug录下的TIMERO.out。</p>
+<p>⑦在CCS中按图5.10所示设置断点(在欲设置断点处所在的行双击鼠标即可)。</p>
+<p><img alt="" src="../images/77e01ff8f5a47cf49a1756ae8b2d97a066d85372d283f22547e2359af257ca3a.jpg" /></p>
+<p>图5.10定时器断点设置</p>
+<p>⑧在CCS中选择Debug→Run菜单项，此时户可以发现程序运到断点处，然后查看YX-F28335开发板上面的6个LED的状态。</p>
+<p>⑨在CCS中选择Debug→Run菜单项，此时程序第2次运到断点，然后查看YX-F28335开发板上面的6个LED的状态，可以多次运行程序来观察YX-F28335开发板上LED的状态。</p>
+<p>①在断点处双击鼠标，将断点去掉，然后选择Debug→Run菜单项，再次观看</p>
+<p>LED状态。</p>
+<h2 id="3_1">3.实验原理说明</h2>
+<h2 id="1_4">(1)定时器操作原理</h2>
+<p>F28335片上有3个32位的通用定时器，分别为TIMER0、TIMER1、TIMER2。定时器2预留给DSP的实时操作系统BIOS。但是如果没有使用实时操作系统，那么定时器0、定时器1和定时器2都可以被用户使用。定时器的功能如图5.11所示。</p>
+<p><img alt="" src="../images/da55546fe0ee4fe20984bde0418e9b0564edefd4690693e57ce4004ac8cfd71d.jpg" /></p>
+<p>图5.11定时器功能框图</p>
+<p>定时器有一个预分频模块和一个定时/计数模块，其中预分频模块包括一个16位的定时器分频寄存器（TDDRH：TDDR）和一个16位的预定标计数器（PSCH：PSC)；定时/计数模块包括一个32位的周期寄存器（PRDH:PRD）和一个32位的计数寄存器（TIMH：TIM）。</p>
+<p>当系统时钟（SYSCLKOUT）来一个脉冲，PSCH：PSC预定标计数器减1，当PSCH:PSC预定标计数器减到O的时候，预定标计数器产生下溢后向定时器的32位计数器TIMH:TIM借位，即TIMH:TIM计数器减1，同时PSCH：PSC可以重载定时器分频寄存器（TDDRH:TDDR)的值；当计数寄存器TIMH：TIM减到O产生下溢的时候，计数寄存器会重载周期寄存器（PRDH：PRD)的值，同时定时器会产一个中断信号给CPU。定时器的中断结构如图5.12所示。</p>
+<p><img alt="" src="../images/e474d636e6bad458c08981fe40592cca78cc300d3441f89d71d9b030c713f911.jpg" /></p>
+<p>图5.12定时器中断结构</p>
+<p>定时器中断属于PIE中断，中断信号经过PIE后，再进入处理器，定时器O的中断属于PIE第组中断中的第7个中断。</p>
+<h2 id="2_3">（2）定时器相关寄存器</h2>
+<p>定时器配置和控制寄存器如表5.15所列。</p>
+<p>（）</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>寄存器</th>
+<th>称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00000C000x00000C010x00000C020x00000C030x00000C040x00000C050x00000C060x00000C07F</td>
+<td>TIMEROTIMTIMEROTIMHTIMEROPRDTIMEROPRDHTIMEROTCR保留TIMEROTPRTIMEROTPRH</td>
+<td>Timer0，计数寄存器低Timer0，计数寄存器高Timer0，周期寄存器低Timer0,周期寄存器高Timer0，控制寄存器Timer0，预定标寄存器Timer0，预定标寄存器高</td>
+</tr>
+<tr>
+<td>THHAL0x00000C080x00000C090x00000COA0x00000C0B0x00000C0C0x00000COD0x00000C0E0x00000C0F</td>
+<td>TIMER1TIMTIMER1TIMHTIMER1PRDTIMER1PRDHTIMER1TCR保留TIMER1TPRTIMER1TPRH</td>
+<td>Timer1,计数寄存器低Timer1.计数寄存器高Timer1.周期寄存器低Timer1,周期寄存器高Timer1.控制寄存器Timer1，预定标寄存器Timer1，预定标寄存器高</td>
+</tr>
+<tr>
+<td>0x00000C100x00000C110x00000C120x00000C130x00000C140x00000C150x00000C160x00000C17</td>
+<td>TIMER2TIMTIMER2TIMHTIMER2PRDTIMER2PRDHTIMER2TCR保留TIMER2TPRTIMER2TPRH</td>
+<td>Timer2，计数寄存器低特油效Timer2.计数寄存器高宝Timer2，周期寄存器低MTimer2，周期寄存器高招销锁Timer2.控制寄存器Timer2，预定标寄存器UTTimer2,预定标寄存器高</td>
+</tr>
+</tbody>
+</table>
+<p>表5.15定时器相关寄存器</p>
+<p>①定时器控制寄存器TIMERxTCR</p>
+<p>定时器控制寄存器的各位分配如表5.16所列。</p>
+<p>承退</p>
+<h2 id="_1"></h2>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>TIF</td>
+<td>CPU定时器中断标志位当定时计数器递减到零时，该位置1，可以通过软件向该位写1清零0:写0无影响；1：写1清零</td>
+</tr>
+<tr>
+<td>14</td>
+<td>TIE</td>
+<td>定时器中断使能如果定时计数器递减到O，TIE为使能，定时器向CPU申请中断</td>
+</tr>
+<tr>
+<td>13、12</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>11</td>
+<td>FREE</td>
+<td>CPU定时器仿真模式</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>CPU定时器仿真模式FREE SOFT0      0        下次计数器递减操作完成后定时器停止</td>
+</tr>
+<tr>
+<td>10</td>
+<td>SOFT</td>
+<td>0      0        下次计数器递减操作完成后定时器停止0                计数器递减到0后定时器停止1      0       自由运行1      1        自由运行</td>
+</tr>
+<tr>
+<td>9~6</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>5</td>
+<td>TRB</td>
+<td>定时器重载控制位0:禁止重载；1：使能重载</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TSS</td>
+<td>启动和停止定时器的状态位试周机0:为了启动或重新启动，将其清零1：要停止定时器，将其置1</td>
+</tr>
+<tr>
+<td>3~0</td>
+<td>保留</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表5.16定时器控制寄存器</p>
+<h2 id="2_4">②定时器预定标寄存器</h2>
+<p>表5.17给出了定时器预定标寄存器的各位分配。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>PSC</td>
+<td>CPU定时器预定标计数器 PSC保存当前定时器的预定标的值。PSCH:PSC大于0时，每个定时器源时 钟周期PSCH：PSC递减1。PSCH:PSC递减到O时，即是一个定时器周期（定 时器预定标器的输出），PSCH:PSC使用TDDRH：TDDR内的值重新装载， 定时器计数寄存器减1。只要软件将定时器的重新装载位置1，PSCH：PSC 也会重新装载。可以读取PSCH：PSC内的值，但不能直接写这些位。必须从 分频计数寄存器（TDDRH：TDDR）获取要装载的值。复位时PSCH：PSC 清零</td>
+</tr>
+</tbody>
+</table>
+<p>表5.17定时器预定标寄存器</p>
+<p>表</p>
+<p>续表5.17</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述 s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7~0</td>
+<td>TDDR</td>
+<td>CPU定时器分频寄存器 每隔（TDDRH：TDDR十1）个定时器源时钟周期，定时器计数器寄存器 （TIMH:TIM)减1。复位时TDDRH：TDDR清零。当PSCH:PSC等于0时， 一个定时器源时钟周期后，重新将TDDRH：TDDR的内容装载到PSCH： PSC，TIMH：TIM减1。当软件将定时器的重新装载位（TRB)置1时，PSCH :PSC也会重新装载</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3_2">③定时器计数器</h2>
+<p>定时计数器各位信息如表5.18所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>TIM</td>
+<td>CPU定时器计数寄存器（TIMH:TIM）。TIM寄存器保存当前32位定时器 计数值的低16位。每隔（TDDRH：TDDR十1）个时钟周期，TIMH：TIM减 1，其中TDDRH:TDDR为定时器预定标分频系数。当TIMH:TIM递减到0 时，TIMH:TIM寄存器重新转载PRDH：PRD寄存器保存的周期值，并产生 定时器中断TINT信号</td>
+</tr>
+</tbody>
+</table>
+<p>表5.18定时器计数器</p>
+<h2 id="4_1">④定时器周期寄存器</h2>
+<p>定时周期寄存器各位信息如表5.19所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>功能描述 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>PRD</td>
+<td>CPU周期寄存器（PRDH:PRD)。PRD寄存器保存32位周期值的低16位， PRDH保存高16位。当TIMH：TIM递减到0时，在下次定时周期开始之前 TIMH:TIM寄存器重新装载PRDH:PRD寄存器保存的周期值；当用户将</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>定时器控制寄存器（TCR）的定时器重新转载位（TRB）置位时，TIMH：TIM 也会重新装载PRDH:PRD寄存器保存的周期值</td>
+</tr>
+</tbody>
+</table>
+<p>表5.19定时器周期寄存器</p>
+<h2 id="3_3">(3)程序清单与注释</h2>
+<p>①定时器0初始化程序如下：</p>
+<p>void InitcpuTimers(void)</p>
+<p>// 定时器0初始化</p>
+<p>//指向定时0的寄存器地址</p>
+<p>CpuTimer0.RegsAddr = &CpuTimeroRegs;</p>
+<p>// 设置定时器0的周期寄存器值</p>
+<p>CpuTimerORegs.PRD.al1 = 0xFFFFFFFF;</p>
+<p>// 设置预定标计数器值为0</p>
+<h2 id="20">②定时器0的设置如下所示：</h2>
+<p>通过以上程序就可以让定时器0每隔段时间产次中断，这段时间的计算公式为：△T=Freq×Period/150000000(s);（其中150000000是CPU的时钟频率，即150MHz的时钟频率)针对此实验，Frep为150，Period为100000，那么△T=0.1s=100ms。</p>
+<p>③中断设置程序过程如下：</p>
+<h2 id="4_2">④中断向量表的初始化函数如下：</h2>
+<p>下的句话就是告诉定时器0的中断地址为中断向量表的INT0</p>
+<p>下的两条语句是告诉CPU第组中断将会产，并使能第组中断的第7个小中断。</p>
+<p>通过以上中断的设置，定时器0就会每隔100ms进入一次中断服务函数，但是</p>
+<p>中断服务函数里面需要清除中断标志位，包括清除PIE第一组的中断标志位和定时器0本身的中断标志位。</p>
+<p>⑤中断标志位清除函数如下所：</p>
+<h2 id="_2"></h2>
+<h2 id="4_3">4.实验观察与思考</h2>
+<p>①如何通过程序改变LED变化的频率？</p>
+<p>②假如不定时器中断，通过查询式怎么来改变LED的闪烁效果?</p>
+<h3 id="57">5.7手把手教你应用按钮触发外部中断</h3>
+<h2 id="1_5">1.实验目的</h2>
+<p>①掌握外部中断。</p>
+<p>②掌握F28335中断机制。</p>
+<h2 id="2_5">2.实验主要步骤</h2>
+<p>①先打开已经配置的CCS3.3软件。</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③在CCS中选择→Debug→Connect菜单项，连接目标板，确定目标板连接 成功。</p>
+<p>④将ExInt录复制到CCS开发环境中的Myproject目录下。</p>
+<p>⑤在CCS菜单栏中选择 project→Open菜单项，加载 ExInt录中的ExInt. pjt。</p>
+<p>⑥在CCS菜单栏中选择File→Load Program菜单项，加载Debug录下的ExInt. out。</p>
+<p>⑦在CCS菜单栏中选择Debug→Run菜单项，之后用户可以按下YX-F28335开发板上面的S2～S5按钮，观察LED的变化效果。用户将会发现不同的按钮对应不同的LED变化效果。</p>
+<h2 id="3_4">3.实验原理说明</h2>
+<p>F28335有7个外部引脚中断，GPIO0～GPIO63这64个GPIO都可以通过软件配置成外部中断引脚，但是需要注意的是GPIO0～GPIO31只能配置为外部中断1和2,GPIO32～GPIO63只能配置为外部中断3、4、5、6和7。一旦某一个GPIO被配置为外部中断引脚后，那么边沿脉冲就可以触发此外部中断。本实验采取的是通过按钮来产生边沿信号，其原理图如图5.13所示。</p>
+<p><img alt="" src="../images/01de26909b52a97ca41ad751ca219136c6d560c7671aac2c261a0359cfa485ce.jpg" /></p>
+<p>图5.13按钮原理图</p>
+<p>下面通过程序详细介绍外部中断实验。外部中断引脚配置过程如下：</p>
+<p>在定时器实验中，控制LED是通过对GPIO的数据寄存器写高低电平来操作，而在此实验中是对GPIO的置位寄存器和清零寄存器写1来控制LED。这样控制的优点是GPIO外设响应的时间快，不用延时（用户可以对照前面实验的LED控制程序，通过数据寄存器来控制LED是需要一定的延时，否则GPIO响应不过来）。LED状态宏定义程序如下所示：</p>
+<h2 id="4_4">4.实验观察与思考</h2>
+<p>①怎么把GPIO53配置为外部中断4,GPIO54配置为外部中断3，其他不变？</p>
+<p>②把GPIO53～GPIO56配置为上升沿触发可以吗？如果可以怎么配置？</p>
+<p>1</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

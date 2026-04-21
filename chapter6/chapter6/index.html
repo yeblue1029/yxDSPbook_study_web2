@@ -1,0 +1,1493 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../chapter5/chapter5/">
+      
+      
+        <link rel="next" href="../../chapter7/chapter7/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第6章 CPU定时器 - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#6" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第6章 CPU定时器
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter2/chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter4/chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter5/chapter5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通用数字量输入/输出(GPIO)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通用数字量输入/输出(GPIO)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 GPIO工作原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 GPIO寄存器以及编程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.GPIO的寄存器的列表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2gpxctrl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.GPxCTRL寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3gpaqsel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.GPAQSEL寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4gpxdir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.GPxDIR寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.GPIO寄存器编程设置与应用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.GPIO寄存器编程设置与应用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#63f28335gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3手把手教你实现基于F28335GPIO的跑马灯实验
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)硬件原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)程序说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter7/chapter7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter8/chapter8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter9/chapter9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通用数字量输入/输出(GPIO)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通用数字量输入/输出(GPIO)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 GPIO工作原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 GPIO寄存器以及编程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.GPIO的寄存器的列表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2gpxctrl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.GPxCTRL寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3gpaqsel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.GPAQSEL寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4gpxdir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.GPxDIR寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.GPIO寄存器编程设置与应用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.GPIO寄存器编程设置与应用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#63f28335gpio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3手把手教你实现基于F28335GPIO的跑马灯实验
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)硬件原理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)程序说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="6">第 6 章</h1>
+<h2 id="gpio">通用数字量输入/输出(GPIO)</h2>
+<p>CPU要处理外界二进制信息（数字量），要将其存放在存储器中，就需要外界信息源与CPU或存储器进行交换，这样的交换接口若用来进行通用目的数字量的输输出，就被称为通用数字量输入/输出接口，简称GPIO。F28335DSP有多达88个GPIO口，对应着芯引出的88个引脚，随着芯的封装与尺寸的确定，引脚数目是有限的，所以这88个引脚多数都是功能复用的，即可以灵活配置为输入引脚，也可以灵活配置为输出引脚，即可以作为通用I/O引脚，也可以作为特殊功能口（如SCI、SPI、ECAN等），非常灵活，用户根据需要，可以通过GPIOMUX（输入输出多路选择器，复用开关)寄存器进行相关配置，下面详细介绍GPIO的工作原理及其配置过程。</p>
+<h3 id="61-gpio">6.1 GPIO工作原理</h3>
+<p>F28335DSP将这88个GPIO口分成了A、B、C这3组，A组包括GPIO0～GPIO31，B组包括GPIO32～GPIO63，C组包括GPIO64～GPIO87，每个引脚都复用了多个功能，同一时刻，每个引脚只能用该引脚的一个功能。究竟工作在哪个模式下，可以通过GPIOMux（复用开关)寄存器配置每个引脚的具体功能（通数字量I/0或者外设专功能）。如果将这些引脚选择数字量I/O模式，可以通过向寄存器GPxDIR配置数字量I/O的向，既作为输引脚也作为输出引脚;还可以通过量化寄存器GPxQUAL对输信号进量化限制，从可以消除数字量I/O引脚的噪声干扰。此外，有下面4种式对GPIO引脚进读写操作：</p>
+<p>①可以通过GPxDAT寄存器独读/写I/O信号。</p>
+<p>②利GPxSET寄存器写.1(写0效)对I/O置位。</p>
+<p>③利GPxCLEAR寄存器写1(写0效)对I/O清零。</p>
+<p>④利GPxTOOGLE寄存器置1后(写0效)翻转I/O输出电平，原来电平变成低电平，原来低电平则变成电平。</p>
+<p>GPIO模块框图如图6.1所。从图中最左侧圈内GPIO0～GPIO27为GPIO引脚，在其上位置有个PU，表PULLUP是上拉的意思，也就是这些GPIO引脚是通过软件可编程控制其电平是否上拉，控制寄存器为GPAPUD，O的时候上拉有效，1的时候上拉效，两个三形是控制GPIO作为输还是输出，上边三形为输入通道，GPIO输入后经滤波电路，引脚的功能选择由多路选择器控制，每个引脚有4种功能选择，00为通用1/0引脚，01、10、11分别为外设1、2、3引脚，输入的值都会进GPADAT寄存器，可以通过该寄存器进行读取，在GPIO方向选择为输入的时候，对GPADAT寄存器进置位是无效的，因为这时候它是个读寄存器，其值只受GPIO输信号控制，在其上就是GPIO输引脚引的相关PIE中断，下边三角形为输出通道，输出值为GPADAT内的值，在做输出引脚时，可以通过GPASET等寄存器设置该寄存器的值。</p>
+<p><img alt="" src="../images/fdee90b8d4617d326eb6f502d45a1da7ade593a020ae4a092ac2cde6adc21511.jpg" /></p>
+<p>图6.1 GPIO模块框图</p>
+<p>GPIO输受到可编程的滤波器的限制，用户可以通过配置GPAQSEL1、GPAQSEL2、GPBQSEL2寄存器选择GPIO引脚的输限制类型。对于个GPIO输入引脚，输人限制可以被SYSCLKOUT同步然后经采样窗进行滤波限制；而对于配置成外设输入的引脚，除同步与采样窗限制外，也可以是异步输入的。</p>
+<p>引脚在配置为外设输入时，可以采用异步输人模式，该模式仅用于不需要输入同步的外设或外设自身具有信号同步功能，如通信端口SCI、SPI、eCAN和I2C。如果引脚是GPIO功能，则异步功能模式失效，只能采用同步模式。所有引脚复位时默认的就是同步模式。在该模式中，因为引人的信号与时钟信号初始不同步，所以需要1个SYSCLKOUT进SYSCLKOUT与输信号匹配同步，因此输信号会有1个SYSCLKOUT的延迟。如果还通过采样窗口的办法对输入同步后的信号进行滤波，就要对采样周期GPxCXTRL与采样窗进相关设置。为了限制输信号，对输信号进采样，采样总是会有一定的时间间隔，这个时间间隔就是采样周期，等于现在有个钟表，要知道时间，每隔一段时间，就会去看一下表，这其实就是个采样过程，采样过程可以很长也可以很短，根据需求而定，例如看实时新闻时，眼睛会是盯着看的，但你不能眼睛一眨都不眨，其实眨眼间隔就是看新闻时的采样周期，因为眨眼间隔时间很短，我们感觉不出来，所以感觉新闻是连续的，其实我们看到的还是离散信号。采样周期由用户指定，并决定采样间隔时间或相对于系统时钟的比率。采样周期由GPxCTRL寄存器的QUALPRDn位来指定，QUALPRDn一位可以用来配置8路输入信号。例如，GPIO0～GPIO7由GPACTRAL[QUALPRD0位设置，GPIO8～GPIO15由GPACTRL[QUALPRD1]位设置。在采样的过程中，信号可能会受到干扰影响，而误触发信号，滤波的作用就是通过设置采样窗的周期数，尽量避免一些误触发的毛刺信号。如图6.2所示，在限制选择器（GPAQSEL1、GPAQSEL2、GPBQSEL1和GPBQSEL2)中信号采样次数被指定为3个采样或6个采样，当输信号在经过3个或6个采样周期都保持致时，输信号才被认为是个有效的信号，否则保持原来状态不变，例如图6.3中的那个GPIO输信号中有1个较窄脉冲，因为其持续时间没到采样数3个采样周期或6个采样周期，所以认为该脉冲是扰信号，采样信号保持原先状态不变，这样起到了滤波作，但同时,采样信号在初始时，会延迟设置的采样数周期，因为需要经过3个或6个采样周期后，才确认有效信号，采样信号才做有效变化。凡是滤波，硬件与软件，都会或多或少引信号延迟。</p>
+<p><img alt="" src="../images/2aa4eacff28fef42fe613e16bc4d8a10c3ba5199a95f41b3212e7ab635b58b65.jpg" /></p>
+<p>图6.2GPIO滤波采样</p>
+<p><img alt="" src="../images/e7874132021254d9b8abb51a18741523842c0d0aa06845c1076fc38a957c0c24.jpg" /></p>
+<p>图6.3 GPIO滤波采样波形</p>
+<h3 id="62-gpio">6.2 GPIO寄存器以及编程</h3>
+<h2 id="1gpio">1.GPIO的寄存器的列表</h2>
+<p>器客</p>
+<p>F28335DSP的GPIO所有寄存器如表6.1所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址对</th>
+<th>324空间地址 5</th>
+<th>泰       描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPACTRL</td>
+<td>0X6F80</td>
+<td>2</td>
+<td>GPIOA控制寄存器</td>
+</tr>
+<tr>
+<td>GPAQSEL1</td>
+<td>0X6F82</td>
+<td>2</td>
+<td>GPIOA量化控制寄存器1</td>
+</tr>
+<tr>
+<td>GPAQSEL2</td>
+<td>0X6F84</td>
+<td>2</td>
+<td>GPIOA量化控制寄存器2</td>
+</tr>
+<tr>
+<td>GPAMUX1</td>
+<td>0X6F86</td>
+<td>2</td>
+<td>GPIOA选择寄存器1</td>
+</tr>
+<tr>
+<td>GPAMUX2</td>
+<td>0X6F88</td>
+<td>2</td>
+<td>GPIOA选择寄存器2</td>
+</tr>
+<tr>
+<td>GPIOADIR</td>
+<td>0X6F8A</td>
+<td>2 品</td>
+<td>GPIOA方向寄存器</td>
+</tr>
+<tr>
+<td>GPIOAPUD</td>
+<td>0X6F8C</td>
+<td>2</td>
+<td>GPIOA上拉禁止寄存器</td>
+</tr>
+<tr>
+<td>GPBCTRL</td>
+<td>0X6F90</td>
+<td>2</td>
+<td>GPIOB控制寄存器</td>
+</tr>
+<tr>
+<td>GPBQSEL1</td>
+<td>0X6F92</td>
+<td>2</td>
+<td>GPIOB量化控制寄存器1</td>
+</tr>
+<tr>
+<td>GPBQSEL2</td>
+<td>0X6F94</td>
+<td>2</td>
+<td>GPIOB3量化控制寄存器2</td>
+</tr>
+<tr>
+<td>GPBMUX1</td>
+<td>0X6F96</td>
+<td>2</td>
+<td>GPIOB选择寄存器1</td>
+</tr>
+<tr>
+<td>GPBMUX2</td>
+<td>0X6F98</td>
+<td>2</td>
+<td>GPIOB选择寄存器2</td>
+</tr>
+<tr>
+<td>GPBDIR</td>
+<td>0X6F9A</td>
+<td>2</td>
+<td>GPIOB方向寄存器</td>
+</tr>
+<tr>
+<td>GPBPUD</td>
+<td>0X6F9C</td>
+<td>2</td>
+<td>GPIOB上拉禁止寄存器</td>
+</tr>
+<tr>
+<td>GPCMUX1</td>
+<td>0X6FA6</td>
+<td>2</td>
+<td>GPIOC选择寄存器1</td>
+</tr>
+</tbody>
+</table>
+<p>表6.1GPIO寄存器</p>
+<p>续表6.1</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+<th>空间地址</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPCMUX2</td>
+<td>0X6FA8</td>
+<td>2</td>
+<td>GPIOC选择寄存器2</td>
+</tr>
+<tr>
+<td>GPCDIR</td>
+<td>0X6FAA</td>
+<td>2</td>
+<td>GPIOC方向寄存器</td>
+</tr>
+<tr>
+<td>GPCPUD  1</td>
+<td>0X6FAC</td>
+<td>2</td>
+<td>GPIOC上拉禁止寄存器</td>
+</tr>
+<tr>
+<td>GPIOXINT1SEL</td>
+<td>0X6FE0</td>
+<td></td>
+<td>外部中断源选择寄存器1</td>
+</tr>
+<tr>
+<td>GPIOXINT2SEL</td>
+<td>0X6FE1</td>
+<td>1</td>
+<td>外部中断源选择寄存器2</td>
+</tr>
+<tr>
+<td>GPIONMISEL</td>
+<td>0X6FE2</td>
+<td>1</td>
+<td>不可屏蔽中断源选择寄存器</td>
+</tr>
+<tr>
+<td>GPIOXINT3SEL</td>
+<td>0X6FE3</td>
+<td>1</td>
+<td>外部中断源选择寄存器3出</td>
+</tr>
+<tr>
+<td>GPIOXINT4SEL</td>
+<td>0X6FE4</td>
+<td>1</td>
+<td>外部中断源选择寄存器4</td>
+</tr>
+<tr>
+<td>GPIOXINT5SEL</td>
+<td>0X6FE5</td>
+<td>(21)</td>
+<td>外部中断源选择寄存器5</td>
+</tr>
+<tr>
+<td>GPIOXINT6SEL</td>
+<td>0X6FE6</td>
+<td>1</td>
+<td>外部中断源选择寄存器6</td>
+</tr>
+<tr>
+<td>GPIOXINT7SEL</td>
+<td>0X6FE7</td>
+<td>星义</td>
+<td>外部中断源选择寄存器7</td>
+</tr>
+<tr>
+<td>GPIOLPMSEL</td>
+<td>0X6FE8</td>
+<td>1</td>
+<td>唤醒低功耗模式源选择寄存器</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2gpxctrl">2.GPxCTRL寄存器</h2>
+<p>GPxCTRL寄存器将为输引脚指定采样周期，GPACTRL为输引脚0～31指定采样周期，GPACTRL位功能描述如表6.2所列。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>31~24</td>
+<td>QUALPRD3</td>
+<td>GPIO24～GPIO31引脚特定的采样周期0x0O：采样周期=TSYSCLKOUT（即系统时钟）0x01:采样周期=2×TSYSCLKOUT（即系统时钟）…QxFF：采样周期=510×TSYSCLKOUT（即系统时钟）</td>
+</tr>
+<tr>
+<td>23~16</td>
+<td>QUALPRD2</td>
+<td>GPIO16～GPIO23引脚特定的采样周期具体配置同上</td>
+<td></td>
+</tr>
+<tr>
+<td>15~8</td>
+<td>QUALPRD1</td>
+<td>GPIO8～GPIO15引脚特定的采样周期具体配置同上</td>
+<td></td>
+</tr>
+<tr>
+<td>7~0</td>
+<td>QUALPRDO</td>
+<td>GPIO0～GPIO7引脚特定的采样周期具体配置同上</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表6.2 GPIOGPxCTRL寄存器</p>
+<h2 id="3gpaqsel">3.GPAQSEL寄存器</h2>
+<p>GPAQSEL1寄存器用来配置采样数，也可以认为是滤波数，当干扰信号持续采样周</p>
+<p>期于该寄存器设置的采样周期数时，干扰信号被滤除。其位分配如表6.3所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>GPIO15~GPIO0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表6.3GPIOGPAQSEL寄存器</p>
+<h2 id="4gpxdir">4.GPxDIR寄存器</h2>
+<p>GPIO的输输出向由GPxDIR寄存器配置。GPADIR寄存器位分配如表6.4所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>字段</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31~0</td>
+<td>GPIO31~GPIO0</td>
+<td>当在GPAMUX1或GPAMUX2寄存器中配置指定引脚为GPIO引脚，GPIO A端所管理的引脚对应的方向控制 0:配置为GPIO引脚为输引脚（默认） 1:配置为GPIO引脚为输出引脚</td>
+</tr>
+</tbody>
+</table>
+<p>表6.4GPIOGPxDIR寄存器</p>
+<p>其余的寄存器配置与功能在上边或有叙述或有雷同，详细可以参见TI给出的数据册。</p>
+<h2 id="5gpio">5.GPIO寄存器编程设置与应用</h2>
+<p>GPIOMux寄存器来选择28335处理器多功能复引脚的操作模式，每个引脚都可以独地配置为GPIO模式或者是外设专功能模式。如果配置为通数字量I/O模式，还可以通过向控制寄存器设置GPIO的向，通过量化输寄存器（GpxQUAL）配置输入引脚的量化功能。</p>
+<p>采C/C++编程实现处理器的GPIO控制，其复用寄存器的相关结构体定义为：</p>
+<p>采用上述结构体定义可以直接对GPIO的寄存器进操作，完成外部引脚的初始化操作。例如，将IOA全部设置GPIO功能，输出状态，0量化，代码如下：</p>
+<p>由于所有多功能复用引脚都可以通过相应的控制寄存器的位独立配置，因此在使时需要详细了解各GPIO对应的控制位以及对应的值。因此在C/C+十编程的时候，需要用结构体将寄存器每一位都列出来，这样更方便与寄存器配置操作。如GPIO0～15结构体如下所示：</p>
+<p>例如，将GPIO0～3配置为PWM1、2功能：</p>
+<p>如果复用引脚配置为数字量1/O模式，则可以直接利用数据寄存器对1/O操作(读/写），也可以利用其他辅助寄存器对各I/O进独立操作，如数字I/O置位（GPXSET寄存器）、数字I/O清零（GPXCLRAR寄存器）以及数字I/O电平转换（GPXTOGGLE寄存器）。</p>
+<p>同复用寄存器在C/C十+语编程方式一样，数据寄存器也这样定义</p>
+<p>通过上面定义的结构体，可以很清楚地看到GPIO的数据寄存器共有4类。分别为GPIODAT、GPIOSET、GPIOCLEAR、GPIOTOGGLE。若某一GPIO设置为输出状态，那么通过对GPIODAT相应位写0或者1，此时此GPIO就会输出相应的状态。</p>
+<p>F28335一共有88个GPIO，分为3组，分别是A、B、C。其中A组GPIO可以通过软件配置为外部中断1、2以及NMI功能，B组GPIO可以通过软件配置为外部中断3、4、5、6、7功能。而C组的GPIO不能配置为中断功能。如果将某GPIO配置为外部中断功能，那么下面是设置步骤：</p>
+<p>①将数字量I/O配置为GPIO功能。</p>
+<p>②将数字量1/O配置为输向。</p>
+<p>③将数字量I/O量化配置正确。</p>
+<p>④利外部中断选择寄存器选择相应的引脚为外部中断源。</p>
+<p>⑤为此GPIO触发信号设置极性，上升沿、下降沿或者双边沿。</p>
+<p>⑥使能外部中断即可。</p>
+<p>例如，如果将GPIO53～GPIO57分别设置为外部中断3～7，那么配置过程如下：</p>
+<h3 id="63f28335gpio">6.3手把手教你实现基于F28335GPIO的跑马灯实验</h3>
+<h2 id="1">1.实验目的</h2>
+<p>①F28335开发板上跑马灯的实现。</p>
+<p>②F28335GPIO使用与编程。</p>
+<h2 id="2">2.实验主要步骤</h2>
+<p>①先打开已经配置好的CCS3.3软件。</p>
+<p>②将仿真器的USB与计算机连接，将仿真器的另一端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③在CCS中选择Debug→Connect菜单项，连接目标板，确定目标板连接成功。</p>
+<p>④在CCS中选择project→Open菜单项，加载GPIO_LED录中的GPIO_LED. pjt。</p>
+<p>⑤在CCS中选择File→Load Program菜单项，加载Debug目录下的GPIO_LED.out。</p>
+<p>⑥在CCS中选择Debug→Run菜单项。</p>
+<p>⑦观察YX-F28335开发板上LED跑马灯的效果。</p>
+<h2 id="3">3.实验原理说明</h2>
+<h2 id="1_1">(1)硬件原理</h2>
+<p>在YX-F28335开发板中，DSP的8个管脚通过74LVC245缓冲芯、限流电阻与8个发光二极管相连，其原理图如图6.4所示，其中D7和D8是CAP/QEP捕捉指示灯，在此实验中只用控制D1~D6，D1～D6的管脚为DSP的GPIO0～GPIO5，此8路LED是共阴的连接方式，当GPIO0～GPIO5为高电平时，则LED被点亮；当GPIO0～GPIO5为低电平的时候，LED熄灭。</p>
+<p>74LVC245缓冲芯是总线缓冲芯，如图6.5所示，实现3.3V电压接口信号和5V接口信号的相互接口，DSP的外设端口电压与外设电压并不完全一致，这时候就需要考虑这些驱动缓冲芯。所以第三方厂家提供开发板的同时，实际上提供了一些接口芯方案，对于设计人员来说有一定的参考价值。限流电阻，对于极管来说，导通电阻极低，因此必须考虑导通情况下的限制电流大小。</p>
+<p><img alt="" src="../images/3ad3c77b696a01d52e42f8511fb8f26b0112edf555c95301b199f7406a927eee.jpg" /></p>
+<p>图6.4LED流水灯原理接线</p>
+<p><img alt="" src="../images/1045b4f1199507a727ec7de001f511e08fb1a631dceff1a7a95db938885c4b7f.jpg" /></p>
+<p>图6.5 电平转换缓冲芯片</p>
+<h2 id="2_1">(2)程序说明</h2>
+<p>F28335的I/O管脚具有多功能复用，通过对GPAMUX寄存器的设置为0，可以设置I/O的功能，在控制LED的过程中，DSP的管脚配置为普通I/O口就可以了，同时需要将这些I/O口配置为输出口，通过设置GPADIR方向寄存器为1,GPIO口设置可参见TI提供的数据册。GPIO配置如下所示：</p>
+<p>为了程序书写直观采用宏定义方式，可以使程序更加直观、方便，程序定义如下：</p>
+<h1 id="define-led1-gpiodataregsgpadatbit-gpio0led1-gpio0define-led2-gpiodataregsgpadatbitgpi01-led2gpi01define-led3-gpiodataregsgpadatbitgpio2led3gpio2define-led4-gpiodataregsgpadatbitgpio3led4gpi03define-led5-gpiodataregsgpadatbit-gpio4led5gpio4define-led6-gpiodataregsgpadatbitgpio5-led6-gpio5">define LED1 GpioDataRegs.GPADAT.bit. GPIO0//LED1 代表GPIO0位#define LED2 GpioDataRegs.GPADAT.bit.GPI01 //LED2代表GPI01位#define LED3 GpioDataRegs.GPADAT.bit.GPIO2//LED3代表GPIO2位#define LED4 GpioDataRegs.GPADAT.bit.GPIO3//LED4代表GPI03位#define LED5 GpioDataRegs.GPADAT.bit. GPIO4//LED5代表GPIO4位#define LED6 GpioDataRegs.GPADAT.bit.GPIO5 //LED6 代表GPIO5位</h1>
+<h2 id="led">实现LED跑马灯效果的程序如下：</h2>
+<p>//每次延时后取反，实现LED的亮与灭</p>
+<h2 id="m">本基M</h2>
+<h2 id="4">4.实验观察与思考</h2>
+<p>①如何使LED变化效果的频率变慢?</p>
+<p>②如何实现LED的不同变化效果？</p>
+<p><img alt="" src="../images/1bd88118068cb6c65764f6d080a10249a806f3785099d7cc3390157821dcbc20.jpg" /></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

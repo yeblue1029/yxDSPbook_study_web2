@@ -1,0 +1,5949 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../chapter6/chapter6/">
+      
+      
+        <link rel="next" href="../../chapter8/chapter8/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第7章 - TMS320F28335 学习笔记 V2 (含交互版)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#7" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-header__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TMS320F28335 学习笔记 V2 (含交互版)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第7章
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TMS320F28335 学习笔记 V2 (含交互版)" class="md-nav__button md-logo" aria-label="TMS320F28335 学习笔记 V2 (含交互版)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TMS320F28335 学习笔记 V2 (含交互版)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter2/chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 芯片资源
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter3/chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 寄存器与中断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter4/chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 时钟与看门狗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter5/chapter5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 GPIO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter6/chapter6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 CPU定时器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#epwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        增强型脉宽调制模块(ePWM)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="增强型脉宽调制模块(ePWM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 PWM控制基本原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72f28335pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2F28335PWM结构及组成单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-tb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 时基模块TB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1epwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.ePWM时基模块作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.时基模块的关键信号和寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3epwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.ePWM的周期和频率的计算
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)向上-下计数模式(先递增后递减)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)向上计数模式(递增）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)向下计数模式（递减）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.影子寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）时基周期影子寄存器模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）时基周期立即加载模式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（2）时基周期立即加载模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#74cc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4计数比较模块CC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.计数比较模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.计数器比较模块的关键信号与寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.计数器比较模块的特点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.计数器比较模块的特点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#75-ac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 动作模块AC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.动作模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.动作模块关键信号与寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.动作模块事件优先级
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.动作模块一般配置条件下的输出波形
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.动作模块一般配置条件下的输出波形">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#76db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6死区产生模块DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.为什么要产生死区
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.死区产生模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.死区模块工作的特点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.死区模块工作的特点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#77-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 斩波模块PC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.PWM斩波模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.PWM斩波模块的特点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.PC模块输出波形
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.一次脉冲
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.一次脉冲">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#78tz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8错误联防模块TZ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.错误联防模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.错误联防模块的操作
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.错误联防模块的操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#79" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.9事件触发模块
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.事件触发模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.事件触发模块的操作特点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.事件触发模块的操作特点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#710-pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.10 PWM模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.时基模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1tbprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）时基周期寄存器TBPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2tbphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）时基相位寄存器TBPHS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3tbctr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）时基计数寄存器TBCTR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4tbctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4）时基控制寄存器TBCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5tbsts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (5）时基状态寄存器TBSTS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.计数比较模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1acmpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)计数比较寄存器ACMPA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2bcmpb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）计数比较寄存器BCMPB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3cmpctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3）计数比较控制寄存器CMPCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.动作模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1aaqctla" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）动作控制寄存器AAQCTLA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2baqctlb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）动作控制寄存器BAQCTLB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3aqsfrctoah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）动作软件强制寄存器AQSFRC皇各TOAH器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4aqcsfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）动作连续软件强制寄存器AQCSFRC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.死区模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1dbctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）死区控制寄存器DBCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2dbred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）死区上升沿延时寄存器DBRED
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3dbfed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）死区下降沿延时寄存器DBFED)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.斩波模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.错误联防模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1tzsel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）错误联防选择寄存器TZSEL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2tzctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）错误联防控制寄存器TZCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3tzeint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）错误联防中断使能寄存器TZEINT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4tzflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）错误联防中断标志寄存器TZFLG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5tzclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (5）错误联防中断清除寄存器TZCLR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6tzfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （6）错误联防中断强制寄存器TZFRC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.事件触发模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1etsel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）事件触发选择寄存器ETSEL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2etps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）事件触发分频寄存器ETPS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3etflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）事件触发标志寄存器ETFLG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4etclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）事件触发清除寄存器ETCLR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5etfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （5）事件触发强制寄存器ETFRC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（5）事件触发强制寄存器ETFRC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#711pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.11手把手教你实现PWM输出
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#712hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.12高精度脉宽调制模块(HRPWM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.高精度脉宽调制模块概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.高精度脉宽调制模块的操作
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1hrpmw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)HRPMW控制
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）配置HRPWM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)操作方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ②具体配置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4sfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④参数优化软件(SFO)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⑤优化编程代码的HRPWM实例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.HRPWM寄存器描述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1）寄存器概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2hrpwmhrcnfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）HRPWM配置寄存器（HRCNFG)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3acmpahr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)计数比较A高精度寄存器(CMPAHR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4tbphshr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）时间基准相位高精度寄存器（TBPHSHR）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter8/chapter8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter9/chapter9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter10/chapter10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter11/chapter11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter12/chapter12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter13/chapter13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第13章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter14/chapter14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第14章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter15/chapter15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第15章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter16/chapter16/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第16章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter17/chapter17/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第17章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interactive/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🛠️ 交互演示模块
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#epwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        增强型脉宽调制模块(ePWM)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="增强型脉宽调制模块(ePWM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 PWM控制基本原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72f28335pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2F28335PWM结构及组成单元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-tb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 时基模块TB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1epwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.ePWM时基模块作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.时基模块的关键信号和寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3epwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.ePWM的周期和频率的计算
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)向上-下计数模式(先递增后递减)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2)向上计数模式(递增）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)向下计数模式（递减）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.影子寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）时基周期影子寄存器模式
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）时基周期立即加载模式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（2）时基周期立即加载模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#74cc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4计数比较模块CC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.计数比较模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.计数器比较模块的关键信号与寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.计数器比较模块的特点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.计数器比较模块的特点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#75-ac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 动作模块AC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.动作模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.动作模块关键信号与寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.动作模块事件优先级
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.动作模块一般配置条件下的输出波形
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.动作模块一般配置条件下的输出波形">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#76db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6死区产生模块DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.为什么要产生死区
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.死区产生模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.死区模块工作的特点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.死区模块工作的特点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#77-pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 斩波模块PC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.PWM斩波模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.PWM斩波模块的特点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3pc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.PC模块输出波形
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.一次脉冲
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.一次脉冲">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#78tz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8错误联防模块TZ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.错误联防模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.错误联防模块的操作
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.错误联防模块的操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#79" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.9事件触发模块
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.事件触发模块的作用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.事件触发模块的操作特点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.事件触发模块的操作特点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#710-pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.10 PWM模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.时基模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1tbprd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）时基周期寄存器TBPRD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2tbphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）时基相位寄存器TBPHS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3tbctr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）时基计数寄存器TBCTR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4tbctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (4）时基控制寄存器TBCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5tbsts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (5）时基状态寄存器TBSTS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.计数比较模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1acmpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)计数比较寄存器ACMPA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2bcmpb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）计数比较寄存器BCMPB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3cmpctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3）计数比较控制寄存器CMPCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.动作模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1aaqctla" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）动作控制寄存器AAQCTLA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2baqctlb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）动作控制寄存器BAQCTLB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3aqsfrctoah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）动作软件强制寄存器AQSFRC皇各TOAH器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4aqcsfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）动作连续软件强制寄存器AQCSFRC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.死区模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1dbctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）死区控制寄存器DBCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2dbred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）死区上升沿延时寄存器DBRED
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3dbfed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）死区下降沿延时寄存器DBFED)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.斩波模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.错误联防模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1tzsel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）错误联防选择寄存器TZSEL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2tzctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）错误联防控制寄存器TZCTL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3tzeint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）错误联防中断使能寄存器TZEINT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4tzflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）错误联防中断标志寄存器TZFLG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5tzclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (5）错误联防中断清除寄存器TZCLR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6tzfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （6）错误联防中断强制寄存器TZFRC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.事件触发模块寄存器
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1etsel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （1）事件触发选择寄存器ETSEL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2etps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）事件触发分频寄存器ETPS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3etflg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （3）事件触发标志寄存器ETFLG
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4etclr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）事件触发清除寄存器ETCLR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5etfrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （5）事件触发强制寄存器ETFRC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（5）事件触发强制寄存器ETFRC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#711pwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.11手把手教你实现PWM输出
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.实验目的
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.实验主要步骤
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.实验原理说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.实验观察与思考
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.实验观察与思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#712hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.12高精度脉宽调制模块(HRPWM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.高精度脉宽调制模块概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.高精度脉宽调制模块的操作
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1hrpmw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1)HRPMW控制
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (2）配置HRPWM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)操作方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ②具体配置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4sfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④参数优化软件(SFO)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⑤优化编程代码的HRPWM实例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3hrpwm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.HRPWM寄存器描述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (1）寄存器概述
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2hrpwmhrcnfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （2）HRPWM配置寄存器（HRCNFG)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3acmpahr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (3)计数比较A高精度寄存器(CMPAHR)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4tbphshr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （4）时间基准相位高精度寄存器（TBPHSHR）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="7">第 7 章</h1>
+<h2 id="epwm">增强型脉宽调制模块(ePWM)</h2>
+<p>2000系列的DSP之所以能在电控制领域大放异彩，除了其DSP内核外，更因为其集成了众多适合电检测与控制的外设设备，PWM模块是其中最突出者之，很多电程师就是因为电机控制、电源控制时需要采PWM控制选择使2000系列DSP。</p>
+<h3 id="71-pwm">7.1 PWM控制基本原理</h3>
+<p>PWM（脉冲宽度调制）是英文PulseWidthModulation的缩写，简称脉宽调制。PWM控制技术就是对脉冲宽度进调制的技术，即通过对一系列的脉冲的宽度进调制，来等效地获得所需要的波形。在采样控制理论中有个重要的结论：冲量相等而形状不同的窄脉冲加载到具有惯性的环节上时，其效果基本相同。冲量即指窄脉冲的面积。这里所说的效果基本相同，是指环节的输出响应波形基本相同。如果把输出波形用傅里叶变换分析，则其低频段非常接近，仅在高频段略有差异。例如图7.1（a）、（b）、(c)所示的3个窄脉冲形状不同，其中图7.1（a）为矩形脉冲、图7.1(b)为三角形脉冲、7.1(c)为正弦半波脉冲，但它们的面积(即冲量)都等于1，那么当它们分别加在具有惯性的同个环节上时（如图7.2(a)所），电路输为e(t)，窄脉冲，如图7.1（a）、（b）、（c)、(d）所示，其输出响应基本相同，如图7.2(b)所示，电路输出为i(t)。当窄脉冲变为图7.1(d)的单位脉冲函数δ(t)时，一阶惯性环节的响应即为该环节的脉冲过渡函数。</p>
+<p><img alt="" src="../images/e4bc259af9eb9bb75e2b6e9d330e9a11fe6cd4c8c1aacb0841932dbd772baec9.jpg" /></p>
+<p><img alt="" src="../images/13e29cb253a5fa23872f5b24ea0ff3f4f5990110665b9e97b50e8ecb227c2afe.jpg" /></p>
+<p>(b)</p>
+<p>从输出波形中可以看出，在输出波形的上升段，脉冲形状不同时，输出波形的形状略有不同，但其下降段则乎完全相同。脉冲越窄，各输出波形的差异也越。如果周期性地施加上述脉冲，则响应也是周期性的。用傅里叶级数分解后将可看出，各输出波形在低频段的特性将非常接近，仅在频段上略有差异。面积等效原理是PWM控制技术的重要理论基础。</p>
+<p><img alt="" src="../images/ea25f1a2b86e66b2fe4455252d676c673fcc220bbfec77438dd6d3d752afa566.jpg" /></p>
+<p><img alt="" src="../images/a6da0036453d0ee0c2fff8ff4dbb1e5ff5fea165652b415d881ee8e9c0468d3a.jpg" /></p>
+<p>图7.2冲量相同的各种窄脉冲的响应波形</p>
+<p>前很多电应用都采用的是正弦交流电，下面介绍如何用系列脉冲来代替一个正弦半波。如图7.3（a)所示，把正弦半波分成N等份，就可以把正弦半波看成是由N个彼此相连的脉冲序列所组成的波形。这些脉冲宽度相等，但幅值不等，且脉冲顶部不是水平直线，而是曲线，各脉冲的幅值按正弦规律变化。如果把上述脉冲序列利相同数量的等幅不等宽的矩形脉冲代替，使矩形脉冲的中点和相应的正弦波部分的中点重合，且使矩形脉冲的相应的正弦波部分面积（冲量）相等，就得到图7.3(b)所示的脉冲序列。这就是PWM波形。可以看出，各脉冲的幅值相等，而宽度是按正弦规律变化的。根据面积等效原理，PWM波形和正弦半波是等效的。对于正弦波的负半周，也可以用同样的方法得到PWM波形。像这种脉冲宽度按正弦规律变化而和正弦波等效的PWM波形，也称SPWM(SinusoidalPWM)波形。</p>
+<p>要改变等效输出正弦波的幅值时，只要按照同例系数改变上述各脉冲宽度即可。</p>
+<p>在实际应用中，很多部件内部都有自己的惯性环节（积分器），例如电机本身就是非常理想的低通滤波器，PWM信号的一个很重要的用途就是数字电机控制。在电机控制系统中，PWM信号控制功率开关器件的导通和关闭，从而使得功率器件为电机的绕组提供期望的电流和能量。相电流的频率和能量可以控制电机的转速和转矩，这样提供给电机的控制电流和电压都是调制信号，而且这个调制信号的频率比PWM载波频率要低。采用PWM控制式可以为电机绕组提供良好的谐波电压和电流，避免因为环境变化产生的电磁扰动，并且能够显著提高系统的功率因数。为能够给电机提供具有够驱动能力的正弦波控制信号，可以采用PWM输出信号经过NPN或PNP功率开关管实现，如图7.4所示。</p>
+<p>功率开关管在输出大电流的情况下，若控制开关管工作在线性区，会使系统产生很大的热损耗，降低电源的使用效率，同时开关管也容易过烫超过结温而炸掉，所以般使开关管作在静态切换状态 即饱和与截止两个状态，在该状态下，开关管有较小的功率耗损，且状态稳定，也符合数字控制逻辑对开</p>
+<p>关逻辑的要求。</p>
+<p><img alt="" src="../images/6a4c39e27674f0d645b0b4be3faea272c42e1d337d45b6919b85e4198c3dd145.jpg" /></p>
+<p>图7.3用PWM波代替正弦半波</p>
+<p><img alt="" src="../images/5e6ae4f7a5c848fb3604a7efcf204e1a51a99804fd722468938058b7d1b52be8.jpg" /></p>
+<p>图7.4PWM信号驱动开关管</p>
+<p>PWM波形可分为等幅PWM波和不等幅PWM波两种，微控制器输出的电平一般都是确定的，所以一般调整微控制器输出矩形脉冲的占空比，就可以输出等幅不等宽的PWM波，微控制器输出的PWM波功率有限，主要用来驱动功率开关管。通过对功率开关器件的开关控制，可以输出更大功率、更多形状的PWM波形，将功率开关器件的开关拓扑逻辑组合变化，就可以输出不等幅即多电平的大功率PWM波形。PWM就像大功率DA转换器一样，将数字信号转换为模拟信号，只是PWM是用调制脉宽的方法将数字信号等效替代模拟信号。也可以认为PWM电路就是一类特殊的D/A电路。</p>
+<p>PWM控制一般包括两部分电路，一部分是功率开关管组成的功率电路，另一部分是由微控制器组成的驱动开关管的驱动电路。微控制器产的单周期PWM驱动信号本身很简单，主要包括4个要素，周期、脉宽、脉冲相位、脉冲个数，但是每个周期的脉冲波形的宽度会变化，有时对脉冲的具体相位也有要求，脉冲宽度如何具体调制，这就要根据具体的控制场合以及功率电路进行算法研发，详情要参照PWM控制相关技术，下面主要介绍F28335如何产生最初的这个脉冲波形，并且每个周期的脉冲波形宽度以及具体相位都是可以配置和调整的。</p>
+<p>目前PWM控制技术应用已经极为广泛，在电机拖动、电机控制、整流、逆变、有源电力滤波（APF）、静止无功发生器（SVG）、统一潮流控制器（UPFC）、超导储能（SMES）、LED调光、开关电源等众多领域都有重要应用。</p>
+<h3 id="72f28335pwm">7.2F28335PWM结构及组成单元</h3>
+<p>一个有效的PWM外设能够占用最少的CPU资源和中断，但可以产生灵活配置的脉冲波形，并且可以方便地被理解与使用。单周期的PWM波形很简单，主要就是控制脉冲的周期，脉冲的宽度，脉冲起落的时间，一个周期内的脉冲个数，但事实是产生PWM波形时，要结合实际应用，每个要素都要顾及，需要灵活配置，涉及到强电控制与弱电控制的结合，有一定的难度与技术门槛，需要耐心的探索。</p>
+<p>F28335的ePWM模块是个加强模块，与F2812的PWM模块有较不同，在F2812中，PWM模块采用事件管理器控制，与eCAP和eQEP共享定时器信号，而F28335中每个ePWM模块都是个独的模块，这样的体系结构更便我们使用与理解。每个ePWM模块由两路ePWM输出组成，分别为ePWMxA和ePWMxB，这一对PWM输出，可以配置成两路独立的单边沿PWM输出，或者两路独立的但互相对称的双边沿PWM输出，或者一对双边沿非对称的PWM输出，共有6对这样ePWM模块，因为每对PWM模块中的两个PWM输出均可以单独使用，所以也可以认为有12路单路ePWM，除此之外还有6个APWM,这6个APWM通过CAP模块扩展配置，可以独使用，所以F28335最多可以有18路PWM输出。每组ePWM模块都包含以下7个模块：时基模块TB、计数比较模块CC、动作模块AQ、死区产生模块DB、PWM斩波模块PC、错误联防模块TZ、事件触发模块ET，如图7.5所示。</p>
+<p><img alt="" src="../images/d66edf02c09d5e379670a33c0275748a8e988faa001a4836f6a34bf95fbc1406.jpg" /></p>
+<p>图7.5 PWM组成单元</p>
+<p>每组PWM模块主要的输入输出信号如下，如图7.6所示。</p>
+<p>①PWM输出信号(ePWMxA和ePWMxB);PWM输出引脚与GPIO引脚复，具体配置时要参照GPIO引脚配置。</p>
+<p>②时间基础同步输入（ePWMxSYNCI)和输出（ePWMxSYNCO)信号；同步时钟信号将ePWM各个模块的所有单元联系在一起，每个ePWM模块都可以根据需要被配置为使同步信号，或忽略它的同步输成为独单元。时钟同步输和输出信号仅由ePWM1引脚产生，ePWMl的同步输出也与第一个捕获模块(eCAP1）的同步信号相连接。</p>
+<p>③错误联防信号（TZ1～TZ6）；当外部被控单元符合错误条件时，诸如IGBT等功率器件模块过电压或过电流或过热时，这些输人信号为ePWM模块发出错误警告。每个模块都可以被配置为使或忽略错误联防信号，同时TZ1TZ6可以设置</p>
+<p><img alt="" src="../images/94dbe996dca3f9555628601ca84bcd9632956f012cb113e01eca390ed745a049.jpg" /></p>
+<p>图7.6 PWM模块结构框图</p>
+<p>为GPIO外设的异步输。</p>
+<p>④ADC启动信号（ePWMSOCA和ePWMSOCB);每个ePWM模块都有两个ADC转换启动信号，任何个ePWM模块都可以启动ADC。触发ADC的转换信号的事件由PWM模块中事件触发模块来配置。</p>
+<p>⑤外设总线；外设总线宽度为32位，允许16位和32位数据通过外设总线写ePWM模块寄存器。</p>
+<p>每组ePWM模块支持以下特点：</p>
+<p>专用16位时基计数器，控制输出的周期和频率。</p>
+<p>两个互补对称PWM输出 和 可以配置如下式：</p>
+<p>两个独立的单边沿操作的PWM输出。</p>
+<p>-两个独立的双边沿操作对称的PWM输出。</p>
+<p>－个独的双边沿操作对称的PWM输出。</p>
+<p>软件实现PWM信号异步控制。</p>
+<p>➢可编程的相位控制以支持超前或滞后其余的PWM模块。</p>
+<p>》逐周期硬件同步相位。</p>
+<p>双边沿延时死区控制。</p>
+<p>》可编程错误联防。</p>
+<p>➢产错误时可以强制PWM输出高电平低电平或者是高阻态。</p>
+<p>所有的事件都可以触发CPU中断和ADC开始转换信号。</p>
+<p>高频PWM斩波，用于基于脉冲变压器的门极驱动。</p>
+<p>每组PWM模块的结构原理图如图7.7所示，时钟信号经时基模块TB产时基信号，可以设定PWM波形的周期，通过计数比较模块CC，可以对PWM波形的脉宽进行配置，再由动作模块AQ限定PWM输出状态即脉冲波形的起落，经过死区模块DB，可以将同组内的互补输出PWM波形进边沿延迟，进死区模块及进边沿延迟的原因稍后在死区模块内详细讲述，接着可选择是否进人PWM斩波模块，进第一个脉冲宽度设置和后级脉冲占空比调整以适应基于脉冲变压器的门级驱动控制，若PWM波形输出后，功率器件有错误响应，可以将错误信号引错误联防模块，从而强制复位PWM的输出。也可以通过事件触发模块配置触发一些事件，如ADC转换开始。下面逐一了解这7个模块。</p>
+<p><img alt="" src="../images/95d7603734d45419b1aec719cf32ecff8d7d74567e910b0618c9647cc42731cf.jpg" /></p>
+<p>图7.7 PWM模块的结构原理图</p>
+<h3 id="73-tb">7.3 时基模块TB</h3>
+<p>每个ePWM模块都有一个己的时基单元，用来决定该ePWM模块相关的事件时序，通过同步输信号可以将所有的ePWM工作在同一时基信号下，即所有的ePWM模块级联在一·起，处于同步状态，在需要时，可以看成为一个整体。原理框图如图7.8所示。</p>
+<p><img alt="" src="../images/a0f973c954914a00746945121a58ee9c84112dfed6596aece44e201e5b797a3d.jpg" /></p>
+<p>图7.8 ePWM时基模块在PWM模块中的输入输出连接关系</p>
+<h2 id="1epwm">1.ePWM时基模块作用</h2>
+<p>时基可以通过配置完成以下功能：</p>
+<p>①确定ePWM时基模块的频率或者周期，进一步确定了事件发生的频率。主要是通过配置PWM时基计数器（TBCTR）来标定与系统时钟（SYSCLKOUT）有关的时基时钟的频率或周期。</p>
+<p>②管理ePWM模块之间的同步性。</p>
+<p>③维护ePWM与其他ePWM模块之间的相位关系。</p>
+<p>④设置时基计数器的计数模式。可以工作在向上计数（递增计数）、向下计数（递减计数）、向上下计数模式（先递增后递减计数）。</p>
+<p>⑤产生下列事件：</p>
+<p>：时基计数器的值与周期寄存器的值相同（TBCTR=TB-</p>
+<p>时基计数器的值为 O</p>
+<p>时基计数器按照指定模式进行计数，递增时会达到与周期寄存器的值一致，递减时则会减到最小值0。</p>
+<p>⑥配置时基模块的时钟基准，对系统时钟SYSCLKOUT进分频可以得到时基时钟，通过合理分频系统时钟，计数的时候可以工作在相对较低的频率。1</p>
+<h2 id="2">2.时基模块的关键信号和寄存器</h2>
+<p>表7.1为时基模块相关寄存器。</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>地址</th>
+<th>影子</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TBCTL</td>
+<td>0x0000</td>
+<td>无</td>
+<td>时基控制寄存器</td>
+</tr>
+<tr>
+<td>TBSTS</td>
+<td>0x0001</td>
+<td>无</td>
+<td>时基状态寄存器</td>
+</tr>
+<tr>
+<td>TBPHSHR</td>
+<td>0x0002</td>
+<td>无</td>
+<td>HRPWM扩展相位寄存器</td>
+</tr>
+<tr>
+<td>TBPHS</td>
+<td>0x0003</td>
+<td>无</td>
+<td>时基相位寄存器</td>
+</tr>
+<tr>
+<td>TBCTR</td>
+<td>0x0004</td>
+<td>无</td>
+<td>时基计数寄存器</td>
+</tr>
+<tr>
+<td>TBPRO</td>
+<td>0x0005</td>
+<td>有</td>
+<td>时基周期寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表7.1时基模块寄存器</p>
+<p>时基模块的原理图如图7.9所示，关键信号如下：</p>
+<p>①ePWMxSYNCI：时基同步信号输入。输入脉冲用于时基计数器与之前的eP-WM模块同步，每个ePWM模块可以通过软件配置为使或者忽略此信号。对于第一个ePWM模块，这个信号从外部引脚获得。随后的模块的同步信号可以由其他ePWM模块传递过来。例如第2个模块的同步信号可以从第1个模块的同步信号输出获得，第3个模块由第2个模块产生，以此类推。</p>
+<p>② ：时基同步信号输出。输出脉冲于随后的ePWM的时基计数器同步。ePWM模块产生该信号来源于下列3个事件源中的一件。</p>
+<p>同步输脉冲)。</p>
+<p>，时基计数器等于 0</p>
+<p>，时基计数器等于比较寄存器。</p>
+<p>③CTR=PRD，时基计数器等于指定周期值。无论什么时候当时基计数器的值与激活的周期寄存器(相对于影寄存器而)的值相等的时候，就会产此信号。</p>
+<p>④ ，时基计数器等于0。无论什么时候当时基计数器的值为0的时候，会产生此信号。</p>
+<p>5 ，时基计数器等于比较寄存器。时基计数器的值等于激活的比较寄存器B的时候，会产此信号。该信号由比较计数模块产，用于同步输出逻辑。</p>
+<p><img alt="" src="../images/ae7acb082b8254ca9e22eee143206163d2c09bf3e5aded50b8a64541243e315d.jpg" /></p>
+<p>图7.9ePWM时基模块原理框图</p>
+<p>⑥CTR_dir：时基计数器向。表明时基计数器的计数向，当高电平时，计数器向上计数，低电平时则向下计数。</p>
+<p>⑦CTR_max:时基计数器的值为最值。当时基计数器到最大值时会产此信号。该信号作状态指。</p>
+<p>⑧TBCLK：时基时钟信号。这个信号来源于预分频的系统时钟信号，用于所有的ePWM模块。该信号确定了时基计数器增减的速率。</p>
+<h2 id="3epwm">3.ePWM的周期和频率的计算</h2>
+<p>ePWM的频率是由时基周期寄存器值（TBPRD）和时基计数器的计数模式(TBCTRL)共同决定的。时基计数器的计数模式有向上计数（递增)模式、向下计数（递减)模式、向上-下计数（先递增后递减)模式。下边就以周期寄存器设置为4(TB-PRD=4)举例说明。</p>
+<h2 id="1-">(1)向上-下计数模式(先递增后递减)</h2>
+<p>在此模式下，时基计数器先从0开始向上计数（递增）直到递增到周期寄存器的值4，然后再由4向下计数（递减）直到减到0，再重复以上动作，如图7.10所示。</p>
+<p><img alt="" src="../images/fee13d668ebb6ee00fe3adc40a7aa88a7a8ff74c8827afd349fb5ac3634f916f.jpg" /></p>
+<p>图7.10增减计数模式</p>
+<p>在此种模式下，随着同步信号的来临，时基模块的输出波形有两种情形，需要通过设置相位方向TBCTL[PHSDIR]来确定。如果TBCTL[PHSDIR]=0时，那么当同步信号到来时，对应的输出波形如图7.11所。如果TBCTL[PHSDIR]=1时，那么当同步信号到来时，对应的输出波形如图7.12所示。</p>
+<p><img alt="" src="../images/4e2b0e4867696ad360e3fc02a6a32cec1613d47143840de8ba5ba74c6b51b5f3.jpg" /></p>
+<p>图7.11增减模式下PWM输出波形1</p>
+<p>同步信号来临时，不管目前时基计数器已经到什么值，都将置位为相位寄存器的值，这个作用可以协调各路ePWM模块间的固定相位差，对于先递增后递减模式，同一相位寄存器的值，同时对应着两个段，例如相位值3，既出现在递增的过程中，又出现在递减过程中，通过TBCTL寄存器的PHSDIR位的设置，就可以确定究竟是递增过程还是递减过程中的3。TBCTL[PHSDIR]=1表示为相位寄存器的值是递增过程中的值，TBCTL[PHSDIR]=0时表示为相位寄存器的值是递减过程中的值。当时基计数器的值变化到特定值的时候，特定事件就会产，特定信号就会发出。</p>
+<p><img alt="" src="../images/9df26db8fc6ec3e5305cbf659f393cc8588b492d7b7c51d364ef1ebff4d65759.jpg" /></p>
+<p>图7.12 增减模式下PWM输出波形2</p>
+<p>每个ePWM模块可以通过软件配置使或者忽略同步输信号。如果TBCTL（PHSEN)位被设置为1，那么时基计数器在下面任意两种情况下就会自动加载相位寄存器（TBPHS)的内容。</p>
+<p>①ePWMxSYNCI:同步信号脉冲：当同步信号输脉冲到来的时候，时基计数器就会在时基模块时钟TBCLK的下个边沿自动加载TBPHS的值。</p>
+<p>②软件强制同步信号脉冲：向TBCTL的SWFSYNC位写1后，时基计数器也会在时基模块时钟TBCLK的下一个边沿自动加载TBPHS的值。</p>
+<p>这个特点可以使其中个PWM的时基与其他的PWM模块的时基同步，清除TBCTL[PHSEN]位，可以配置PWM忽略同步输信号。但是同步信号仍然可以通过第一个PWM产生，经过ePWMxSYNCO传递给下面的PWM模块（ePWM2～ePWMx)。</p>
+<p>TBCLKSYNC位可以被来同步在个设备上所有使能的PWM模块。该位是系统时钟使能寄存器的一部分。当TBCLKSYNC=0时，ePWM模块时基时钟停止（默认），TBCLKSYNC=1时，所有的ePWM模块在TBCLK的时钟上升沿到来时同时被启动，为了更好地同步各ePWM模块的TBCLK，每个ePWM模块的预分频系统时钟的时基时钟TBCTL的寄存器都要设置为相同的值。设置ePWM时钟的操作步骤如下：</p>
+<p>①使能各ePWM模块的时钟。</p>
+<p>②设置TBCLKSYNC=0，停止所有已使能的ePWM模块的时基时钟。</p>
+<p>③配置预分频值与ePWM工作模式。</p>
+<p>④设置TBCLKSYNC=1,启动时基时钟。</p>
+<h2 id="2_1">(2)向上计数模式(递增）</h2>
+<p>在此模式下，时基计数器从0开始向上计数，直到递增到周期寄存器的值后，时基计数器会自动复位到0，重复以上动作，如图7.13所示，在此种模式下，随着同步信号的来临，时基模块的输出波形如图7.14所示。</p>
+<p><img alt="" src="../images/801e8c9c0b7dcb3d17bb1b4209c25e40d3ec43264cf55dd260839d5446157a32.jpg" /></p>
+<p>图7.13增计数模式</p>
+<p><img alt="" src="../images/2fd28bffc994811bd999ef2cac52f5c1602e71c4f3b133b0206c0334b7d8e79b.jpg" /></p>
+<p>图7.14增模式下PWM输出波形</p>
+<h2 id="3">(3)向下计数模式（递减）</h2>
+<p>在此模式下，时基计数器首先加载周期寄存器的值，然后开始递减，直到减到0时，自动再加载周期寄存器的值，重复以上动作，如图7.15所示。在此种模式下，随着同步信号的来临，时基模块的输出波形如7.16所。六</p>
+<p><img alt="" src="../images/a6c1ebd5e213aa2e21963ede1d2c06f80282b3613156033e5fa78794374390b3.jpg" /></p>
+<p>图7.15减计数模式</p>
+<h2 id="4">4.影子寄存器</h2>
+<p>在时基模块中有个周期影子寄存器。影子寄存器允许寄存器可以随硬件进同步更新。在ePWM模块中多处出现了影子寄存器，其意义都相仿。影子寄存器是相对于活动</p>
+<p><img alt="" src="../images/9b07161ec9f51c639dcf8eee59eb0d779cf5fdc7cfcac04c566234e80cd9b95c.jpg" /></p>
+<p>图7.16减模式下PWM输出波形</p>
+<p>寄存器而的。</p>
+<p>ActiveRegister（活动寄存器）也就是被激活的寄存器，在工作的寄存器，控制着硬件，可以响应由硬件引起的相关的事件。ShadowRegister（影子寄存器)影子寄存器缓存器相当于为活动寄存器提供了一个暂时的存放地址，不能直接影响硬件的控制，当系统运到一定时候时，影子寄存器的值会传给活动寄存器，这样可以防止由于软件配置寄存器与硬件不同步时出现系统崩溃或些奇怪的故障。</p>
+<p>影子寄存器与活动寄存器的内存地址映射值是一致的，写或者读哪一个寄存器，主要取决于TBCTLPRDLD位。该位可以对TBPRD的影子寄存器进使能或者禁。</p>
+<h2 id="1">（1）时基周期影子寄存器模式</h2>
+<p>当TBCTLPRDLD=0时，TBPRD的影寄存器是使能的，读写TBPRD的映射地址的内容时，会读写影子寄存器。时基模块计数器值为0时，（TBCTR=0x0000)，影子寄存器的值传递给活动寄存器。默认情况下，影子寄存器都是有效的。</p>
+<h2 id="2_2">（2）时基周期立即加载模式</h2>
+<p>当TBCTL[PRDLD]=1时，为即加载模式，读写时基周期寄存器对应的地址时，都是直接到活动寄存器。</p>
+<h3 id="74cc">7.4计数比较模块CC</h3>
+<p>计数比较模块CC的原理框图如图7.17所。</p>
+<h2 id="1_1">1.计数比较模块的作用</h2>
+<p>计数器比较模块是以时基计数器的值作为输，与比较寄存器CMPA和比较寄存器CMPB不断进比较，当时基计数器的值等于其中之一时，就会产生相应的</p>
+<p><img alt="" src="../images/206ce6b80a19a0ca022c3fa56178c5afc8bb374229e6c536152d09d12ac2e855.jpg" /></p>
+<p>图7.17ePWM计数比较模块原理框图</p>
+<p>事件。</p>
+<p>①产比较事件具体取决于编程时是采用寄存器A或者B：</p>
+<p>CTR=CMPA：时基计数器的值与比较寄存器A的值相同。</p>
+<p>CTR=CMPB：时基计数器的值与比较寄存器B的值相同。</p>
+<p>②动作模块AC恰当配置后可以控制PWM的占空比。</p>
+<p>③采用影寄存器来更新比较值可以有效防在PWM周期内出现故障以及毛刺。</p>
+<h2 id="2_3">2.计数器比较模块的关键信号与寄存器</h2>
+<p>CC模块涉及的关键寄存器如表7.2所列。</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>地址</th>
+<th>影子</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMPCTL</td>
+<td>0x0007</td>
+<td>无</td>
+<td>计数比较控制寄存器</td>
+</tr>
+<tr>
+<td>CMPAHR</td>
+<td>0x0008</td>
+<td>有</td>
+<td>HRPWMP计数比较A扩展寄存器</td>
+</tr>
+<tr>
+<td>CMPA</td>
+<td>0x0009</td>
+<td>有</td>
+<td>计数比较A寄存器</td>
+</tr>
+<tr>
+<td>CMPB</td>
+<td>0x000A</td>
+<td>有</td>
+<td>计数比较B寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表7.2 计数器比较模块的关键寄存器</p>
+<p>控制框图如图7.18所示。</p>
+<p>CTR=CMPA：时基计数器的值与CMPA的值相同，PWM可以根据AC动作。</p>
+<p>CTR=CMPB：时基计数器的值与CMPB的值相同时，PWM可以根据AC动作。</p>
+<p>➢CTR=PRD：时基计数器的值与周期寄存器的值相同，PWM可以根据AC动作。CMPA与CMPB可以根据相关影寄存器的值进更新。</p>
+<p><img alt="" src="../images/7dba81e0390b905d1a8bcc03f2d3a500562f888b1cdf93b16657c7d35934f5e8.jpg" /></p>
+<p>图7.18CC模块结构框图</p>
+<p>：时基计数器的值递减到O时，PWM可以根据AC动作。CM-PA与CMPB可以根据相关影子寄存器的值进行更新。器</p>
+<h2 id="3_1">3.计数器比较模块的特点</h2>
+<p>计数器比较模块可以产生两个独立的比较事件，对于向上（递增）或者向下（递减)计数模式来说，在一个PWM周期内，比较事件只发生一次。而对于向上向下（先递增后递减)计数模式来说，如果比较寄存器的值在0～TBPRD之间，在一个PWM周期内，比较事件就会发生两次。这些事件都会直接影响动作模块。</p>
+<p>计数器比较模块比较寄存器CMPA、CMPB各都有个影子寄存器。CMPA影子寄存器通过清除CMPCTL[SHDWAMODE]位使能，CMPB影子寄存器通过清零CMPCTLSHDWBMODE位使能。默认情况下，CMPA和CMPB影子寄存器是使能的。</p>
+<p>若CMPA影子寄存器被使能的话，那么在以下几种情况时，影子寄存器的值会传递到有效寄存器中。</p>
+<p>CTR=PRD：时基计数器值与周期寄存器值相同。</p>
+<p>时基计数器值为0。</p>
+<p>立即加载模式：如果影子寄存器被禁止，就进入立即加载模式，一旦将值写入到CMP寄存器时，这个值直接送到有效寄存器中，立即起作用。</p>
+<h3 id="75-ac">7.5 动作模块AC</h3>
+<blockquote>
+<p>🔧 <strong>交互式学习</strong>：<a href="../../interactive/components/pwm_aq.html">ePWM动作限定模块</a></p>
+</blockquote>
+<p>动作模块在PWM波形形成过程中起到了关键作，它决定了相应事件发时应该输出什么样的电平。动作模块原理框图如图7.19所示。 &lt;ZE1</p>
+<p><img alt="" src="../images/d0447c216e98b37439864f912ed5b65f5b23e7d278ca3485889dc7f4844aab85.jpg" /></p>
+<p>图7.19动作模块框图</p>
+<h2 id="1_2">1.动作模块的作用</h2>
+<p>①动作模块根据下列事件产生动作（置高、拉低、翻转）；</p>
+<p>CTR=PRD：时基模块来的信号，时基计数器的值等于周期寄存器的值。</p>
+<p>CTR=ZERO时基模块来的信号，时基计数器的值等于0。</p>
+<p>CTR=CMPA计数比较模块来的信号，时基计数器的值等于比较寄存器A的值。</p>
+<p>CTR=CMPB计数比较模块来的信号，时基计数器的值等于比较寄存器B的值。</p>
+<p>②管理以上事件发生后PWM的输出极性；</p>
+<p>③ 针对时基计数器递增或者递减时提供独的动作控制。</p>
+<h2 id="2_4">2.动作模块关键信号与寄存器</h2>
+<p>动作模块关键寄存器如表7.3所列。动作模块是基于事件驱动的，图7.20展示了动作模块的输入逻辑和输出动作。动作模块的输入事件如表7.4所列。</p>
+<table>
+<thead>
+<tr>
+<th>寄存器名</th>
+<th>地址偏移</th>
+<th>影子寄存器</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AQCTLA</td>
+<td>0x000B</td>
+<td>无</td>
+<td>ePWMA动作模块控制寄存器</td>
+</tr>
+<tr>
+<td>AQCTLB</td>
+<td>0x000C</td>
+<td>无</td>
+<td>ePWMB动作模块控制寄存器</td>
+</tr>
+<tr>
+<td>AQSFRC</td>
+<td>0x000D</td>
+<td>无</td>
+<td>动作模块软件强制寄存器</td>
+</tr>
+<tr>
+<td>AQCSFRC</td>
+<td>0x000E</td>
+<td>阳 有</td>
+<td>动作模块软件强制持续</td>
+</tr>
+</tbody>
+</table>
+<p>表7.3动作模块的关键寄存器</p>
+<p><img alt="" src="../images/e9d4d5398a1dc02b806d82f7a21e3d8eec6e924851cb0685c0717b63118c15c8.jpg" /></p>
+<p>图7.20 动作模块输入输出</p>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>描述</th>
+<th>寄存器比较</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CTR=PRD</td>
+<td>时基计数器的值等于周期值</td>
+<td>TBCTR=TBPRD</td>
+</tr>
+<tr>
+<td>CTR=Zero</td>
+<td>时基计数器的值等于0            中</td>
+<td>TBCTR=0x0000</td>
+</tr>
+<tr>
+<td>CTR=CMPA</td>
+<td>时基计数器的值等于比较器A的值</td>
+<td>TBCTR=CMPA</td>
+</tr>
+<tr>
+<td>CTR=CMPB</td>
+<td>时基计数器的值等于比较器B的值</td>
+<td>TBCTR=CMPB</td>
+</tr>
+<tr>
+<td>Software forced event</td>
+<td>由软件进行初始化的异步事件</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.4动作模块输入事件</p>
+<p>软件强制是个异步事件，这个控制由AQSFRC和AQCSF两个寄存器处理。动作模块可以控制输出ePWMA和ePWMB的动作。输动作模块的事件也可以被量化，这样就可以控制在递增或递减计数模式时，输出独立的相位。</p>
+<p>ePWMA和ePWMB的动作包括：</p>
+<p>SETHIGH:使ePWMA和ePWMB输出高电平。</p>
+<p>CLEARLOW：使ePWMA和ePWMB输出低电平。</p>
+<p>TOOGLE：当ePWMA或者ePWMB当前状态是低电平时，那么下时刻就是高电平，当ePWMA或者ePWMB当前状态时高电平时，那么下时刻就是低电平。</p>
+<p>DONOTHING：不对ePWM输出做任何改变。但是还是可以产相应的事件触发信号以及相关中断。</p>
+<h2 id="3_2">3.动作模块事件优先级</h2>
+<p>在同一时刻，动作模块可能会收到两个及两个以上的事件时，动作模块如何执呢？在这种情况下，就需要硬件提供事件优先级。优先级1最，优先级7最低。根</p>
+<p>据不同的计数模式，优先级定义不同。向上向下（先递增后递减)计数模式的优先级定义如表7.5所列。</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>假如时基计数器（TBCNTR)在增长TBCNTR=0增加到TBCNTR=TBPRD</th>
+<th>假如时基计数器（TBCNTR）在减少TBCNTR=TBPRD减少到TBCNTR=1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1（最高）</td>
+<td>软件强制</td>
+<td>软件强制</td>
+</tr>
+<tr>
+<td>2</td>
+<td>向上计数时，计数器等于计数比较器B(CBU)</td>
+<td>向下计数时，计数器等于计数比较器B(CBD)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>向上计数时，计数器等于计数比较器A(CAU)</td>
+<td>向下计数时，计数器等于计数比较器A(CAD)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>计数器等于0</td>
+<td>计数器等于周期寄存器值</td>
+</tr>
+<tr>
+<td>5</td>
+<td>向下计数时，计数器等于计数比较器B(CBD)</td>
+<td>向上计数时，计数器等于计数比较器B(CBU)</td>
+</tr>
+<tr>
+<td>6（最低）</td>
+<td>向下计数时，计数器等于计数比较器A（CAD)</td>
+<td>向上计数时，计数器等于计数比较器A(CAU)</td>
+</tr>
+</tbody>
+</table>
+<p>表7.5 动作模块先增后减模式下的事件优先级</p>
+<p>软件强制优先级最高，最低是计数器在增的时候，与比较寄存器A匹配事件。向上计数（递增)模式的优先级如表7.6所列。最高同样是软件强制，最低是计数器减到0事件。表7.7给出了向下（递减)计数模式的优先级。</p>
+<p>最同样是软件强制，最低是计数器与周期寄存器的值匹配事件。</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1（最高）</td>
+<td>软件强制</td>
+</tr>
+<tr>
+<td>2</td>
+<td>计数器等于周期寄存器值（TBPRD）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>向上计数时，计数器等于计数比较器B（CBU)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>向上计数时，计数器等于计数比较器A(CAU)</td>
+</tr>
+<tr>
+<td>5（最低）</td>
+<td>计数器等于0</td>
+</tr>
+</tbody>
+</table>
+<p>表7.6 动作模块递增模式下的事件优先级</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1（最高）</td>
+<td>软件强制</td>
+</tr>
+<tr>
+<td>2</td>
+<td>计数器等于周期寄存器值(TBPRD)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>向下计数时，计数器等于计数比较器B(CBU)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>向下计数时，计数器等于计数比较器A（CAU)</td>
+</tr>
+<tr>
+<td>5（最低）</td>
+<td>计数器等于0</td>
+</tr>
+</tbody>
+</table>
+<p>表7.7动作模块递减模式下的事件优先级</p>
+<h2 id="4_1">4.动作模块一般配置条件下的输出波形</h2>
+<p>PWM波形在通过AC模块后是什么样呢？需要根据时基计数器的作模式来分别讨论。上下计数模式(先递增后递减)的波形图如图7.21所示。在这个模式下占空可以从0～100%变化。当计数器递增到CMPA的值时，PWM输出电平经AC模块被置高，同样，当计数器递减到CMPA时，PWM输出电平被置低。若CM-PA=0时，则PWM信号直输出低电平，占空比为0%，当CMPA=TBPRD时，PWM信号输出高电平，占空比为100%。</p>
+<p>实际使中，如果装载CMPA或CMPB为0时，那么设置CMPA或CMPB的值要于或等于1，如果装载CMPA或CMPB为周期寄存器的值时，那么设置</p>
+<p>CMPA或CMPB的值要小于或等于TBPRD一1，这就意味着，每个PWM周期至少有一个时基时钟周期的脉冲，在系统角度来看，这个周期很短，所以可以忽略。</p>
+<p><img alt="" src="../images/a012110e8b3eb78974483cdab9de9f65ac7b3679187efced6a652e9b1e24d134.jpg" /></p>
+<p>图7.21先递增后递减模式下占空比控制波形图</p>
+<p>具体波形的调整与配置程序如下。</p>
+<p>[例7.1] 单边非对称波形(ePWMxA和ePWMxB独调制，高电平有效）如图7.22所示。</p>
+<p><img alt="" src="../images/da503e60b1aaf4993e1f915219ee50baf9eec2bc6f27adae7b47927a40e30348.jpg" /></p>
+<p>图7.22单边非对称波形(ePWMxA和ePWMxB独立调制，高电平有效）</p>
+<p>注意：</p>
+<p>②CMPA决定ePWMxA的占空比，CMPB决定ePWMxB占空比。</p>
+<p>图7.22的相关配置程序如下：</p>
+<p>[例7.2] 向上计数(递增)单边不对称脉冲波形(ePWMA、ePWMB独调制) 如图7.23所示船.</p>
+<p>与例题7.1程序不一样的地方只在初始化最后部分，如下：</p>
+<p>[例7.3]向上计数（递增）ePWMA独调制，不对称脉冲波形，如图7.24所示。</p>
+<p>图7.24的相关配置程序如下：</p>
+<p>//设定PWM周期为601个TBCLK时钟周期 //比较器A为200个TBCLK</p>
+<p><img alt="" src="../images/a289f37f3103a6b5fcf3a692c547aadd5ee4a93857bf3019467619646fbe4418.jpg" /></p>
+<p>图7.23 向上计数(递增）单边不对称脉冲波形(ePWMA、ePWMB独立调制）</p>
+<p><img alt="" src="../images/39deeecd7b69df2daebc14dac223909a2efee10a4b51cbf80de00a3936b2dd2c.jpg" /></p>
+<p>图7.24向上计数（递增）ePWMA独立调制，不对称脉冲波形</p>
+<p>ePWM1Regs.CMPB=400; //比较器B为400个TBCLK</p>
+<p>ePWM1Regs. TBPHS = 0; //相位寄存器清零</p>
+<p>ePWM1Regs.TBCTR=0; //时基计数器清零</p>
+<p>ePWM1Regs.TBCTL. bit.CTRMODE = TB_UP; //设定为增计数模式</p>
+<p>ePWM1Regs.TBCTL. bit.PHSEN= TB_DISABLE; //禁止相位控制</p>
+<p>ePWM1Regs.TBCTL. bit.PRDLD = TB_SHADOW; //TBPRD寄存器采用影子寄存器模式</p>
+<p>ePWM1Regs.TBCTL.bit.SYNCOSELTB_SYNC_DISABLE;//禁止同步信号</p>
+<p>ePWM1Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1；//设定TBCLK=SYSCLK时基时钟=系统时钟</p>
+<p>ePWM1Regs.TBCTL.bit.CLKDIV = TB_DIV1;</p>
+<p>ePWM1Regs.CMPCTL.bit.SHDWAMODE= CC_SHADOW； //设定CMPA为影子寄存器模式</p>
+<p>ePWM1Regs.CMPCTL.bit.SHDWBMODE = CC_SHADOW;</p>
+<p>ePWM1Regs.CMPCTL.bit.LOADAMODE= CC_CTR_ZERO； //在CTR=Zero时装载</p>
+<p>ePWM1Regs.AQCTLA.bit:CBU=AQ_CLEAR; //CTR=CBU时，将ePWM1A置低</p>
+<p>[例7.4]上下(先递增后递减)计数，双边对称波形,ePWMxA和ePWMxB独立调制，低电平有效，如图7.25所示。</p>
+<p><img alt="" src="../images/70716a458d83d367e0f27bfacbdcea9e2eb816d077876a35d72fe30b63fe47b6.jpg" /></p>
+<p>图7.25上下(先递增后递减)计数双边对称波形ePWMxA和ePWMxB独立调制，低电平有效</p>
+<p>图7.25的相关配置程序如下：</p>
+<p>[例7.5]上下（先递增后递减)计数，双边对称波形,ePWMxA和ePWMxB独立调制，互补型，如图7.26所示。</p>
+<p><img alt="" src="../images/05bac0a7b0d4d5f99cf0bce8ae058638af95b3a1b7e64a2f538fea0a3668209d.jpg" /></p>
+<p>图7.26 上下(先递增后递减)计数双边对称波形ePWMxA和ePWMxB独立调制互补型</p>
+<p>图7.25中程序配置与例7.4不同之处在于比较寄存器的配置，如下所示：</p>
+<p>[例7.6] 递增递减计数，ePWMxA独输出双边不对称波形，如图7.27 所示。</p>
+<p><img alt="" src="../images/182a5d4db7f506e126ef20e3c2f5498842535bfaa4945a8e9d0ef77fd18e0894.jpg" /></p>
+<p>图7.27递增递减计数，ePWMxA独立输出双边不对称波形</p>
+<p>图7.27的相关配置程序如下：</p>
+<p>//初始化</p>
+<h3 id="76db">7.6死区产生模块DB</h3>
+<blockquote>
+<p>🔧 <strong>交互式学习</strong>：<a href="../../interactive/components/pwm_db.html">ePWM死区发生器</a></p>
+</blockquote>
+<h2 id="1_3">1.为什么要产生死区</h2>
+<p>PWM电路通常是一个全桥控制或半桥控制的电路，图7.28是一个典型的三相全桥PWM控制逆变电路原理图。该电路由6个开关管组成，（V1，V4）、（V2，V5）、（V3，V6）三个桥臂，每个开关管都由调制电路产生的PWM波形驱动，PWM波形处于高电平时，开关管导通，处于低电平时关断。显然同一桥臂上的两个开关管不该同时导通，若同时导通，就造成了电源短路。因此输同桥臂上的两个开关管的驱动信号必须要进互补控制，即V1开通，V4须可靠截止。在上节了解到F28335的PWM模块中就可以产互补的PWM对称波形，理想情况下如图7.29所示。</p>
+<p><img alt="" src="../images/4346da938061d1a81efa8e2090f9445844b1c3a0f98575596f021d762745972a.jpg" /></p>
+<p>图7.28三相全桥逆变控制电路</p>
+<p><img alt="" src="../images/0a4b0e2d9b6f14bf94eed0a12993939e50ecb927ce3d45afb506b8690aa503fa.jpg" /></p>
+<p>图7.29V1、V4对称互补波形</p>
+<p>实际情况中没有绝对的理想脉冲波形，所有的数字信号归根到底都是模拟信号，在脉冲形成时，总会有上升时间与下降时间。V1在上升沿时开通，V2在下降沿过程中关断，但若V1开通时，V2尚未有效关断，这时电源就短路了，瞬间电流会很大，会烧坏功率管，这种现象也许会发，也许不会发，因为并不能完全确定每个管子在上升沿时哪个精确时点开通，在下降沿时哪个精确时点会关断，功率管的制造艺总会有定的分散性，关断与开通的准确时间点，也有一定的随机性，这就存在着很大的不确定性，对于成熟设计而言，不确定就是灾难，要尽量避免不确定性，确保同桥臂上的两个管的开通与关断的状态互补。法很简单，就是确保关断的管有效关断，般在个下降沿时间内，管能够有效关断，因此同桥臂上待开通的管子的上升沿只要滞后于另管的下降沿时间即可，这个时间区域，很有可能两个管子都不在导通状态，所以这个时间区域称为死区。死区的存在能够保证有效的关断管，避免两个管同时导通。</p>
+<h2 id="2_5">2.死区产生模块的作用</h2>
+<p>F28335的死区模块主要作用就是让两个互补的对称的PWM波形中，上升沿的发出滞后于PWM波的下降时间发出。在实际编程或者实际情况中更灵活些，有可能管子是低电平状态开通，所以延时的式可以更灵活。在动作限定模块中就可以产死区，但是如果要严苛格控制死区的边沿延时和极性，则需要通过死区模块来实现。</p>
+<p>死区模块的主要功能如下：</p>
+<p>①根据信号ePWMxA输产带死区的信号对(ePWMxA和ePWMxB)，也就是输出对互补PWM输出边沿延时。</p>
+<p>②信号对可编程完成如下操作：</p>
+<p>输出高有效（AH）。</p>
+<p>输出低有效(AL)。</p>
+<p>输出互补高有效（AHC）。</p>
+<p>➢ePWMA\B输出互补低有效(ALC)。</p>
+<p>③加入可编程上升沿延时(RED)。</p>
+<p>④加可编程下降沿延时(FED)。</p>
+<p>⑤可以忽略延时。</p>
+<h2 id="3_3">3.死区模块工作的特点</h2>
+<p>死区模块有两组(ePWMxA与ePWMxB)独的选择机制，如图7.30所示，选择过程中主要有3类选择，如下：</p>
+<p>①输源选择。死区模块的输源来自动作模块输出的ePWMA和ePWMB，通过DBCTL[IN_MODE]位选择输入源。</p>
+<p>ePWMXA是上升沿和下降沿延时的输源，系统默认选择。</p>
+<p>》ePWMXA是上升沿延时的输源、ePWMXB是下降沿延时的输源。</p>
+<p>➢ePWMXA是下降沿延时的输源、ePWMXB是上升沿延时的输源。</p>
+<p>➢ePWMXB是上升沿和下降沿延时的输源。</p>
+<p>②输出模式选择。输出模式选择是通过DBCTL[OUT_MODE]位决定的。</p>
+<p>③极性选择。极性选择是通过DBCTL[POLSEL]位决定的。</p>
+<p>图7.30说明了死区控制的选择机制：</p>
+<p><img alt="" src="../images/c15d7a5aedc4ade563e41312ecba5bbd29799ed7f6b2360aef0771b434700057.jpg" /></p>
+<p>图7.30 死区模块选择输入输出</p>
+<p>表7.8给出了死区共有7种选择模式，图7.31给出了不同模式下的波形输出：</p>
+<p>》模式1：不经过双边沿延时模块，即禁止死区功能。</p>
+<p>模式2～模式5：典型死区应用。</p>
+<p>模式6：不经过上升沿延时模块。</p>
+<p>模式7：不经过下降沿延时模块。</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>Uxh6描述</th>
+<th>DBCTL（POLSEL）S3             S2</th>
+<th>DBCTL（OUT_MODE)S1               SO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>√</td>
+<td>EOWMxA、ePWMxB无延迟</td>
+<td>X              X</td>
+<td>0               0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AHC高电平（延迟）互补</td>
+<td>1                0</td>
+<td>1                1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ALC低电平（延迟）互补</td>
+<td>0                1</td>
+<td>1                1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>AH（高电平有效）</td>
+<td>0                0</td>
+<td>1                1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>AL（低电平有效）</td>
+<td>1                 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ePWMxAOut=ePWMxAIn（无延迟）ePWMxBOut=ePWMxAIn（下降沿延迟）</td>
+<td>0or            or1</td>
+<td>]</td>
+</tr>
+<tr>
+<td>7</td>
+<td>ePWMxAOut=ePWMxAIn（无延迟）ePWMxBOut=ePWMxAIn（下降沿延迟）</td>
+<td>0or              or</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>表7.8死区选择模式部田工区</p>
+<p>综上所述，可以把死区看成是由选择模块和延时模块组成的，其中延时模块又分为上升沿延时模块(RED)和下降沿延时模块(FED)。而且死区还可以分别通过延时寄存器DBRED和DBFED单独编程，从决定延时时间。这两个延时寄存器共有10位有效位数，其值代表对时基时钟的倍数。</p>
+<p><img alt="" src="../images/46cac68d2a53bc12330465fa595931a1c5c248db48845c665f65c1f796a03d4b.jpg" /></p>
+<p>图7.31 死区控制的波形输出</p>
+<h3 id="77-pc">7.7 斩波模块PC</h3>
+<p>PWM斩波器子模块通过高频信号来调制经由动作模块与死区模块产的PWM波形，这个功能在基于脉冲变压器的门极驱动型功率器件控制中很重要。组成框图如图7.32所。</p>
+<p><img alt="" src="../images/446cdea1d2cd1752000b48d3465112eb750c36a52cd09ba096066b3547b9dfcf.jpg" /></p>
+<p>图7.32斩波模块</p>
+<h2 id="1pwm">1.PWM斩波模块的作用</h2>
+<p>PWM斩波模块主要有以下作用：</p>
+<p>①可编程斩波（载波)频率。</p>
+<p>②可编程第1个脉冲的脉宽。</p>
+<p>③可编程第2个以及后面的脉冲占空比。</p>
+<p>④可以禁止使用PWM斩波模块。</p>
+<h2 id="2pwm">2.PWM斩波模块的特点</h2>
+<p>PWM斩波模块原理框图如图7.33所。载波时钟来源于系统时钟SYSCLK-OUT。它的频率和占空比由CHPCTL寄存器中的CHPFREQ和CHPDUTY进配置。一次触发模块(one-shot)子模块主要是提供较大能量的第一个脉冲，迅速有效地开通功率开关，改变功率开关的状态，接下来的脉冲只要维持开关的状态就行，例如多数功率器件开通电流要维持电流得多。单触发模块的第个脉冲的宽度可以由OSHTWTH位来确定。PWM斩波器这一功能模块可以用CHPEN位进使能控制。</p>
+<h2 id="3pc">3.PC模块输出波形</h2>
+<p>图7.34给出了PWM斩波模块作用下的输出波形。</p>
+<p><img alt="" src="../images/2a5f3f3f71c85578ed9520e19f672d3559dd5fee78ef765e898ce46e98d37386.jpg" /></p>
+<p>图7.33PWM斩波模块原理框图</p>
+<p>斩波可以认为是一个降压电路，从上向下，ePWMxA、ePWMxB分别为经过前面动作模块与死区模块后的输出波形，为斩波模块的输波形，中间PSCLK是斩波模块的时钟信号，输入的ePWMxA相当于一个闸门实际是与PSCLK作与运算，得到ePWMxA斩波波形，经斩波后，ePWMxA的占用能量和平均电压均可以通过占空比等设置进调整，对一些功率器件而言，可以降低开通期间的功耗。</p>
+<p><img alt="" src="../images/39cc487b23c917d88acef584ad5a995d789990f807eb85817bcf8cc87d993c89.jpg" /></p>
+<p>图7.34PWM斩波输出波形</p>
+<h2 id="4_2">4.一次脉冲</h2>
+<p>①第1个脉冲的宽度可以通过编程为16种值。第1个脉宽计算值为下式：</p>
+<p>一次脉冲波形如图7.35所示。</p>
+<p>OSHT的波形设置根据首脉冲宽度要求，输入波形与时钟波形进行与运算再与OSHT进行或运算，输出波形与原斩波波形主要差别为首脉冲的宽度得到单独控制，首脉冲的宽度可以根据功率器件的开通特性来设置，以保证功率器件可靠开通。</p>
+<p>②占空比控制。基于脉冲变压器的门极驱动电路的设计需要考虑磁极或者变压器及相关电路的特点，要考虑到变压器饱和的情况。为了满足门极驱动的设计要求，第2个及其余脉冲占空比可以通过编程设置，确保在功率器件开通周期内脉冲有正确的极性与驱动能力。斩波器模块通过对CHPDUTY位编程，可以实现7种不同占空比，占空比可以选择的范围是12.5%~87.5%。占空比的设置要根据驱动电路的要求以及器件的开通特性考虑，如图7.36所示。</p>
+<p><img alt="" src="../images/2a074d5352adc47737d803e3ca19efd38de7da7e6e1bd3b9a8de3c380e70446d.jpg" /></p>
+<p>图7.35-次脉冲波形</p>
+<p><img alt="" src="../images/bf4bc7f7093e7cd45c472153118fd2795b095d3ceca246e538c23411a259c517.jpg" /></p>
+<p>图7.36斩波占空比控制</p>
+<h3 id="78tz">7.8错误联防模块TZ</h3>
+<p>每个ePWM模块都与GPIO多路复用引脚中的6个TZn（TZ1～TZ6）信号脚连接。这些信号脚用来响应外部错误或外部触发条件，当错误发生时，PWM模块可以通过编程来响应这些问题。错误联防模块的位置如图7.37所示阴影部分。</p>
+<p><img alt="" src="../images/36bad5425af72972d43f546ac1129bbf6fd31671f412cf10599f93d37fa9dfcb.jpg" /></p>
+<p>图7.37 错误联防模块</p>
+<h2 id="1_4">1.错误联防模块的作用</h2>
+<p>错误联防模块的主要作用如下：</p>
+<p>①错误联防引脚TZ1～TZ6可以灵活地映射到对应的PWM模块；</p>
+<p>②针对错误信息，ePWMXA和ePWMXB可以被强制或如下几种状态：</p>
+<p>高电平。</p>
+<p>低电平。</p>
+<p>》高阻抗。</p>
+<p>无动作。</p>
+<p>③在短路或者过流条件时，支持次错误联防触发。</p>
+<p>④针对限流操作时，支持周期错误联防触发。</p>
+<p>⑤每个错误联防输引脚都可以配置为次或者周期错误联防触发。</p>
+<p>⑥任何个错误联防引脚都可以产中断。</p>
+<p>⑦支持软件强制错误联防。</p>
+<p>⑧如果不需要此模块，可以选择禁止。</p>
+<h2 id="2_6">2.错误联防模块的操作</h2>
+<p>TZ1~TZ6的输引脚为低有效。当这些引脚中的任意个有效时，表明个错误事件发生，每个PWM模块都可以单独配置为禁止或者使能此错误联防触发引脚。ePWM模块选择哪一个错误引脚是通过TZSEL进行设置的，错误信号可以跟系统时钟同步，也可以不同步，同样具有数字滤波功能，跟GPIO引脚功能一样。个系统时钟的低脉冲输即可以有效触发错误控制逻辑。异步触发确保在系统时钟发错误的情况下，错误引脚仍能够触发错误控制逻辑。其余的配置可以参照GPIO的引脚配置。每个TZn输引脚可以单独配置为一次触发或者周期触发。</p>
+<p>①周期触发：当周期错误联防事件发生时，TZCTL寄存器中的动作立刻输出到ePWMXA和ePWMXB引脚上，另外，周期错误联防事件标志位（TZFLG[CBC]）被置位，同时当TZEINT寄存器和PIE模块的中断使能时，ePWMX_TZINT中断就会产生。</p>
+<p>②单次触发：当单次错误联防事件发时，同样TZCTL寄存器中的动作刻输出到ePWMXA和ePWMXB引脚上，另外单次错误联防事件标志位（TZFLG[OST)被置位，同时当TZEINT寄存器和PIE模块的中断使能时，ePWMX_TZINT中断就会产。</p>
+<p>两种模式触发的区别在于，周期错误联防事件标志可以动清零，但是单次错误联防事件标志需要软件清零。</p>
+<h3 id="79">7.9事件触发模块</h3>
+<p>事件触发模块功能框图位置如图7.38中阴影部分所。</p>
+<p><img alt="" src="../images/244a35b82adde7e585b23a01636e8d1e2bbd1fa5897e1bd036f67ad61793f3e4.jpg" /></p>
+<p>图7.38 事件触发模块</p>
+<h2 id="1_5">1.事件触发模块的作用</h2>
+<p>①接收来自时基模块和计数比较模块产生的相关事件的输入；</p>
+<p>②利用时基模块中的向信息识别是递增还是递减计数模式以便产相应的</p>
+<p>事件。</p>
+<p>③使用预定标判断逻辑发出中断请求或者ADC开始转换启动信号：</p>
+<p>》每个事件。</p>
+<p>》每两个事件。</p>
+<p>每三个事件。</p>
+<p>④允许软件配置，强制产生中断事件或者ADC启动信号。</p>
+<p>事件触发模块主要响应时基模块与计数较模块的相关事件，当这些事件发时，PWM事件触发模块产相应的中断事件或ADC启动事件。事件触发模块的原理框图如图7.39所示。</p>
+<p><img alt="" src="../images/4950445cb0be8259522721b216ff16f0c4af97a2436f2e5d3649954e39d81052.jpg" /></p>
+<p>图7.39事件触发模块框图</p>
+<h2 id="2_7">2.事件触发模块的操作特点</h2>
+<p>每个ePWM模块有个中断请求线连接到PIE，两个ADC启动转换信号与ADC模块相连。如图7.40所。所有的ePWM模块的ADC启动转换信号是起做或运算之后连接到ADC单元的，因此个有效的ADC转换信号可能对应着多个模块，当两个以上ADC转换请求同时发时，实际为一个请求被识别。</p>
+<p>事件触发模块监控各种事件的状态（如图7.41所，左边为事件触发模块的输信号)并且可以在发出中断请求或ADC转换启动之前可以预先进定标配置。事件触发模块预定标逻辑发出中断请求或ADC转换启动有以下3种模式：</p>
+<p>①每个事件。</p>
+<p>②每两个事件。</p>
+<p>③每三个事件。</p>
+<p>图7.42给出了事件触发器中断产逻辑，中断周期(ETPS[INTPRD])位确定请求中断产生的事件数，可以按照如下操作进行选择；</p>
+<p><img alt="" src="../images/cb20db56e29c9182e4e3d5c9f6041dbe3103bb24a083e9c05a42a00d7d13c28a.jpg" /></p>
+<p><img alt="" src="../images/7d1a86dd1d58d903c92001c36616b89cbf140c904e5a226480f82edbf3970a5a.jpg" /></p>
+<p>图7.40事件触发模块ADC启动信号图7.41事件触发模块的事件</p>
+<p>①不产生中断。</p>
+<p>②每个事件产生一次中断。</p>
+<p>③每两个事件产生次中断。</p>
+<p>④每三个事件产生一次中断。</p>
+<p>中断选择（ETSEL[INTSEL]）位设置产生中断的事件，可选事件如下：</p>
+<p>①时间基准计数器等于零（TBCTR=0X0000)。</p>
+<p>②时间基准计数器等于周期值 </p>
+<p>③时间基准计数器在递增计数时等于比较寄存器A。</p>
+<p>④时间基准计数器在递减计数时等于比较寄存器A。</p>
+<p>⑤时间基准计数器在递增计数时等于比较寄存器B。</p>
+<p>⑥时间基准计数器在递减计数时等于较寄存器B。</p>
+<p>通过中断事件计数器（ETPS[INTCNT）寄存器位可以得到事件的数量。当ETPSINTCNT递增计数直到数值等于ERPS(INTPRD)确定的值时，停计数且输出置位，只有当中断发送到PIE时，计数器才会清零。当ETPS[INTCNT]等于ETPS（INTPRD）将发生以下动作：</p>
+<p>①如果中断被使能，ETSEL[INTEN]=1并且中断标志清零，ETFLG[INT]=0，则产生中断脉冲且中断标志位置位，ETFLG（INT)=1，事件计数器清零，ETPS[INTCN]=0，再重新对事件计数。</p>
+<p>②如果中断被禁止，ETSEL[INTEN]=0或者中断标志置位，ETFLG[INT]=1，则当计数器的值等于周期值即ETPS[INTCNT=ETPSINIPRD，计数器停止计数。</p>
+<p>如果中断被使能，但是中断标志已经复位，则计数器将输出高电平直到ETFLG[INT]标志位清零，这就允许当接收个中断时，另个中断进等待。</p>
+<p>INTPRD位写操作时，计数动清零即INTCNT=0并且计数器输出复位（所以没有中断产生）。写1到ETFRC[INT]位，计数器INTCNT将增加。当INTCNT=INTPRD时，计数器将按照上述描述进作。当INTPRD=0时，计数器将被禁，所以不会检测当任何事件并且EIFRC[INT位被忽略。</p>
+<p><img alt="" src="../images/3ead3a43a8fe5ca480da226057604026001f450fb24b147f366f4170c5ccb41d.jpg" /></p>
+<p>图7.42 事件触发模块的中断产生逻辑</p>
+<p>事件触发器产生启动SOCA脉冲的电路如图7.43所示，除了产生连续脉冲外，ETPS[SOCACNT计数器和ETPSSOCAPRD]周期值同上述中断产生逻辑中的计数器和周期寄存器功能相同，所不同的是此模块产生连续的脉冲。当一个脉冲产生时，脉冲标志ETFLG[SOCA]被锁存，但是不会停脉冲的产生。使能/禁位ET-SEL[SOCAEN]于停脉冲的产，但是输事件仍就被继续计数直到其值等于周期寄存器的值。可以通过ETSEL[SOCASEL]和ETSEL[SOCBSEL]位独设置SOCA和SOCB脉冲触发事件。事件触发模块SOCB的产生电路，SOCB产生过程和SOCA相同。</p>
+<p><img alt="" src="../images/d1fada566196c6bb9e44e28c21d7163d7020f3261ce4e5be1be9dda3ceba304b.jpg" /></p>
+<p>图7.43事件触发模块的SOCA产生电路</p>
+<h3 id="710-pwm">7.10 PWM模块寄存器</h3>
+<p>F28335PWM所有的寄存器以及对应的地址如表7.9所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+<th>太小</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TBCTLTBSTSTBPHSHRTBPHSTBCTRTBPRD</td>
+<td>0x68000x68010x6802</td>
+<td>111</td>
+<td>时基控制寄存器时基状态寄存器HRPWM相位扩展寄存器</td>
+</tr>
+<tr>
+<td>0x68020x68030x68040x68050</td>
+<td>11</td>
+<td>HRPWM相位扩展寄存器时基相位寄存器容警立时基计数寄存器业时基周期寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>CMPCTLCMPAHRCMPACMPB</td>
+<td>0x68070x68080x68090x680A</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>计数比较控制寄存器HRPWM计数比较扩展寄存器计数比较寄存器A</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>计数比较寄存器A计数比较寄存器B量</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>AQCTLAAQCTLB</td>
+<td>0x680B0x680C</td>
+<td></td>
+<td>动作控制寄存器A动作控制寄存器B</td>
+</tr>
+<tr>
+<td>AQSFRCAQCSFRC</td>
+<td>0x680D0x680E</td>
+<td>]</td>
+<td>动作软件强制寄存器动作连续软件强制寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>表7.928335PWM相关寄存器</p>
+<p>续表7.9</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+<th>大小</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DBCTLDBREDDBFED</td>
+<td>0x680F0x68100x6811</td>
+<td>111</td>
+<td>死区产生控制寄存器死区产生上升沿延时寄存器死区产生下降沿延时寄存器</td>
+</tr>
+<tr>
+<td>TZSELTZCTLTZEINTTZFLGTZCLRTZFRC</td>
+<td>0x68120x68140x68150x68160x68170x6818</td>
+<td>111</td>
+<td>错误联防选择寄存器错误联防控制寄存器错误联防中断使能寄存器错误联防标志寄存器错误联防清零寄存器错误联防强制寄存器</td>
+</tr>
+<tr>
+<td>ETSELETPSETFLGETCLRETFRC</td>
+<td>0x68190x681A0x681B0x681C0x681D</td>
+<td>1</td>
+<td>事件触发选择寄存器事件触发预分频寄存器事件触发标志寄存器事件触发清零寄存器事件触发软件强制寄存器</td>
+</tr>
+<tr>
+<td>PCCTL</td>
+<td>0x681E</td>
+<td>1</td>
+<td>PWM斩波控制寄存器</td>
+</tr>
+<tr>
+<td>HRCNFG</td>
+<td>0x6820</td>
+<td>1</td>
+<td>HRPWM配置寄存器 AV</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1_6">1.时基模块寄存器</h2>
+<h2 id="1tbprd">（1）时基周期寄存器TBPRD</h2>
+<p>时基周期寄存器TBPRD各位信息如表7.10所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>TBPRD</td>
+<td>0x0000~0xFFFF</td>
+<td>时基周期寄存器：时基计数器周期</td>
+</tr>
+</tbody>
+</table>
+<p>表7.10时基周期寄存器TBPRD</p>
+<h2 id="2tbphs">（2）时基相位寄存器TBPHS</h2>
+<p>时基相位寄存器TBPHS各位信息如表7.11所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>TBPHS</td>
+<td>0x0000~0xFFFF</td>
+<td>时基相位寄存器：时基的相位</td>
+</tr>
+</tbody>
+</table>
+<p>表7.11时基相位寄存器TBPHS</p>
+<h2 id="3tbctr">（3）时基计数寄存器TBCTR</h2>
+<p>时基计数寄存器TBCTR各位信息如表7.12所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>TBCTR</td>
+<td>0x0000~0xFFFF</td>
+<td>时基计数器</td>
+</tr>
+</tbody>
+</table>
+<p>表7.12时基计数寄存器TBCTR</p>
+<h2 id="4tbctl">(4）时基控制寄存器TBCTL</h2>
+<p>时基控制寄存器TBCTL各位信息如表7.13所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~14</td>
+<td>FREE,SOFT</td>
+<td>00011x</td>
+<td>仿真模式位，这些位决定了当仿真事件到来时时基计数器的为当一次时基计数器增或者减后计数器停止当计数器完成一个循环就停止自由运行</td>
+</tr>
+<tr>
+<td>13</td>
+<td>PHSDIR</td>
+<td>01</td>
+<td>相位方向位当时基计数器配置为向上一下模式时，这个位才起作用。这个位决定了当同步信号到来时计数器装载相位寄存器的值后向上还是向下计数。同步信号到来时向下计数同步信号到来时向上计数</td>
+</tr>
+<tr>
+<td>12~10</td>
+<td>CLKDIV</td>
+<td>000001010011100101</td>
+<td>时基时钟分频位这些位决定了时基时钟分频的值TBCLK = SYSCLKOUT/(HSPCLKDIVXCLKDIV)/1（复位后默认值）1214/8/16/32</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>110111</td>
+<td>/64/128                    嘉态基（）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>高速时基时钟分频位这些位决定了时基时钟分频值</td>
+</tr>
+<tr>
+<td>9~7</td>
+<td>HSPCLKDIV</td>
+<td>000001010011100101110111</td>
+<td>TBCLK=SYSCLKOUT/(HSPCLKDIV×CLKDIV)/1                                          s-/2（复位后默认值）/4/618/10/12/14</td>
+</tr>
+<tr>
+<td>s-</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.13 时基控制寄存器TBCTL</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>器国</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>SWFSYNC</td>
+<td>0</td>
+<td>软件强制同步脉冲写0没有效果写1强制一次同步脉冲产生</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5~4</td>
+<td>SYNCOSEL</td>
+<td>00011011</td>
+<td>同步信号输出选择。这些位选择ePWMxSYNCO信号输出源。 $\mathrm { e P W M x S Y N C I }$ CTR=ZERO：当时基计数器值等于0时CTR=CMPA：当时基计数器等于比较寄存器A禁同步信号输出</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PRDLD</td>
+<td>01</td>
+<td>周期寄存器装载影子寄存器选择当计数器的值为O时周期寄存器TBPRD装载影子寄存器的值禁止使用影子寄存器</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PHSEN</td>
+<td>01</td>
+<td>计数寄存器装载相位寄存器使能位禁止装载当同步信号到来时，计数寄存器装载相位寄存器的值</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>CTRMODE</td>
+<td>00011011</td>
+<td>计数模式一般情况下，计数模式只设置一次。如果需要改变模式，那么将会在下一个TBCLK的边沿生效向上计数                                  ViUI,T向下计数向上一下计数停止计数（复位后默认）</td>
+</tr>
+</tbody>
+</table>
+<p>J器奇管空量续表7.13</p>
+<h2 id="5tbsts">(5）时基状态寄存器TBSTS</h2>
+<p>时基状态寄存器TBSTS各位信息如表7.14所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>1241 A022E=2H描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~3</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>CTRMAX</td>
+<td>01</td>
+<td>时基计数器达到最大值OXFFFF时，锁存位置1计数器没有达到最大值计数器达到最大值，写1可以清除此标志位</td>
+<td>2H</td>
+</tr>
+<tr>
+<td></td>
+<td>SYNCI</td>
+<td>01</td>
+<td>同步输锁存状态位没有同步事件发生同步事件发，写1可以清除此标志位</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.14时基状态寄存器TBSTS</p>
+<p>型</p>
+<p>续表7.14</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>CTRDIR</td>
+<td></td>
+<td>时基计数器方向状态位时基计数器当前向下计数时基计数器当前向上计数</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2_8">2.计数比较模块寄存器</h2>
+<h2 id="1acmpa">(1)计数比较寄存器ACMPA</h2>
+<p>计数比较寄存器A各位信息如表7.15所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~0</td>
+<td>CMPA</td>
+<td>计数比较寄存器。CMPA中的值与时基计数器的值一直在比较，当两个寄存器的值相同时，计数比较模块就会产生CTR=CMPA事件，送给动作模块进行相应动作</td>
+</tr>
+</tbody>
+</table>
+<p>表7.15计数比较寄存器CMPA</p>
+<h2 id="2bcmpb">（2）计数比较寄存器BCMPB</h2>
+<p>计数比较寄存器B各位信息如表7.16所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5~0</td>
+<td>CMPB</td>
+<td>计数比较寄存器B。CMPB中的值与时基计数器的值一直在比较，当两个寄存器的值相同时，计数比较模块就会产生CTR=CMPB事件，送给动作模块进行相应动作</td>
+</tr>
+</tbody>
+</table>
+<p>表7.16计数比较寄存器CMPB</p>
+<h2 id="3cmpctl">(3）计数比较控制寄存器CMPCTL</h2>
+<p>计数比较控制寄存器CMPCTL各位信息如表7.17所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~10</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>SHDWBFULL</td>
+<td>01</td>
+<td>CMPB影子寄存器满标志位CMPB影子缓冲寄存器FIFO未满CMPB影缓冲寄存器FIFO已满，CPU写会覆盖当前影子寄存器的值</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>SHDWAFULL</td>
+<td>01</td>
+<td>CMPA影子寄存器满标志位CMPA影子缓冲寄存器FIFO未满CMPA影子缓冲寄存器FIFO已满，CPU写会覆盖当前影子寄存器的值</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.17-计数比较控制寄存器CMPCTL</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>SHDWBMODE</td>
+<td>01</td>
+<td>计数比较B寄存器操作模式影子装载模式：工作在双缓冲下，CPU向影子寄存器写人值立即装载模式：CPU直接向CMPB写入值</td>
+</tr>
+<tr>
+<td>5</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>4</td>
+<td>SHDWAMODE</td>
+<td>01</td>
+<td>计数比较A寄存器操作模式器管夫建子影子装载模式：工作在双缓冲下，CPU向影子寄存器写入值立即装载模式：CPU直接向CMPA写人值</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>00</td>
+<td>CMPB影子装载模式下，装载条件选择模式在CTR=ZERO时</td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>LOADBMODE</td>
+<td>011011</td>
+<td>在CTR=PRD时在CTR=ZERO或CTR=PRD时禁止</td>
+</tr>
+<tr>
+<td></td>
+<td>LOADAMODE</td>
+<td>00011011</td>
+<td>CMPA影子装载模式下，装载条件选择模式在CTR=ZERO时学出甘（5）在CTR=PRD时在CTR=ZERO或CTR=PRD时禁止</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3_4">3.动作模块寄存器</h2>
+<h2 id="1aaqctla">（1）动作控制寄存器AAQCTLA</h2>
+<p>动作控制寄存器AAQCTLA各位信息如表7.18所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~12</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>11~10</td>
+<td>CBD</td>
+<td>00011011</td>
+<td>当向下计数时，时基计数器的值与CMPB寄存器的值相等不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+<tr>
+<td>9~8</td>
+<td>CBU</td>
+<td>00011011</td>
+<td>当向上计数时，时基计数器的值与CMPB寄存器的值相等不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+</tbody>
+</table>
+<p>表7.18动作控制寄存器AAQCTLA</p>
+<p>续表7.18</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7~6</td>
+<td>CAD</td>
+<td>00011011</td>
+<td>当向下计数时，时基计数器的值与CMPA寄存器的值相等不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+<tr>
+<td>5~4</td>
+<td>CAU</td>
+<td>00011011</td>
+<td>当向上计数时，时基计数器的值与CMPA寄存器的值相等不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>PRD</td>
+<td>00011011</td>
+<td>当时基计数器的值与周期寄存器的值相等时动作不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>ZRO</td>
+<td>00011011</td>
+<td>当时基计数器的值等于0时动作不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2baqctlb">(2）动作控制寄存器BAQCTLB</h2>
+<p>动作控制寄存器BAQCTLB各位信息如表7.19所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~12</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>11~10</td>
+<td>CBD</td>
+<td>00011011</td>
+<td>面站当向下计数时，时基计数器的值与CMPB寄存器的值相等不动作清零：使ePWMxB输出低置位：使ePWMxB3输出高翻转：使ePWMx3输出翻转</td>
+</tr>
+<tr>
+<td>9~8</td>
+<td>CBU</td>
+<td>00011011</td>
+<td>当向上计数时，时基计数器的值与CMPB寄存器的值相等不动作清零：使ePWMxB输出低置位：使ePWMxB输出高翻转：使ePWMxB输出翻转</td>
+</tr>
+</tbody>
+</table>
+<p>表7.19动作控制寄存器BAQCTLB</p>
+<p>续表.7.19</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7~6</td>
+<td>公CAD</td>
+<td>00011011</td>
+<td>当向下计数时，时基计数器的值与CMPA寄存器的值相等不动作清零：使ePWMxB输出低置位：使ePWMxB输出高翻转：使ePWMxB输出翻转</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>请5~4</td>
+<td>CAU</td>
+<td>00011011</td>
+<td>当向上计数时，时基计数器的值与CMPA寄存器的值相等不动作清零：使ePWMxB输出低置位：使ePWMxB输出高翻转：使ePWMxB输出翻转</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>PRD</td>
+<td>00011011</td>
+<td>当时基计数器的值与周期寄存器的值相等时动作不动作清零：使ePWMxB输出低置位：使ePWMxB输出高翻转：使ePWMxB输出翻转</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>ZRO</td>
+<td>000110</td>
+<td>当时基计数器的值等于0时动作不动作清零：使ePWMxB输出低置位：使ePWMxB输出高</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>11</td>
+<td>翻转：使ePWMxB输出翻转</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3aqsfrctoah">（3）动作软件强制寄存器AQSFRC皇各TOAH器</h2>
+<p>动作软件强制寄存器AQSFRC的各位信息如表7.20所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th>增量</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>7~6</td>
+<td>RLDCSF</td>
+<td>00011011</td>
+<td>AQCSF有效寄存器装载影子寄存器的条件当计数器值为0                             LR当计数器值为PRD周期寄存器当计数器为O或者为PRD周期寄存器立即加载</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>OTSFB</td>
+<td>01</td>
+<td>一次性软件强制ePWMxB输出没有任何效果初始化一次性软件强制信号</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.20动作软件强制寄存器AQSFRC</p>
+<p>续表7.20</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4~3</td>
+<td>ACTSFB</td>
+<td>00011011</td>
+<td>当一次性软件强制B输出被调用时的动作不动作清零：使ePWMxB输出低置位：使ePWMxB输出高翻转：使ePWMxB输出翻转</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OTSFA</td>
+<td>01</td>
+<td>一次性软件强制ePWMxA输出没有任何效果初始化一次性软件强制信号</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>ACTSFA</td>
+<td>00011011</td>
+<td>当一次性软件强制A输出被调用时的动作不动作清零：使ePWMxA输出低置位：使ePWMxA输出高翻转：使ePWMxA输出翻转</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4aqcsfrc">（4）动作连续软件强制寄存器AQCSFRC</h2>
+<p>动作连续软件强制寄存器AQCSFRC各位信息如表7.21所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>月描述 20联</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3~2</td>
+<td></td>
+<td>51.133</td>
+<td>连续软件强制B输出 ES 在立即装载模式下，连续软件强制发生在下一个TBCLK边沿</td>
+</tr>
+<tr>
+<td>CSFB</td>
+<td></td>
+<td>在影子装载模式下，连续强制发生在装载后的下一个TBCLK边沿</td>
+<td></td>
+</tr>
+<tr>
+<td>00 01</td>
+<td>强制无效 1k</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10 11</td>
+<td>强制B输出为低 强制B输出为高 （）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>CSFA</td>
+<td>月</td>
+<td>软件强制禁止 连续软件强制A输出</td>
+</tr>
+<tr>
+<td></td>
+<td>在立即装载模式下，连续软件强制发生在下一个TBCLK边沿 在影子装载模式下，连续强制发生在装载后的下一个TBCLK边沿</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>00</td>
+<td>强制无效</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>01 10</td>
+<td>强制A输出为低 强制A输出为高</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.21 动作连续软件强制寄存器AQCSFRC</p>
+<h2 id="4_3">4.死区模块寄存器</h2>
+<h2 id="_1">器</h2>
+<h2 id="1dbctl">（1）死区控制寄存器DBCTL</h2>
+<p>死区控制寄存器DBCTL各位信息如表7.22所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~6</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>5~4</td>
+<td>IN_MODE</td>
+<td>00011011</td>
+<td>死区模块输人控制ePWMxA是双边沿延时输入源ePWMxB是上升沿延时输入源，ePWMxA是下降沿输入源ePWMxA是上升沿延时输源，ePWMxB是下降沿输源ePWMxB是双边沿延时输入沿</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>POSEL</td>
+<td>00011011</td>
+<td>极性选择控制ePWMxA和ePWMxB都不翻转ePWMxA翻转，ePWMxB不翻转ePWMxA不翻转,ePWMxB翻转ePWMxA和ePWMxB都翻转</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>OUT_MODE</td>
+<td>00011011</td>
+<td>死区模块输出控制ePWMxA和ePWMxB不经过死区模块禁止上升沿延时，使能下降沿延时代限美新禁止下降沿延时，使能上升沿延时使能双边沿延时</td>
+</tr>
+</tbody>
+</table>
+<p>表7.22死区控制寄存器DBCTL</p>
+<h2 id="2dbred">（2）死区上升沿延时寄存器DBRED</h2>
+<p>死区上升沿延时寄存器DBRED的各位信息如表7.23所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~10</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>9~0</td>
+<td>DEL</td>
+<td>0~1023</td>
+<td>上升沿延时计数器，10位</td>
+</tr>
+</tbody>
+</table>
+<p>表7.23死区上升沿延时寄存器DBRED</p>
+<h2 id="3dbfed">（3）死区下降沿延时寄存器DBFED)</h2>
+<p>死区下降沿延时寄存器DBFED各位信息如表7.24所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~10</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>9~0</td>
+<td>DEL</td>
+<td>0~1023</td>
+<td>下升沿延时计数器，10位</td>
+</tr>
+</tbody>
+</table>
+<p>表7.24死区下降沿延时寄存器DBFED</p>
+<h2 id="5">5.斩波模块寄存器</h2>
+<p>斩波控制寄存器PCCTL的各位信息如表7.25所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~11</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>000001</td>
+<td>斩波时钟占空比占空比=1/8占空比=2/8</td>
+</tr>
+<tr>
+<td>10~8</td>
+<td>CHPDUTY</td>
+<td>010011100101110111</td>
+<td>占空比=3/8占空比=4/8占空比=5/8占空比=6/8占空比=7/8保留</td>
+</tr>
+<tr>
+<td>7~5</td>
+<td>CHPFREQ</td>
+<td>000001010011100101110111</td>
+<td>斩波时钟频率分频系数不分频2分频3分频4分频5分频6分频7分频8分频</td>
+</tr>
+<tr>
+<td>4~1</td>
+<td>OSHTWTH</td>
+<td>0000000100100011010001010110011110001001101010111100110111101111</td>
+<td>第一个脉冲宽度1XSYSCLKOUT/82×SYSCLKOUT/83×SYSCLKOUT/84XSYSCLKOUT/85XSYSCLKOUT/86XSYSCLKOUT/87XSYSCLKOUT/8</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8XSYSCLKOUT/89XSYSCLKOUT/810×SYSCLKOUT/811XSYSCLKOUT/812XSYSCLKOUT/813×SYSCLKOUT/814XSYSCLKOUT/815XSYSCLKOUT/816XSYSCLKOUT/8</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>CHPEN</td>
+<td>01</td>
+<td>PWM斩波使能位禁止斩波功能使能斩波功能</td>
+</tr>
+</tbody>
+</table>
+<p>表7.25 斩波控制寄存器PCCTL</p>
+<h2 id="6">6.错误联防模块寄存器</h2>
+<h2 id="1tzsel">（1）错误联防选择寄存器TZSEL</h2>
+<p>错误联防选择寄存器TZSEL各位信息如表7.26所列。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~14</td>
+<td>保留</td>
+<td>中</td>
+<td>保留</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>13</td>
+<td>OSHT6</td>
+<td>01</td>
+<td>one-short错误联防6选择（TZ6)单次触发联防禁止TZ6one-short错误联防功能使能TZ6one-short错误联防功能</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>12</td>
+<td>OSHT5</td>
+<td>元01</td>
+<td>禁止TZ5one-short错误联防功能使能TZ5one-short错误联防功能</td>
+<td>one-short错误联防5选择（TZ5）单次触发联防禁止TZ5one-short错误联防功能使能TZ5one-short错误联防功能</td>
+</tr>
+<tr>
+<td></td>
+<td>11</td>
+<td>OSHT4</td>
+<td>01</td>
+<td>one-short错误联防4选择（TZ4）单次触发联防禁止TZ4one-short错误联防功能使能TZ4one-short错误联防功能</td>
+<td></td>
+</tr>
+<tr>
+<td>(cid:)</td>
+<td>10</td>
+<td>OSHT3</td>
+<td>01</td>
+<td>禁止TZ3oneshort错误联防功能使能TZ3one-short错误联防功能</td>
+<td>one-short错误联防3选择（TZ3）单次触发联防禁止TZ3oneshort错误联防功能使能TZ3one-short错误联防功能</td>
+</tr>
+<tr>
+<td>(cid:)</td>
+<td>9</td>
+<td>OSHT2</td>
+<td>01</td>
+<td>禁止TZ2one-short错误联防功能使能TZ2one-short错误联防功能</td>
+<td>one-short错误联防2选择（TZ2）单次触发联防禁止TZ2one-short错误联防功能使能TZ2one-short错误联防功能</td>
+</tr>
+<tr>
+<td>(cid:)</td>
+<td>8</td>
+<td>OSHT1</td>
+<td>01</td>
+<td>one-short错误联防1选择（TZ1）单次触发联防禁止TZlone-short错误联防功能使能TZlone-short错误联防功能</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>7~6</td>
+<td>保留</td>
+<td>3</td>
+<td>保留</td>
+<td></td>
+</tr>
+<tr>
+<td>(cid:)</td>
+<td>5</td>
+<td>CBC6</td>
+<td>-01</td>
+<td>CBC错误联防6选择（TZ6）周期触发联防禁止TZ6CBC错误联防功能使能TZ6CBCt错误联防功能</td>
+<td></td>
+</tr>
+<tr>
+<td>cid:)</td>
+<td>4</td>
+<td>CBC5</td>
+<td>01</td>
+<td>CBC错误联防5选择（TZ5)周期触发联防禁止TZ5CBC错误联防功能使能TZ5CBCt错误联防功能</td>
+<td></td>
+</tr>
+<tr>
+<td>cid:)</td>
+<td>3</td>
+<td>CBC4</td>
+<td>01</td>
+<td>CBC错误联防4选择（TZ4）周期触发联防禁止TZ4CBC错误联防功能使能TZ4CBCt错误联防功能</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.26 错误联防选择寄存器TZSEL</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述中洋员</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>CBC3</td>
+<td>01</td>
+<td>CBC错误联防3选择（TZ3）周期触发联防禁止TZ3CBC错误联防功能使能TZ3CBCt错误联防功能</td>
+</tr>
+<tr>
+<td>1</td>
+<td>CBC2</td>
+<td>0</td>
+<td>CBC错误联防2选择（TZ2）周期触发联防禁止TZ2CBC错误联防功能使能TZ2CBCt错误联防功能</td>
+</tr>
+<tr>
+<td>0</td>
+<td>CBC1</td>
+<td>01</td>
+<td>CBC错误联防1选择（TZ1）周期触发联防禁止TZ1CBC错误联防功能使能TZ1CBCt错误联防功能</td>
+</tr>
+</tbody>
+</table>
+<p>续表7.26（）</p>
+<h2 id="2tzctl">(2）错误联防控制寄存器TZCTL</h2>
+<p>错误联防控制寄存器TZCTL各位信息如表7.27所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>资所描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td></td>
+<td>3~2</td>
+<td>TZB</td>
+<td>00011011</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>TZA</td>
+<td>00011011</td>
+<td>当错误事件发生的时候，此位决定了ePWMxA的输出状态高阻状态强制ePWMxA高状态强制ePWMxA低状态不起作用</td>
+</tr>
+</tbody>
+</table>
+<p>表7.27错误联防控制寄存器TZCTL</p>
+<h2 id="3tzeint">（3）错误联防中断使能寄存器TZEINT</h2>
+<p>错误联防中断使能寄存器TZEINT各位信息如表7.28所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>管政描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~3</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OST</td>
+<td>01</td>
+<td>禁止ONE-SHORT中断使能ONE-SHORT中断</td>
+</tr>
+<tr>
+<td>1</td>
+<td>CBC</td>
+<td>01</td>
+<td>禁止CBC中断使能CBC中断</td>
+</tr>
+<tr>
+<td>0</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表728错误联防中断使能寄存器TZEINT</p>
+<h2 id="4tzflg">（4）错误联防中断标志寄存器TZFLG</h2>
+<p>错误联防中断使能寄存器TZFLG各位信息如表7.29所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~3</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OST</td>
+<td>0</td>
+<td>没有ONE-SHORT事件产生表明ONE-SHORT事件产生</td>
+</tr>
+<tr>
+<td>1</td>
+<td>CBC  AN</td>
+<td>01</td>
+<td>没有CBC事件产生表明CBC事件产生</td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>01</td>
+<td>表明没有中断事件产生表明中断事件产生</td>
+</tr>
+</tbody>
+</table>
+<p>表7.29错误联防中断标志寄存器TZFLG</p>
+<h2 id="5tzclr">(5）错误联防中断清除寄存器TZCLR</h2>
+<p>错误联防中断清除寄存器TZCLR各位信息如表7.30所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~3</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>OST</td>
+<td>01</td>
+<td>单次触发清除标志位没有效果清除OST事件标志位</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>CBC</td>
+<td>01</td>
+<td>周期触发清除标志位没有效果清除CBC事件标志位</td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>01</td>
+<td>全局中断清除标志位没有效果清除中断标志位</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.30错误联防中断清除寄存器TZCLR</p>
+<h2 id="6tzfrc">（6）错误联防中断强制寄存器TZFRC</h2>
+<p>错误联防中断强制寄存器TZFRC各位信息如表7.31所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~3</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>2</td>
+<td>OST</td>
+<td>01</td>
+<td>通过软件强制单次触发没有效果强制置OST事件标志位</td>
+</tr>
+</tbody>
+</table>
+<p>表7.31错误联防中断强制寄存器TZFRC</p>
+<p>续表7.31</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CBC</td>
+<td>01</td>
+<td>通过软件强制周期触发没有效果强制置CBC事件标志位</td>
+</tr>
+<tr>
+<td>0</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7_1">7.事件触发模块寄存器</h2>
+<h2 id="1etsel">（1）事件触发选择寄存器ETSEL</h2>
+<p>事件触发选择寄存器ETSEL的各位信息如表7.32所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>SOCBEN</td>
+<td>01</td>
+<td>使能ePWMxSOCB信号产生位禁止ePWMxSOCB信号产生使能ePWMxSOCB信号产生</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>000001</td>
+<td>ePWMxSOCB信号产生条件保留当TBCTR=0时</td>
+</tr>
+<tr>
+<td>14~12</td>
+<td>SOCBSEL</td>
+<td>010011100101110111</td>
+<td>当TBCTR=TBPRD时保留当TBCTR=CMPA，且向上计数时当TBCTR=CMPA，且向下计数时当TBCTR=CMPB，且向上计数时当TBCTR=CMPB，且向下计数时</td>
+</tr>
+<tr>
+<td>11</td>
+<td>SOCAEN</td>
+<td>01</td>
+<td>使能ePWMxSOCA信号产生位禁止ePWMxSOCA信号产生使能ePWMxSOCA信号产生</td>
+</tr>
+<tr>
+<td>10~8</td>
+<td>SOCASEL</td>
+<td>000001010011100101110111</td>
+<td>ePWMxSOCA信号产生条件保留当TBCTR=0时当TBCTR=TBPRD时保留当TBCTR=CMPA，且向上计数时当TBCTR=CMPA，且向下计数时当TBCTR=CMPB，且向上计数时当TBCTR=CMPB，且向下计数时</td>
+</tr>
+<tr>
+<td>7~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表7.32事件触发选择寄存器ETSEL</p>
+<p>续表7.32</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>INTEN</td>
+<td>0题</td>
+<td>使能ePWM中断产生位禁止中断使能中断器证</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>雷租</td>
+<td></td>
+</tr>
+<tr>
+<td>2~0</td>
+<td>INTSEL</td>
+<td>000001010011100101</td>
+<td>ePWM中断选择条件保留               器容央书事当TBCTR=0时当TBCTR=TBPRD时容释（保留                   当TBCTR=CMPA，且向上计数时当TBCTR=CMPA，且向下计数时</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>110111</td>
+<td>当TBCTR=CMPB，且向上计数时当TBCTR=CMPB，且向下计数时</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2etps">(2）事件触发分频寄存器ETPS</h2>
+<p>事件触发分频寄存器ETPS的各位信息如表7.33所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th></th>
+<th>描述</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>SOCBCNT</td>
+<td>$000121011</td>
+<td>这些位对产生ePWMxSOCB条件事件进行计数没有事件发生有1次事件发生有2次事件发生有3次事件发生</td>
+<td>这些位对产生ePWMxSOCB条件事件进行计数</td>
+<td>S1</td>
+<td></td>
+</tr>
+<tr>
+<td>14~12</td>
+<td>SOCBPRD</td>
+<td>00011011</td>
+<td>ePWMxSOCB信号产生条件禁止SOCB事件计数器</td>
+<td>在第1个事件时，产生SOC信号：SOCBCNT=01在第2个事件时，产生SOC信号：SOCBCNT=10在第3个事件时，产生SOC信号：SOCBCNT=11</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11~10</td>
+<td>SOCACNT日</td>
+<td>胡日000110日11</td>
+<td>这些位对产生ePWMxSOCA条件事件进行计数没有事件发生有1次事件发生有2次事件发生有3次事件发生</td>
+<td>这些位对产生ePWMxSOCA条件事件进行计数</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.33 事件触发分频寄存器ETPS</p>
+<p>续表7.33</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9~8</td>
+<td>SOCAPRD</td>
+<td>00011011</td>
+<td>ePWMxSOCA信号产生条件禁止SOCA事件计数器在第1个事件时，产生SOC信号：SOCACNT=01在第2个事件时，产生SOC信号：SOCACNT=10在第3个事件时，产生SOC信号：SOCACNT=11</td>
+</tr>
+<tr>
+<td>7~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3~2</td>
+<td>INTCNT</td>
+<td>00011011</td>
+<td>这些位对产生ePWM中断事件进行计数没有事件发生有1次事件发生有2次事件发生有3次事件发生</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>INTPRD</td>
+<td>000110</td>
+<td>中断产生条件器喜管盟越书禁止中断事件计数器在第1个事件时，产生SOC信号：SOCBCNT=01在第2个事件时，产生SOC信号：SOCBCNT=10在第3个事件时，产生SOC信号：SOCBCNT=11</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>11</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3etflg">（3）事件触发标志寄存器ETFLG</h2>
+<p>事件触发标志寄存器ETFLG的各位信息如表7.34所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SOCB</td>
+<td>01</td>
+<td>ADC转换启动信号BePWMxSOCB事件发生标志位没有ePWMxSOCB事件发生有ePWMxSOCB事件产生</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SOCA</td>
+<td>0</td>
+<td>ADC转换启动信号AePWMxSOCA事件发生标志位没有ePWMxSOCA事件发生</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>1</td>
+<td>有ePWMxSOCA事件产强制置CBC事件标志位</td>
+</tr>
+<tr>
+<td>1</td>
+<td>保留</td>
+<td>H</td>
+<td>保留M顺手手</td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>01</td>
+<td>ePWM中断标志位没有中断事件产生有中断事件产生                    如自处实</td>
+</tr>
+</tbody>
+</table>
+<p>表7.34事件触发标志寄存器ETFLG</p>
+<h2 id="4etclr">（4）事件触发清除寄存器ETCLR</h2>
+<p>事件触发清除寄存器ETCLR的各位信息如表7.35所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SOCB</td>
+<td>01</td>
+<td>ADC转换启动信号BePWMxSOCB标志清除位没有效果清除SOCB标志位</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SOCA</td>
+<td>01</td>
+<td>ADC转换启动信号AePWMxSOCA标志清除位没有效果清除SOCA标志位</td>
+</tr>
+<tr>
+<td>1</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>01</td>
+<td>ePWM中断标志清除位没有效果清除中断标志位</td>
+</tr>
+</tbody>
+</table>
+<p>表7.35事件触发清除寄存器ETCLR</p>
+<h2 id="5etfrc">（5）事件触发强制寄存器ETFRC</h2>
+<p>事件触发强制寄存器ETFRC的各位信息如表7.36所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SOCB</td>
+<td>0</td>
+<td>SOCB强制位没有效果强制置位SOCB标志位，用于测试目的</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SOCA</td>
+<td>01</td>
+<td>SOCA强制位没有效果强制置位SOCA标志位，用于测试目的</td>
+</tr>
+<tr>
+<td>1</td>
+<td>保留</td>
+<td></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>0</td>
+<td>INT</td>
+<td>1</td>
+<td>INT强制位没有效果强制置位中断标志位，用于测试目的</td>
+</tr>
+</tbody>
+</table>
+<p>表7.36事件触发强制寄存器ETFRC</p>
+<h3 id="711pwm">7.11手把手教你实现PWM输出</h3>
+<h2 id="1_7">1.实验目的</h2>
+<p>①掌握F28335PWM输出设置。</p>
+<p>②掌握PWM原理。</p>
+<h2 id="2_9">2.实验主要步骤</h2>
+<p>①先打开已经配置好的CCS3.3软件。</p>
+<p>②接着连接仿真器的USB与计算机，将仿真器的另端JTAG端插到YX-F28335开发板的JTAG针处。</p>
+<p>③在CCS中选择Debug→Connect菜单项，连接标板，确定标板连接成功。</p>
+<p>④将PWM录复制到CCS开发环境中的Myproject录下。</p>
+<p>⑤在CCS菜单栏选择 project→Open菜单项，加载PWM录中的PWM,pjt。</p>
+<p>⑥在CCS菜单栏选择 FileLoad Program菜单项，加载Debug目录下的PWM.out。</p>
+<p>⑦在CCS菜单栏选择Debug→Run，之后打开示波器，将示波器的地线接到开发板的地线端，另一端接到YX-F28335开发板J5的第1脚；将会从示波器上看见如图7.44所示的方波，通过示波器查看PWM的频率应该是10kHz。</p>
+<p><img alt="" src="../images/a27b5f695443a3f5e96aa17e0b711117794d2d297ebe1e575b30714c88faed87.jpg" /></p>
+<p>图7.44PWM波形示意</p>
+<h2 id="3_5">3.实验原理说明</h2>
+<p>实验中，需要产对互补对称，死区为0，频率为10kHz，占空比为50%的PWM波形。</p>
+<p>首先规定计数模式为增减计数。</p>
+<p>①根据实验要求首先要确定周期寄存器的值。</p>
+<p>系统时钟为150MHz,那么周期寄存器的值PRD=SYSCLKOUT/Fpwm×2；</p>
+<p>即PRD=150000000/10000×2=7500;</p>
+<p>将此值送给时基周期寄存器TBPRD。</p>
+<p>②其次要确定比较寄存器的值。由于占空比为50％，那么只需要将比较寄存器的值设为周期寄存器的值半，就可以保证占空比为50%，即CMPA=7500/2=3750。</p>
+<p>以下是程序举例：</p>
+<p>先是PWM输出引脚GPIO需要进如下所的配置：</p>
+<p>PWM初始化设置如下所示：</p>
+<h2 id="4_4">4.实验观察与思考</h2>
+<p>①如何产20kHz频率的PWM?</p>
+<p>②如何产生占空比为1/3的PWM?</p>
+<p>③如何产生SPWM?</p>
+<h3 id="712hrpwm">7.12高精度脉宽调制模块(HRPWM)</h3>
+<h2 id="1_8">1.高精度脉宽调制模块概述</h2>
+<p>PWM控制的时候，系统频率一定，随着PWM开关频率的提高，PWM的精度会下降，为了提高PWM的精度，可以采用高精度脉宽调制模块（HRPWM）。当CPU工作频率为100MHz时，若PWM频率高于200kHz，PWM控制精度会下降到910位，这时就应采用HRPWM来提高精度。HRPWM的关键特征如下：</p>
+<p>①提高PWM时间控制精度。</p>
+<p>②可采用占空比和相移两种控制方法。</p>
+<p>③采用比较寄存器与相位控制寄存器的扩展功能，实现更精确的时间间隔控制与边沿位置控制。</p>
+<p>④A信号作用在PWM路径上，例如作用在ePWMxA输出上,ePWMxB依然可工作在常规模式。</p>
+<p>⑤自检诊断软件模式，可检查边沿位置的逻辑是否运在最优状态。</p>
+<p>ePWM外设功能相当于个数模转换器（DAC)，如图7.45所示，当TsYSCLKOUT=10ns,（即时钟频率为100MHz），对传统的PWM来说，有效精度取决于PWM输出频率（或周期）和系统时钟。</p>
+<p><img alt="" src="../images/6db5d3794719feebb7548575c57881a8287f6f9fd83b27ef26c3d298d8e5f491.jpg" /></p>
+<p>PWM（精度% </p>
+<p>图7.45PWM的精度计算</p>
+<p>在PWM模式下，输出高频率的PWM时不能提供足够的精度，就应考虑采用HRPWM。表7.37为PWM与HRPWM在同样系统频率的情况下的精度对比，假定一个MEP步长为180pS。</p>
+<table>
+<thead>
+<tr>
+<th>PWM频率/kHz</th>
+<th>一般精度（PWM)</th>
+<th>高精度HRPWM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>位</td>
+<td>1%</td>
+</tr>
+<tr>
+<td>20</td>
+<td>12.3</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>50</td>
+<td>11.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>100</td>
+<td>10.0</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>150</td>
+<td>9.4</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>200</td>
+<td>9.0</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>250</td>
+<td>8.6</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>500</td>
+<td>7.6</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>6.6</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>1500</td>
+<td>6.1</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>2000</td>
+<td>5.6</td>
+<td>2.0</td>
+</tr>
+</tbody>
+</table>
+<p>表7.37PWM和HRPWM的精度对比</p>
+<p>每个应用程序可能会有所不同，但典型的低频PWM工作模式（低于250kHz）般不需要HRPWM。HRPWM的能适于需要采频PWM输出系统的电源转换技术中，例如：单相或多相降压、升压和反激变换器，相移式全桥变换器等。</p>
+<h2 id="2_10">2.高精度脉宽调制模块的操作</h2>
+<p>HRPWM是基于微边沿定位（MicroEdgePositional,MEP)技术。MEP逻辑通过对常规的PWM发器的原始时钟进细分，从而可以进更精确的边沿定位。时间步长可达150ps的数量级，时间步长的数量级要看特定设备的数据手册。HRPWM也有自检软件诊断模式，用以检查微边沿定位(MEP)逻辑是否运在最优模式。</p>
+<p>图7.46展示了原始系统时钟与MEP边沿定位的关系，其中MEP调整步长通过比较器A扩展寄存器（CMPAHR)中的8位设置位进行配置。</p>
+<p><img alt="" src="../images/4b64dc7f9ab039d208df67676be2f49a97df909d16d241175ec8b9245507fb45.jpg" /></p>
+<p>图7.46采用MEP的操作逻辑</p>
+<p>要产生HRPWM信号，与常规PWM一样，在给定频率和极性下，要配置TBM、CCM和AQM寄存器，除此之外，还要配置HRPWM寄存器以扩展精度。</p>
+<p>HRPWM操作相关寄存器寄存器如表7.38所列。</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>地址偏移</th>
+<th>是否映射</th>
+<th>功能描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TBPHSHR</td>
+<td>0x0002</td>
+<td>否</td>
+<td>HRPWM相位（8位）扩展寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>CMPAHR</td>
+<td>0x0008</td>
+<td>是</td>
+<td>HRPWM占空比（8位）扩展寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>HRCNFG</td>
+<td>0x0020</td>
+<td>是</td>
+<td>HRPMW配置寄存器</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.38 HRPWM寄存器</p>
+<h2 id="1hrpmw">(1)HRPMW控制</h2>
+<p>HRPWM的MEP由两个8位扩展寄存器控制。这两个HRPWM寄存器联合控制PWM操作的16位TBPHS和CMPA寄存器形成2个32位的寄存器。如图7.47所示。</p>
+<p>TBPHSHR 时间基准相位精度寄存器。</p>
+<p>CMPAHR-计数比较器A高精度寄存器。</p>
+<p><img alt="" src="../images/b51cb7596cc685f6e4be04059d7440781fa23cb54a6d2c85d67dc6c3e5747f3e.jpg" /></p>
+<p>图7.47HRPWM扩展寄存器和存储空间配置</p>
+<p>经过扩展后，采用通道A的PWM信号通道便可实现HRPWM控制。图7.48给出了HRPWM与8位扩展寄存器的接逻辑图。</p>
+<p><img alt="" src="../images/d78e7e8d9036b813718f1e6f14ecc95c1568bfd5f50622a20ea717a36c4eefde.jpg" /></p>
+<p>图7.48HRPWM与8位扩展寄存器的接口逻辑图</p>
+<h2 id="2hrpwm">(2）配置HRPWM</h2>
+<p>如果ePWM已经配置成个给定频率和极性的常规PWM，HRPWM需要通过编程配置偏移地址为20h的HRCNFG寄存器。这个寄存器的配置选择提供了如下操作模式：</p>
+<p>①边沿模式——通过对MEP编程可以提供精确地上升沿、下降沿、双边沿位置控制。下降沿和上升沿的控制可应用于需要占空比控制的电源拓扑结构，而双边沿控制可应用于相移控制的拓扑结构，例如相移全桥。</p>
+<p>②控制模式可以通过配置CMPAHR（占空比控制）寄存器或TBPHSHR（相位控制）寄存器对MEP编程。上升沿与下降沿就由配置CMPAHR寄存器实现，而双边沿通过TBPHSHR寄存器的配置实现。</p>
+<p>③影子模式——同常规PWM一样，这种模式提供了影子（双缓冲）选择。这种选择只有在CMPAHR寄存器的值与CMPA寄存器的值一样的时候才有效，而当使用TBPHSHR寄存器时，该模式无效。</p>
+<h2 id="3_6">(3)操作方法</h2>
+<p>MEP逻辑最大可以有255（8位）个细分的时间步长，其中每一个的时间精度为150ps。MEP同TBM和CCM寄存器一起工作，以确保时间步长的最优应用，并且确保宽范围的PWM频率、系统时钟频率域其他操作条件下保持边沿定位的精度。表7.39展示了几种HRPWM持的典型的操作频率。</p>
+<table>
+<thead>
+<tr>
+<th>系统频率/MHz</th>
+<th>每个SYSCLKOUT对应的MEP步数</th>
+<th>PWM最低频率/Hz</th>
+<th>PWM最高频率/MHz</th>
+<th>PWM最高频率时的精度/位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50.0</td>
+<td>111</td>
+<td>763</td>
+<td>2.50</td>
+<td>11.1</td>
+</tr>
+<tr>
+<td>60.0</td>
+<td>93</td>
+<td>916</td>
+<td>3.00</td>
+<td>10.9</td>
+</tr>
+<tr>
+<td>月 70.0</td>
+<td>79</td>
+<td>1068</td>
+<td>3.50</td>
+<td>10.6</td>
+</tr>
+<tr>
+<td>80.0</td>
+<td>69       月11</td>
+<td>1221</td>
+<td></td>
+<td>4.00</td>
+</tr>
+<tr>
+<td>90.0</td>
+<td>62</td>
+<td>1373</td>
+<td></td>
+<td>4.50</td>
+</tr>
+<tr>
+<td>100.0</td>
+<td>56</td>
+<td>1526</td>
+<td></td>
+<td>5.00</td>
+</tr>
+</tbody>
+</table>
+<p>表7.39MEP步数、PWM频率和精度之间的关系</p>
+<p>②MEP时间步长精度为180ps。</p>
+<p>③分配的MEP步长为时钟周期除以MEP时间步长精度。</p>
+<p>④PWM最小频率是基于最大周期值，如TBPRD=65535。PWM模式为非对称向上计数。</p>
+<p>⑤位精度按照PWM的最高频率给定。</p>
+<p>①边沿定位</p>
+<p>在典型的电源控制系统中(如开关电源、数字电动机、不间断电源等)都需要占空的控制。假设一个特定应用的占空比要求为40.5%，输出的PWM信号为1.25MHz，如果采用系统时钟为100MHz的常规PWM，占空比只能接近40.5%。如图7.49所示，通过32位的比较计数器能获得接近于40.5%的数值，在这种情况下，边沿定位时间精度步长为320ns，而不是324ns，数据参见表7.40所列。。1</p>
+<p>采用MEP可以获得更为接近于324ns的边沿定位。表7.40中给出了CMPA的值、22位的MEP步长（CMPAHR寄存器的值）可以获得323.96ns的边沿位置，几乎实现零误差。假定MEP步长精度为180ps。</p>
+<p><img alt="" src="../images/05104e6159cff00d3496841f7c12f743eb7e9ac9417cde8a6ec0d0bc727b8985.jpg" /></p>
+<p>图7.49占空比为40.5%时对应的PWM波形</p>
+<table>
+<thead>
+<tr>
+<th>CMPA/计数器</th>
+<th>占空比</th>
+<th>高电平时间</th>
+<th>CMPA寄存器/计数</th>
+<th>CMPAHR寄存器值/计数</th>
+<th>占空比</th>
+<th>高电平时间/ns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>28</td>
+<td>35.0</td>
+<td>280</td>
+<td>32</td>
+<td>18</td>
+<td>40.405</td>
+<td>323.24</td>
+</tr>
+<tr>
+<td>29</td>
+<td>36.3</td>
+<td>290</td>
+<td>32</td>
+<td>19</td>
+<td>40.428</td>
+<td>323.42</td>
+</tr>
+<tr>
+<td>30</td>
+<td>37.5</td>
+<td>300</td>
+<td>32</td>
+<td>20</td>
+<td>40.450</td>
+<td>323.60</td>
+</tr>
+<tr>
+<td>31</td>
+<td>38.8</td>
+<td>310</td>
+<td>32</td>
+<td>21</td>
+<td>40.473</td>
+<td>323.78</td>
+</tr>
+<tr>
+<td>32</td>
+<td>40.0</td>
+<td>320</td>
+<td>32</td>
+<td>22</td>
+<td>40.495</td>
+<td>323.96</td>
+</tr>
+<tr>
+<td>33</td>
+<td>41.3</td>
+<td>330</td>
+<td>32</td>
+<td>23</td>
+<td>40.518</td>
+<td>324.14</td>
+</tr>
+<tr>
+<td>34</td>
+<td>42.5</td>
+<td>340</td>
+<td>32</td>
+<td>24</td>
+<td>40.540</td>
+<td>324.32</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>32</td>
+<td>25</td>
+<td>40.563</td>
+<td>324.50</td>
+</tr>
+<tr>
+<td>Required</td>
+<td></td>
+<td></td>
+<td>332</td>
+<td>26</td>
+<td>40.585</td>
+<td>324.68</td>
+</tr>
+<tr>
+<td>32.40</td>
+<td>40.5</td>
+<td>324</td>
+<td>32</td>
+<td>27</td>
+<td>40.608</td>
+<td>324.86</td>
+</tr>
+</tbody>
+</table>
+<p>表7.40CMPA和CMPAHR寄存器值对应的占空比</p>
+<h2 id="2_11">②具体配置</h2>
+<p>通过设置标准（CMPA）和MEP（CMPAHR）寄存器，可以实现边沿定位的精准时间控制。在实际应用中，需要将要求的占空比和相应的周期值紧密对应，计算出来的数值要写到CMPA与CMPAHR寄存器组合中。</p>
+<p>为此，首先要检查相关的比例和映射的步骤。通常软件控制中采用百分比表示占空比，这样做有个好处就是仅仅通过数学计算就可以了，而不用考虑最终的绝对的以时钟计数或高电平时间ns计算的占空比，编程时需要代码具有一定的移植性就要考虑到各种PWM频率下运行的情形。</p>
+<p>寄存器赋值前，要得到相关比例需要两个步骤。</p>
+<p>假设当前系统时钟,SYSCLKOUT=10ns(100MHz）；</p>
+<p>PWM频率=1.25MHz（1/800ns);</p>
+<p>需要的PWM占空比，PWMDuty=0.405(40.5%）；</p>
+<p>PWM原始步长PWMperiod(800 ns/10 ns)=80；</p>
+<p>原始时钟调整的MEP步数（10ns/180ps)，MEP_SF=55;</p>
+<p>CMPAHR寄存器内的值要求在1～233，计算得到的数需要取整（默认值）=0180H;</p>
+<p>步骤1：寄存器CMPA设置占空比的整数值。</p>
+<p>CMPA寄存器值=32(20H)</p>
+<p>步骤2：寄存器CMPAHR设置占空比的小数值。</p>
+<p>③占空比限制</p>
+<p>在高精度模式下，边沿定位并不能对占空比为100%的PWM进调整。具体操作要求如下：当禁诊断功能时，周期启动后至少经过3个时基时钟周期TB-CLK；当SFO诊断功能启动时，周期启动少6个时基时钟周期TBCLK。</p>
+<p>占空比调整范围限制如图7.50所示，该限制限定了最低的占空比调节。例如针对接近0％的占空比并不能实现精确地边沿定位。尽管对最初的3～6个周期的HRPWM不可用，但是常规的PWM控制是可以做到占空比为0的。在绝大多数的应中，这种情况并不常见，因为控制器运条件很少要求占空比接近0％。最占空比限制如表7.41所列。</p>
+<p><img alt="" src="../images/13f1758ddef45f2847f6d3a25e7cf2f3adffac935534ad2706dfa536d4aefb06.jpg" /></p>
+<p>图7.50PWM输出频率为1MHz时低百分比占空比的限制</p>
+<table>
+<thead>
+<tr>
+<th>PWM频率/kHz</th>
+<th>3周期最小占空比</th>
+<th>6周期最小占空比</th>
+<th>PWM频率/kHz</th>
+<th>3周期最小占空比</th>
+<th>6周期最小占空比</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>0.6%</td>
+<td>1.2%</td>
+<td>1200</td>
+<td>3.6%</td>
+<td>7.2%</td>
+</tr>
+<tr>
+<td>400</td>
+<td>1.2%</td>
+<td>2.4%</td>
+<td>1400</td>
+<td>4.2%</td>
+<td>8.4%</td>
+</tr>
+<tr>
+<td>600</td>
+<td>1.8%</td>
+<td>3.6%</td>
+<td>1600</td>
+<td>4.8%</td>
+<td>9.6%</td>
+</tr>
+<tr>
+<td>800</td>
+<td>2.4%</td>
+<td>4.8%</td>
+<td>1800</td>
+<td>5.4%</td>
+<td>10.8%</td>
+</tr>
+<tr>
+<td>1000</td>
+<td>出  3.0%</td>
+<td>6.0%</td>
+<td>2000</td>
+<td>6.0%</td>
+<td>12%</td>
+</tr>
+</tbody>
+</table>
+<p>表7.413周期与6周期的占空比限制</p>
+<p>如果应系统要求HRPWM在低占空比范围内操作，那么HRPWM可以被配置为向下递减计数模式，采MEP来控制上升沿。这种模式不会受到最低占空限制，但会受到最大占空比限制。</p>
+<h2 id="4sfo">④参数优化软件(SFO)</h2>
+<p>MEP逻辑能够在255分步下定位边沿，如前所述，这些分步是在150ps条件下实现的。MEP步长会随着处理器参数、作温度和电压变化。随着电压的降低和温度的升增，随着电压的升和温度的降低减。实际应的时候可以采TI提供的参数优化软件（SFO)设定的HRPWM参数。参数优化软件在HRPWM运过程中动态地调整每个SYSCLKOUT周期的MEP步数。</p>
+<p>要有效应用MEP功能，在Q15格式表示的占空比值映射到LCMPA：CM-PAHR]寄存器时，需要将MEP参数（MEP_SF)传值给软件。为此，每个HRPWM模块都内置了检和诊断功能，能够在任何条件下确定优化MEP_SF的值。TI公司提供了有两个优化函数的C调库，它可以采硬件优化和决定MEP_SF的参数。因此，MEP控制和诊断寄存器保留给TI使。</p>
+<h2 id="5hrpwm">⑤优化编程代码的HRPWM实例</h2>
+<p>a.为了更好地理解HRPWM，举例如下：</p>
+<p>非对称PWM(递增模式、高电平有效)控制单相Buck变换器，单相变换器结构</p>
+<p>如图7.51所示。</p>
+<p>b.使用简易地RC滤波器实现DAC功能。</p>
+<p>例：假设MEP步长精度为150ps，并使用SFO函数，代码如下：</p>
+<p>下面介绍单相变换器的控制。</p>
+<p>图7.52给出了PWM波形，正如前文所述，对ePWM1模块的配置除了MEP使能控制外，其他设置和一般的PWM配置一样。</p>
+<p><img alt="" src="../images/ad4594a46e134a6bbdcee8c42ebffa493da0c4f4eedefef7386692bc5f66bbf3.jpg" /></p>
+<p>图7.51 ePWM1控制单相变换器的结构图7.52ePWM1控制单相变换器的输出波形</p>
+<p>本例代码包括两部分；初始化代码（执行一次）和实时代码（在ISR中执行）。</p>
+<p>下面给出了初始化代码。第一部分是对一般PWM的参数配置。第二部分是对HRPWM参数的配置。</p>
+<p>//设置为立即装载 //PWM输出频率为1000kHzPWM //2x周期，Q15~Q0定标</p>
+<h2 id="3hrpwm">3.HRPWM寄存器描述</h2>
+<h2 id="1_9">(1）寄存器概述</h2>
+<p>HRPWM所需的寄存器的汇总如表7.42所列。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>偏移</th>
+<th>大小</th>
+<th>描述</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>时间基准寄存器</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TBCTL</td>
+<td>0x0000</td>
+<td>1/0</td>
+<td>时间基准控制寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>TBSTS</td>
+<td>0x0001        品量</td>
+<td>1/0</td>
+<td>时间基准状态寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>TBPHSHR</td>
+<td>TBPHSHR</td>
+<td>1/0</td>
+<td>时间基准相位高精度寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>TBPHS</td>
+<td>0x0003</td>
+<td>1/0</td>
+<td>时间基准相位寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>TBCNT</td>
+<td>0x0004</td>
+<td>1/0</td>
+<td>时间基准计数寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td>TBPRD</td>
+<td>0x0005</td>
+<td>1/1</td>
+<td>时间基准周期寄存器设置</td>
+<td></td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>0x0006</td>
+<td>1/0</td>
+<td>保留</td>
+<td></td>
+</tr>
+<tr>
+<td>比较寄存器</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CMPCTL</td>
+<td>0x0007</td>
+<td>1/0</td>
+<td>计数比较控制寄存器</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表7.42HRPWM相关寄存器描述</p>
+<p>续表7.42</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>偏移</th>
+<th>大小</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMPAHR</td>
+<td>0x0008</td>
+<td>1/1</td>
+<td>计数比较A高精度寄存器设置</td>
+</tr>
+<tr>
+<td>CMPA</td>
+<td>0x0009</td>
+<td>1/1</td>
+<td>计数比较A寄存器设置</td>
+</tr>
+<tr>
+<td>CMPB</td>
+<td>0x000A</td>
+<td>1/1</td>
+<td>计数比较B寄存器设置</td>
+</tr>
+<tr>
+<td>ePWM寄存器</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ePWM</td>
+<td>0x0000至0x001F</td>
+<td>32</td>
+<td>其他ePWM寄存器，包括上列</td>
+</tr>
+<tr>
+<td>HRCNFG</td>
+<td>0x0020</td>
+<td>1</td>
+<td>HRPWM配置寄存器</td>
+</tr>
+<tr>
+<td>ePWM/HRPWM测试寄存器</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>0x00300x003F</td>
+<td>16</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2hrpwmhrcnfg">（2）HRPWM配置寄存器（HRCNFG)</h2>
+<p>HRPWM配置寄存器（HRCNFG)的各位信息如表7.43所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~4</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>HRLOAD</td>
+<td>映射模式位：选择时间事件，将CMPAHR映射寄存器的值加载到主要寄存器0:CTR=0（计数器等于零）1:CTR=PRD(计数器等于周期值）注：加载模式选择仅当CTLMODE=0被选定（位2）时才有效。可以选择这个事件去配合CMPA加载模式的选定（也即，CMPCTL[LOADMODE]位），在ePWM模块中设置如下：                 器00：LoadonCTR=0;时基计数器等于零（TBCTR=0x0000）01:LoadonCTR=PRD;时基计数器等于周期值（TBCTR=TBP)10:LoadonCTR=0或CTR=PRD(步应用于HRPWM模块）11:冻结（无负载可能）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CTLMODE</td>
+<td>控制模式位：选择能够控制MEP的寄存器（CMP或TBPHS）0:MPAHR(8)寄存器控制边沿位置（即占空比控制模式）（重置默认）1:TBPHSHR(8)寄存器控制边沿位置（即相位控制模式）</td>
+</tr>
+<tr>
+<td>1~0</td>
+<td>EDGMODE</td>
+<td>边沿模式位：选择被MEP逻辑控制的PWM边沿00:HRPWM禁用01:MEP上升沿控制10:MEP下降沿控制11:MEP双沿控制</td>
+</tr>
+</tbody>
+</table>
+<p>表7.43HRPWM配置寄存器(HRCNFG)</p>
+<h2 id="3acmpahr">(3)计数比较A高精度寄存器(CMPAHR)</h2>
+<p>计数比较A精度寄存器（CMPAHR)的各位信息如表7.44所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>CMPAHR</td>
+<td>比较A高精度寄存器位，实现MEP步长控制。使能HRPWM的最小值位0x0001。MEP在1～255H变化范围内有效</td>
+</tr>
+<tr>
+<td>7~0</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表7.44计数比较A高精度寄存器(CMPAHR)</p>
+<h2 id="4tbphshr">（4）时间基准相位高精度寄存器（TBPHSHR）</h2>
+<p>时间基准相位精度寄存器(TBPHSHR)的各位信息如表7.45所列。</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15~8</td>
+<td>TBPHSH</td>
+<td>时间基准相位高精度位</td>
+</tr>
+<tr>
+<td>7~0</td>
+<td>Reserved</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>表7.45时间基准相位高精度寄存器（TBPHSHR）</p>
+<h2 id="_2"></h2>
+<p><img alt="" src="../images/f5936ba4b3b9b05918dccfd739a90080c06e74d19426795b024c2a830686b3c5.jpg" /></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
